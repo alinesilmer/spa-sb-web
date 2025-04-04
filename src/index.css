@@ -1,0 +1,217 @@
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@100..900&family=Playfair+Display:wght@400..900&display=swap");
+
+@import "tailwindcss";
+
+:root {
+  /*COLOR SCHEME*/
+  --bg-color: #ffecec; /*background color*/
+  --accent-color: #9cab98; /*shadows*/
+  --card-color: #f5f5f5; /*cards bg*/
+  --secondary-color: #4e5d4e; /*header, footer, some bgs*/
+  --highlight-color: #e2a3a3; /*hovers and text highlights*/
+  /*text color will go from black or white depending on the bg color*/
+
+  /*FONT SIZES*/
+  /* Updated Font Size Variables */
+  --fs-xs: clamp(0.875rem, 0.8rem + 0.3vw, 1rem); /* Small text  */
+  --fs-s: clamp(1rem, 0.95rem + 0.4vw, 1.25rem); /* Normal body  */
+  --fs-m: clamp(1.25rem, 1.15rem + 0.6vw, 1.5rem); /* Subheading  */
+  --fs-l: clamp(1.5rem, 1.35rem + 1vw, 2.25rem); /* Heading */
+  --fs-xl: clamp(2.5rem, 2rem + 2.5vw, 5rem); /* Hero titles */
+
+  /*FONT WEIGHTS*/
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /*FONT-FAMILY*/
+  font-family: "Montserrat", "Playfair Display", "Great Vibes", sans-serif;
+
+  /*BORDER-RADIUS*/
+  --radius-s: 0.5rem;
+  --radius-m: 1rem;
+  --radius-l: 2rem;
+
+  /*CARDS*/
+  --card-width: 320px;
+  --card-height: 420px;
+  --container-max-width: 1200px;
+  --section-padding: var(--space-xl);
+
+  /*SHADOWS*/
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+  /*SITE WIDTH AND HEIGHT*/
+  --full-width: 100%;
+  --max-height: 90vh;
+}
+
+@media (max-width: 991px) {
+  .nav-links {
+    display: none;
+  }
+
+  .menu {
+    display: block;
+  }
+
+  .menu-dropdown {
+    width: 280px;
+    max-height: 85vh;
+  }
+
+  .search-text-input {
+    width: 200px;
+  }
+
+  .header.opaque {
+    height: auto;
+    padding: 10px 0;
+  }
+
+  .nav-container {
+    padding: 5px 15px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .menu-dropdown {
+    right: 15px;
+    top: 55px;
+  }
+
+  .logo {
+    height: 50px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .nav-container:nth-child(2) {
+    justify-content: center;
+    padding: 5px 0;
+  }
+
+  .nav-container:first-child,
+  .nav-container:last-child {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 767px) {
+  .header.opaque {
+    padding: 5px 0;
+  }
+
+  .nav-container {
+    padding: 5px 10px;
+  }
+
+  .header.opaque {
+    flex-direction: row;
+    display: flex;
+  }
+
+  /* Center logo container */
+  .nav-container:nth-child(2) {
+    justify-content: center;
+    order: 1;
+    padding: 10px 0;
+  }
+
+  /* Search container */
+  .nav-container:first-child {
+    order: 1;
+  }
+
+  /* Menu container */
+  .nav-container:last-child {
+    order: 3;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .logo {
+    height: 40px;
+  }
+
+  .menu-dropdown {
+    top: auto;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    height: 100vh;
+    max-height: 100vh;
+    bottom: 0;
+    border-radius: 0;
+  }
+
+  .search-area {
+    width: 100%;
+  }
+
+  .search-button {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+  }
+
+  .search-input.visible {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: white;
+    padding: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .search-text-input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 479px) {
+  .menu-title {
+    font-size: var(--fs-s);
+  }
+
+  .menu-link {
+    padding: 8px 0;
+    font-size: var(--fs-xs);
+  }
+
+  .submenu-link {
+    padding: 6px 0;
+    font-size: var(--fs-xs);
+  }
+
+  .menu-dropdown {
+    padding: 16px;
+  }
+
+  .logo {
+    height: 35px;
+  }
+}
+
+@media (max-width: 991px) {
+  .menu-button {
+    display: flex;
+  }
+}
+
+@media (min-width: 992px) {
+  .menu {
+    display: none;
+  }
+
+  .nav-links {
+    display: flex;
+  }
+}

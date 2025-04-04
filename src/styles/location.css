@@ -1,0 +1,183 @@
+/* Modern Location Styles */
+.location-container {
+  padding: 5rem 1.5rem;
+  background-color: var(--highlight-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.location-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.location-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  max-width: 700px;
+}
+
+.location-title {
+  font-family: "Playfair Display", serif;
+  font-size: var(--fs-l);
+  font-weight: var(--fw-bold);
+  color: white;
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.location-title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: white;
+}
+
+.location-description {
+  font-family: "Montserrat", sans-serif;
+  font-size: var(--fs-s);
+  line-height: 1.7;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.location-map-container {
+  width: 100%;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+.location-map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.location-details {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.location-info-card {
+  width: 300px;
+  min-width: 300px;
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.location-info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.info-card-title {
+  font-family: "Playfair Display", serif;
+  font-size: var(--fs-m);
+  font-weight: var(--fw-semibold);
+  color: var(--text-color, #333);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.info-card-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--highlight-color, var(--primary-color));
+}
+
+.address-details,
+.contact-details,
+.hours-details {
+  font-family: "Montserrat", sans-serif;
+  font-size: var(--fs-xs);
+  line-height: 1.7;
+  color: var(--text-color-light, #666);
+}
+
+.address-details p {
+  margin-bottom: 0.75rem;
+}
+
+.contact-details a {
+  display: block;
+  color: var(--text-color-light, #666);
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
+}
+
+.contact-details a:hover {
+  color: var(--highlight-color, var(--primary-color));
+}
+
+.hours-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hours-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.hours-item:last-child {
+  border-bottom: none;
+}
+
+.day {
+  font-weight: var(--fw-medium);
+}
+
+.time {
+  color: var(--text-color, #333);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .location-container {
+    padding: 3rem 1rem;
+  }
+
+  .location-map-container {
+    padding-bottom: 75%;
+  }
+
+  .location-info-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .location-title {
+    font-size: calc(var(--fs-l) - 0.25rem);
+  }
+
+  .location-description {
+    font-size: calc(var(--fs-s) - 0.1rem);
+  }
+}
