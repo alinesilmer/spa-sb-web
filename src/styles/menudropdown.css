@@ -3,7 +3,7 @@
   top: 60px;
   right: 20px;
   width: 320px;
-  max-height: 80vh;
+  max-height: 70vh;
   overflow-y: auto;
   background-color: white;
   border-radius: var(--radius-s);
@@ -24,10 +24,25 @@
   }
 }
 
+.navbar-container-menu {
+  display: flex;
+}
 .menu-header {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 16px;
+}
+
+.profile-info {
+  margin-bottom: 12px;
+}
+
+.profile-picture {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
 }
 
 .close-menu {
@@ -140,7 +155,7 @@
 
 .submenu-link {
   display: flex;
-  flex-direction: column;
+  flex-direction: codlumn;
   align-items: flex-start;
   padding: 8px 0;
   color: var(--secondary-color);

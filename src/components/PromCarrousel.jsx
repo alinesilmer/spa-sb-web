@@ -31,19 +31,19 @@ const PromCarousel = () => {
     { 
       id: 2, 
       title: "15% OFF Tratamiento Facial", 
-      description:"Rejuvenece tu piel con nuestro tratamiento facial premium utilizando productos orgánicos adaptados a tu tipo de piel.", 
+      description:"Rejuvenecé tu piel con nuestro tratamiento facial premium utilizando productos orgánicos adaptados a tu tipo de piel.", 
       image: "https://imgs.search.brave.com/puKZkUyXvObWJKQlyPj2D7jR_p9g2v39Bupb4muLiz0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vcGljanVt/Ym8uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy9iZWF1dHktZGF5/LXdvbWFuLWdldHRp/bmctZmFjaWFsLXRy/ZWF0bWVudC1pbi1z/cGEtZnJlZS1pbWFn/ZS5qcGVnP3c9NjAw/JnF1YWxpdHk9ODA"
     },
     { 
       id: 3, 
       title: "3x2 Piedras Calientes", 
-      description: "Experimenta el poder curativo de las piedras basálticas calientes para derretir el estrés y la tensión muscular.", 
+      description: "Experimentá el poder curativo de las piedras basálticas calientes para derretir el estrés y la tensión muscular.", 
      image: "https://imgs.search.brave.com/G6hdDr2P97BHsdk3b1MooTTY6TekP4ca8zC4heEk3oE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMuc3BhbG9waWEu/YXBwLzdlOWExN2Q0/LTExOWEtNTU3ZC1i/ZGZlLTA3NDE1OGJm/MzFjYS9zM2ZzLXB1/YmxpYy9yZmgtc3Bh/LXRyZWF0bWVudHMv/bWFzYWplX3BpZWRy/YXNfY2FsaWVudGVz/XzIwXzAuanBn"
     },
     { 
       id: 4, 
       title: "2x1 Sesión de Aromaterapia", 
-      description: "Sumérgete en aceites esenciales que mejoran tu estado de ánimo y promueven el bienestar general.", 
+      description: "Sumergite en aceites esenciales que mejoran tu estado de ánimo y promueven el bienestar general.", 
    image: "https://imgs.search.brave.com/UKnI6woJ23Ej_hRQToC-Le-pJ-cxkXq_HZmbyXnEqTU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTMy/NTA5NTI4OS9waG90/by9zdGlsbC1saWZl/LWNsb3NldXAtb2Yt/YS10cmFucXVpbC1z/cGEtYXJyYW5nZW1l/bnQuanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPXlyTlhJQUEx/bVNTenlwemJLTVRs/NDgwN25SRzRTOHJz/NVJzV2ItSjBNOVU9"
     },
     { 

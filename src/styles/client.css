@@ -1,0 +1,858 @@
+.client-dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  margin-top: 100px; /* To account for fixed header */
+}
+
+/* Sidebar */
+.client-sidebar {
+  width: 280px;
+  background-color: white;
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: calc(100vh - 100px);
+}
+
+.client-sidebar-header {
+  padding: 25px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.client-sidebar-header h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+}
+
+.client-user-info {
+  display: flex;
+  align-items: center;
+}
+
+.client-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--highlight-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-right: 15px;
+  overflow: hidden;
+}
+
+.client-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.client-user-details {
+  flex: 1;
+}
+
+.client-user-name {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.client-user-role {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.client-nav {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.client-nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.client-nav-item:hover {
+  background-color: #f5f5f5;
+  color: var(--highlight-color);
+}
+
+.client-nav-item.active {
+  background-color: #f0f0f0;
+  color: var(--highlight-color);
+  font-weight: 600;
+  border-left: 3px solid var(--highlight-color);
+}
+
+.client-nav-icon {
+  margin-right: 15px;
+  font-size: 1.2rem;
+}
+
+.client-sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+.client-logout-btn {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.client-logout-btn:hover {
+  color: #e74c3c;
+}
+
+/* Content */
+.client-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 20px;
+}
+
+.client-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.client-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  color: var(--secondary-color);
+}
+
+.client-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.client-action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.client-action-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.client-action-icon {
+  font-size: 1.2rem;
+}
+
+/* Sections */
+.client-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.client-section-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.3rem;
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+}
+
+/* Bookings */
+.client-bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.client-booking-card {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  border-left: 3px solid var(--highlight-color);
+  transition: all 0.3s ease;
+}
+
+.client-booking-card:hover {
+  background-color: #f5f5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.client-booking-card.past {
+  border-left-color: #95a5a6;
+}
+
+.client-booking-date {
+  width: 100px;
+  text-align: center;
+}
+
+.booking-date {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.booking-time {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.client-booking-details {
+  flex: 1;
+  padding: 0 15px;
+}
+
+.client-booking-service {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin: 0 0 5px;
+}
+
+.client-booking-professional,
+.client-booking-duration {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0 0 5px;
+}
+
+.client-booking-status {
+  margin-right: 15px;
+}
+
+.booking-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.booking-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.booking-status.confirmed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.booking-status.completed {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.booking-status.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.client-booking-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.client-booking-action-btn {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.client-booking-action-btn.view {
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+.client-booking-action-btn.view:hover {
+  background-color: #e0e0e0;
+}
+
+.client-booking-action-btn.cancel {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.client-booking-action-btn.cancel:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.client-booking-action-btn.review {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.client-booking-action-btn.review:hover {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.client-no-data {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+  text-align: center;
+  padding: 20px;
+}
+
+.client-view-all-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 20px;
+  background-color: #f0f0f0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.client-view-all-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Profile */
+.client-profile-header {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.client-profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: var(--highlight-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 2rem;
+  margin-right: 30px;
+  overflow: hidden;
+}
+
+.client-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.client-profile-info {
+  flex: 1;
+}
+
+.client-profile-name {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  color: var(--secondary-color);
+  margin: 0 0 5px;
+}
+
+.client-profile-role {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  color: var(--highlight-color);
+  margin: 0 0 10px;
+}
+
+.client-profile-email {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0;
+}
+
+.client-edit-profile-btn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: none;
+  background-color: var(--highlight-color);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.client-edit-profile-btn:hover {
+  background-color: #d48a8a;
+}
+
+.client-profile-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.client-profile-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.client-profile-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.client-form-group {
+  margin-bottom: 15px;
+}
+
+.client-form-group label {
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.client-form-group input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+  background-color: #f9f9f9;
+}
+
+.client-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Preferences */
+.client-preferences {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.client-preference-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.client-preference-item label {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+}
+
+.client-toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.client-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.client-toggle label {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.client-toggle label:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.client-toggle input:checked + label {
+  background-color: var(--highlight-color);
+}
+
+.client-toggle input:checked + label:before {
+  transform: translateX(26px);
+}
+
+/* Placeholders */
+.client-placeholder {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+  text-align: center;
+  padding: 50px 0;
+}
+
+.client-placeholder-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.client-action-link {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 25px;
+  background-color: var(--highlight-color);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.client-action-link:hover {
+  background-color: #d48a8a;
+  transform: translateY(-2px);
+}
+
+/* Modal */
+.client-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.client-modal {
+  background-color: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.client-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.client-modal-header h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+  margin: 0;
+}
+
+.client-modal-content {
+  padding: 20px;
+}
+
+.client-modal-content p {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.client-modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.client-modal-btn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.client-modal-btn.cancel {
+  background-color: #f5f5f5;
+  color: #555;
+}
+
+.client-modal-btn.cancel:hover {
+  background-color: #e0e0e0;
+}
+
+.client-modal-btn.confirm {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.client-modal-btn.confirm:hover {
+  background-color: #c0392b;
+}
+
+.client-modal-btn.save {
+  background-color: var(--highlight-color);
+  color: white;
+}
+
+.client-modal-btn.save:hover {
+  background-color: #d48a8a;
+}
+
+.client-modal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Cancellation Notice */
+.client-cancellation-notice {
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.client-cancellation-notice.success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.client-cancellation-notice.warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+}
+
+/* Profile Picture Upload */
+.client-profile-picture-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.client-profile-picture-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.client-profile-picture-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.client-profile-picture-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--highlight-color);
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 2rem;
+}
+
+.client-profile-picture-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.client-upload-btn {
+  padding: 8px 15px;
+  border-radius: 20px;
+  background-color: var(--highlight-color);
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.client-upload-btn:hover {
+  background-color: #d48a8a;
+}
+
+.client-remove-photo-btn {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background-color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.client-remove-photo-btn:hover {
+  background-color: #f5f5f5;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .client-sidebar {
+    width: 80px;
+  }
+
+  .client-sidebar-header h2,
+  .client-user-details,
+  .client-nav-item span:not(.client-nav-icon),
+  .client-logout-btn span:not(.client-nav-icon) {
+    display: none;
+  }
+
+  .client-nav-icon {
+    margin-right: 0;
+  }
+
+  .client-content {
+    margin-left: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .client-profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .client-profile-avatar {
+    margin: 0 0 20px;
+  }
+
+  .client-edit-profile-btn {
+    margin-top: 20px;
+  }
+
+  .client-profile-form {
+    grid-template-columns: 1fr;
+  }
+
+  .client-booking-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .client-booking-date {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 10px;
+  }
+
+  .client-booking-details {
+    width: 100%;
+    padding: 0;
+    margin-bottom: 10px;
+  }
+
+  .client-booking-status {
+    margin: 0 0 10px;
+  }
+
+  .client-booking-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .client-title {
+    font-size: 1.5rem;
+  }
+
+  .client-form-row {
+    grid-template-columns: 1fr;
+  }
+}

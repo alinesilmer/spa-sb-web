@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 import Video from "../components/Video";
 import videoBg from "../assets/home-div-bg.mp4";
 import Logo from "../assets/logo-sb.png";
@@ -24,8 +25,8 @@ const Home = () => {
             <h2 className="subtitle">Spa & Bienestar</h2>
           </div>
           <div className="btn-container">
-            <a className="login-btn">Iniciar Sesión</a>
-            <a className="register-btn">Registrarme</a>
+           <Link to="/login" className="login-btn">Iniciar Sesión</Link>
+             <Link to="/register" className="register-btn">Registrarme</Link>
                   </div>
                   <h5 className="scroll-instruction">Deslizá hacia abajo</h5>
                   <img src={ScrollArrow} className="scroll-arrow"/>
@@ -35,10 +36,10 @@ const Home = () => {
           <div className="background-home">
               <div className="home-text-container">
               <h3 className="home-title">Pura Energía</h3>
-              <h4 className="home-subtitle">Explora el Arte del Bienestar</h4>
-                  <h5 className="home-body">Descubre el placer del descanso en nuestro Spa. <br></br>Un oasis de calma diseñado para rejuvenecerte, con terapias que renuevan cuerpo y mente.
+              <h4 className="home-subtitle">Explorá el Arte del Bienestar</h4>
+                  <h5 className="home-body">Descubrí el placer del descanso en nuestro Spa. <br></br>Un oasis de calma diseñado para rejuvenecerte, con terapias que renuevan cuerpo y mente.
  </h5>
-                   <a href="#reservas" className="home-booking-link">Reservar Ya</a>
+                   <Link to="/booking" className="home-booking-link">Reservar Ya</Link>
               </div>
     
               <div className="home-img-container">
@@ -54,14 +55,8 @@ const Home = () => {
           
           <Reviews />
           
-           <div className="faq-container">
-              <div className="faq-text-container">
-              <h3 className="home-faq-title">Preguntas Frecuentes</h3>
-              <h5 className="home-faq-body">Consultá nuestras preguntas frecuentes <br></br>para obtener respuestas rápidas y útiles.</h5>
-              <h5 className="home-faq-body">Si no encontrás lo que buscas<br></br> consultá a <a href="#Contact" className="faq-consult-link"> nuestro equipo</a></h5>
-              </div>
+          
               <FAQSection />
-          </div>
 
           <div className="home-location-container">
               <Location />

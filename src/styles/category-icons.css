@@ -1,0 +1,96 @@
+.category-icons-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.category-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  padding: 10px;
+  width: 100px;
+}
+
+.category-icon:hover {
+  transform: translateY(-5px);
+}
+
+.icon-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #e2a3a3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.category-icon:hover .icon-circle {
+  box-shadow: 0 5px 15px rgba(226, 163, 163, 0.4);
+  transform: scale(1.05);
+}
+
+.category-icon.active .icon-circle {
+  background-color: #d88c8c;
+  box-shadow: 0 5px 15px rgba(216, 140, 140, 0.4);
+}
+
+.category-icon span {
+  font-size: 0.9rem;
+  color: #4e5d4e;
+  font-weight: 500;
+  text-align: center;
+}
+
+.category-icon.active span {
+  color: #d88c8c;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .category-icons-container {
+    gap: 15px;
+  }
+
+  .category-icon {
+    width: 80px;
+  }
+
+  .icon-circle {
+    width: 60px;
+    height: 60px;
+  }
+
+  .category-icon span {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-icons-container {
+    gap: 10px;
+  }
+
+  .category-icon {
+    width: 70px;
+  }
+
+  .icon-circle {
+    width: 50px;
+    height: 50px;
+  }
+
+  .category-icon span {
+    font-size: 0.75rem;
+  }
+}

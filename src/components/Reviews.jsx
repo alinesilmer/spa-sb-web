@@ -24,7 +24,7 @@ const reviewsData = [
     avatar: avatars[1]
   },
   {
-    text: "Excelente servicio desde el momento en que entras. El ritual de aromaterapia fue una experiencia transformadora. Volveré pronto para probar más tratamientos.",
+    text: "Excelente servicio desde el momento en que entrás. El ritual de aromaterapia fue una experiencia transformadora. Volveré pronto para probar más tratamientos.",
     author: "Laura Gutiérrez",
     rating: 4,
     avatar: avatars[2]

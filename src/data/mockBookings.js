@@ -1,0 +1,153 @@
+// Mock bookings data for testing
+export const mockBookings = [
+  {
+    id: "1",
+    userId: "3", // Regular user
+    serviceId: "1",
+    serviceName: "Masaje Anti-stress",
+    professionalId: "2",
+    professionalName: "Professional User",
+    date: "2025-05-15",
+    time: "10:00",
+    duration: "60 minutos",
+    price: "$5,500",
+    status: "confirmed",
+    paymentStatus: "paid",
+    paymentMethod: "mercadopago",
+    createdAt: "2025-05-01T14:30:00Z",
+  },
+  {
+    id: "2",
+    userId: "3", // Regular user
+    serviceId: "5",
+    serviceName: "VelaSlim",
+    professionalId: "2",
+    professionalName: "Professional User",
+    date: "2025-05-20",
+    time: "15:30",
+    duration: "45 minutos",
+    price: "$8,500",
+    status: "pending",
+    paymentStatus: "pending",
+    paymentMethod: null,
+    createdAt: "2025-05-02T09:15:00Z",
+  },
+  {
+    id: "3",
+    userId: "3", // Regular user
+    serviceId: "11",
+    serviceName: "Criofrecuencia Facial",
+    professionalId: "2",
+    professionalName: "Professional User",
+    date: "2025-04-25",
+    time: "14:00",
+    duration: "50 minutos",
+    price: "$7,000",
+    status: "completed",
+    paymentStatus: "paid",
+    paymentMethod: "mercadopago",
+    createdAt: "2025-04-10T11:20:00Z",
+  },
+  {
+    id: "4",
+    userId: "3", // Regular user
+    serviceId: "9",
+    serviceName: "Punta de Diamante",
+    professionalId: "2",
+    professionalName: "Professional User",
+    date: "2025-05-10",
+    time: "11:30",
+    duration: "45 minutos",
+    price: "$6,500",
+    status: "cancelled",
+    paymentStatus: "refunded",
+    paymentMethod: "mercadopago",
+    createdAt: "2025-04-28T16:45:00Z",
+    cancelledAt: "2025-05-01T10:20:00Z",
+  },
+  {
+    id: "5",
+    userId: "4", // Another client
+    serviceId: "2",
+    serviceName: "Masaje Descontracturante",
+    professionalId: "2",
+    professionalName: "Professional User",
+    date: "2025-05-16",
+    time: "16:00",
+    duration: "50 minutos",
+    price: "$6,000",
+    status: "confirmed",
+    paymentStatus: "paid",
+    paymentMethod: "mercadopago",
+    createdAt: "2025-05-03T13:10:00Z",
+  },
+  {
+    id: "6",
+    userId: "5", // Another client
+    serviceId: "16",
+    serviceName: "Hidromasajes",
+    professionalId: "2",
+    professionalName: "Professional User",
+    date: "2025-05-18",
+    time: "12:00",
+    duration: "45 minutos",
+    price: "$3,500",
+    status: "confirmed",
+    paymentStatus: "pending",
+    paymentMethod: null,
+    createdAt: "2025-05-04T09:30:00Z",
+  },
+];
+
+// Mock available time slots
+export const mockTimeSlots = [
+  { time: "09:00", available: true },
+  { time: "10:00", available: false },
+  { time: "11:00", available: true },
+  { time: "12:00", available: false },
+  { time: "13:00", available: false },
+  { time: "14:00", available: true },
+  { time: "15:00", available: true },
+  { time: "16:00", available: false },
+  { time: "17:00", available: true },
+  { time: "18:00", available: true },
+  { time: "19:00", available: true },
+];
+
+// Mock contact messages
+export const mockContactMessages = [
+  {
+    id: "1",
+    name: "María González",
+    email: "maria@example.com",
+    phone: "+54 9 3624 123456",
+    subject: "Consulta sobre tratamientos faciales",
+    message:
+      "Hola, me gustaría saber más información sobre los tratamientos faciales disponibles y sus precios. Gracias!",
+    status: "unread",
+    createdAt: "2025-05-01T10:15:00Z",
+  },
+  {
+    id: "2",
+    name: "Carlos Rodríguez",
+    email: "carlos@example.com",
+    phone: "+54 9 3624 789012",
+    subject: "Reserva para grupo",
+    message:
+      "Buenas tardes, quisiera consultar si es posible hacer una reserva para un grupo de 5 personas para hidromasajes el próximo sábado. Saludos.",
+    status: "read",
+    createdAt: "2025-04-28T14:30:00Z",
+  },
+  {
+    id: "3",
+    name: "Laura Pérez",
+    email: "laura@example.com",
+    phone: "+54 9 3624 345678",
+    subject: "Problema con mi reserva",
+    message:
+      "Hola, hice una reserva para mañana pero necesito cambiarla para la semana que viene. ¿Es posible hacer este cambio? Mi número de reserva es #4589. Gracias!",
+    status: "responded",
+    createdAt: "2025-04-30T09:45:00Z",
+    respondedAt: "2025-04-30T11:20:00Z",
+  },
+];

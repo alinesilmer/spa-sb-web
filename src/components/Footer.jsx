@@ -1,5 +1,9 @@
 import React from 'react';
+import { Link } from "react-router-dom"
 import '../styles/footer.css';
+import instagram from '../assets/icons8-instagram.svg';
+import facebook from '../assets/icons8-facebook.svg';
+import tiktok from '../assets/icons8-tiktok.svg';
 
 const Footer = () => {
   return (
@@ -12,27 +16,20 @@ const Footer = () => {
               Un oasis de calma diseñado para rejuvenecerte, con terapias que renuevan cuerpo y mente.
             </p>
             <div className="social-icons">
-              <a href="#" className="social-icon facebook" aria-label="Facebook">Facebook</a>
-              <a href="#" className="social-icon twitter" aria-label="Twitter">Twitter</a>
-              <a href="#" className="social-icon instagram" aria-label="Instagram">Instagram</a>
-              
-              {/* Alternative text-based version if you don't have Font Awesome */}
-              {/* 
-              <a href="#" className="social-icon-text">FB</a>
-              <a href="#" className="social-icon-text">TW</a>
-              <a href="#" className="social-icon-text">IG</a>
-              */}
+            
+              <a href="#" className="social-icon"><img src={ instagram } className="icons-img-footer" alt="Instagram" /></a>
+              <a href="#" className="social-icon"><img src={ facebook } className="icons-img-footer" alt="Facebook" /></a>
+              <a href="#" className="social-icon"><img src={ tiktok } className="icons-img-footer" alt="TikTok" /></a>
             </div>
           </div>
           
           <div className="footer-section">
             <h3 className="footer-heading">Enlaces Rápidos</h3>
             <div className="footer-links">
-              <a href="#" className="footer-link">Inicio</a>
-              <a href="#" className="footer-link">Servicios</a>
-              <a href="#" className="footer-link">Reservas</a>
-              <a href="#" className="footer-link">Sobre Nosotros</a>
-              <a href="#" className="footer-link">Contacto</a>
+             <Link to="/">Inicio</Link>
+               <Link to="/about-us">Nosotros</Link>
+              <Link to="/services">Servicios</Link>
+                <Link to="/contact">Contacto</Link>
             </div>
           </div>
           
