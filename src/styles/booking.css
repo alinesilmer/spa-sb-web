@@ -1,3 +1,4 @@
+/* Overall Booking Page */
 .booking-page {
   padding: 120px 0 60px;
   background-color: #f9f9f9;
@@ -10,6 +11,7 @@
   padding: 0 20px;
 }
 
+/* Header */
 .booking-header {
   text-align: center;
   margin-bottom: 40px;
@@ -30,6 +32,7 @@
   margin: 5px 0;
 }
 
+/* Booking Content */
 .booking-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -39,10 +42,10 @@
 
 .booking-date-selection,
 .booking-time-selection {
-  background-color: white;
-  border-radius: 10px;
+  background-color: #fff;
+  border-radius: var(--radius-m);
   padding: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .booking-date-selection h2,
@@ -53,64 +56,14 @@
   margin-bottom: 20px;
 }
 
-/* Calendar styling */
+/* Calendar Styling */
 .booking-calendar {
   width: 100%;
   border: none;
   font-family: "Montserrat", sans-serif;
 }
 
-.react-datepicker {
-  font-family: "Montserrat", sans-serif !important;
-  border: none !important;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  width: 100%;
-}
-
-.react-datepicker__header {
-  background-color: var(--highlight-color) !important;
-  border-bottom: none !important;
-  padding-top: 15px !important;
-}
-
-.react-datepicker__current-month {
-  color: white !important;
-  font-family: "Playfair Display", serif !important;
-  font-size: 1.2rem !important;
-  margin-bottom: 10px !important;
-}
-
-.react-datepicker__day-name {
-  color: white !important;
-  font-weight: 600 !important;
-  margin: 5px !important;
-  width: 36px !important;
-  height: 36px !important;
-}
-
-.react-datepicker__day {
-  margin: 5px !important;
-  width: 36px !important;
-  height: 36px !important;
-  line-height: 36px !important;
-  border-radius: 50% !important;
-  transition: all 0.3s ease;
-}
-
-.react-datepicker__day:hover {
-  background-color: #f0f0f0 !important;
-}
-
-.react-datepicker__day--selected {
-  background-color: var(--highlight-color) !important;
-  color: white !important;
-}
-
-.react-datepicker__day--disabled {
-  color: #ccc !important;
-}
-
-/* Time slots styling */
+/* Time Slots */
 .booking-time-slots {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -137,7 +90,7 @@
 
 .booking-time-slot.selected {
   background-color: var(--highlight-color);
-  color: white;
+  color: #fff;
 }
 
 .booking-no-slots {
@@ -148,12 +101,12 @@
   padding: 20px;
 }
 
-/* Booking summary */
+/* Booking Summary */
 .booking-summary {
-  background-color: white;
-  border-radius: 10px;
+  background-color: #fff;
+  border-radius: var(--radius-m);
   padding: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .booking-summary h2 {
@@ -174,14 +127,16 @@
   border-bottom: 1px solid #eee;
 }
 
-.booking-summary-label {
+.booking-summary-label,
+.booking-detail-label {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-size: 0.9rem;
   color: #555;
 }
 
-.booking-summary-value {
+.booking-summary-value,
+.booking-detail-value {
   font-family: "Montserrat", sans-serif;
   font-size: 0.9rem;
   color: #777;
@@ -192,7 +147,7 @@
   padding: 15px;
   border-radius: 30px;
   background-color: var(--highlight-color);
-  color: white;
+  color: #fff;
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
   font-weight: 600;
@@ -210,14 +165,14 @@
   cursor: not-allowed;
 }
 
-/* Loading and error states */
+/* Loading & Error States */
 .booking-loading,
 .booking-error {
   text-align: center;
   padding: 50px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-sm);
 }
 
 .booking-error h2 {
@@ -238,7 +193,7 @@
   padding: 12px 25px;
   border-radius: 30px;
   background-color: var(--highlight-color);
-  color: white;
+  color: #fff;
   font-family: "Montserrat", sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
@@ -251,12 +206,14 @@
   background-color: #d48a8a;
 }
 
-/* Confirmation screen */
+/* Booking Confirmation */
 .booking-confirmation {
-  background-color: white;
-  border-radius: 10px;
+  background-color: #fff;
+  border-radius: var(--radius-m);
   padding: 40px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .booking-confirmation-header {
@@ -297,21 +254,10 @@
   border-bottom: 1px solid #f5f5f5;
 }
 
-.booking-detail-label {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.booking-detail-value {
-  font-family: "Montserrat", sans-serif;
-  font-size: 0.9rem;
-  color: #777;
-}
-
+/* Payment Section */
 .booking-payment-section {
   text-align: center;
+  margin-top: 30px;
 }
 
 .booking-payment-section h3 {
@@ -328,24 +274,48 @@
   margin-bottom: 20px;
 }
 
+/* New container for side-by-side payment buttons */
+.booking-payment-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
 .booking-payment-button {
   padding: 15px 30px;
   border-radius: 30px;
-  background-color: #009ee3; /* MercadoPago blue */
-  color: white;
+  background-color: #009ee3; /* Primary payment color */
+  color: #fff;
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  min-width: 200px;
 }
 
 .booking-payment-button:hover {
   background-color: #008acb;
+  transform: translateY(-2px);
 }
 
-/* Responsive styles */
+.booking-receipt-input {
+  margin: 15px 0;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Secondary style for cash payments */
+.booking-cash-button {
+  background-color: #28a745; /* Cash green */
+}
+
+.booking-cash-button:hover {
+  background-color: #238f45;
+}
+
+/* Responsive Styles */
 @media (max-width: 991px) {
   .booking-content {
     grid-template-columns: 1fr;
@@ -357,14 +327,12 @@
   .booking-header h1 {
     font-size: 2rem;
   }
-
   .booking-date-selection,
   .booking-time-selection,
   .booking-summary,
   .booking-confirmation {
     padding: 20px;
   }
-
   .booking-time-slots {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 10px;
@@ -375,18 +343,19 @@
   .booking-header h1 {
     font-size: 1.8rem;
   }
-
   .booking-time-slots {
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: 8px;
   }
-
   .booking-time-slot {
     padding: 10px;
     font-size: 0.8rem;
   }
-
   .booking-confirmation {
     padding: 20px;
+  }
+
+  .booking-receipt-input {
+    font-size: 0.9rem;
   }
 }

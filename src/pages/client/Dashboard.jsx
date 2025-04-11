@@ -1,11 +1,10 @@
 "use client"
-
-import { useState, useEffect } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { useState, useEffect, useRef } from "react"
+import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
 import { mockBookings } from "../../data/mockBookings"
 import "../../styles/client.css"
-
+import SimpleModal from "../../components/SimpleModal"
 const ClientDashboard = () => {
   const navigate = useNavigate()
   const { currentUser, logout, isClient, updateUser } = useAuth()
@@ -23,22 +22,24 @@ const ClientDashboard = () => {
     profilePicture: null,
   })
   const [previewImage, setPreviewImage] = useState(null)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [selectedBookingDetails, setSelectedBookingDetails] = useState(null)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const notificationsRef = useRef(null)
+  const [notificationsRead, setNotificationsRead] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
 
-  // Redirect if not client
   useEffect(() => {
     if (!isClient) {
       navigate("/login")
     }
   }, [isClient, navigate])
 
-  // Load user bookings
   useEffect(() => {
     if (currentUser) {
-      // In a real app, this would be an API call
       const userBookings = mockBookings.filter((booking) => booking.userId === currentUser.id)
       setBookings(userBookings)
-
-      // Set profile data
       setProfileData({
         firstName: currentUser.firstName || "",
         lastName: currentUser.lastName || "",
@@ -49,13 +50,29 @@ const ClientDashboard = () => {
     }
   }, [currentUser])
 
-  // Handle logout
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setShowNotifications(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [notificationsRef])
+
   const handleLogout = () => {
     logout()
     navigate("/")
   }
 
-  // Check if booking can be cancelled (24 hours in advance)
+  const openDetailsModal = (booking) => {
+    setSelectedBookingDetails(booking)
+    setShowDetailsModal(true)
+  }
+
   const canCancelBooking = (booking) => {
     const bookingDate = new Date(`${booking.date}T${booking.time}`)
     const now = new Date()
@@ -63,19 +80,14 @@ const ClientDashboard = () => {
     return hoursDifference >= 24
   }
 
-  // Open cancel modal
   const openCancelModal = (booking) => {
     setBookingToCancel(booking)
     setShowCancelModal(true)
   }
 
-  // Handle booking cancellation
   const handleCancelBooking = () => {
     if (!bookingToCancel) return
-
     const canCancel = canCancelBooking(bookingToCancel)
-
-    // Update booking status
     setBookings(
       bookings.map((booking) =>
         booking.id === bookingToCancel.id
@@ -88,40 +100,29 @@ const ClientDashboard = () => {
           : booking,
       ),
     )
-
-    // Close modal and reset state
     setShowCancelModal(false)
     setBookingToCancel(null)
     setCancellationReason("")
 
-    // Show appropriate message
-    if (canCancel) {
-      if (bookingToCancel.paymentMethod === "transfer") {
-        alert("Tu reserva ha sido cancelada. Recibirás un reembolso en los próximos días hábiles.")
-      } else {
-        alert("Tu reserva ha sido cancelada. El reembolso se procesará automáticamente.")
-      }
-    } else {
-      if (bookingToCancel.paymentMethod === "transfer") {
-        alert(
-          "Tu reserva ha sido cancelada. Como la cancelación es con menos de 24 horas de anticipación, no se realizará reembolso.",
-        )
-      } else {
-        alert(
-          "Tu reserva ha sido cancelada. Como la cancelación es con menos de 24 horas de anticipación, se aplicará el cargo completo.",
-        )
-      }
-    }
+    // Mostrar modal de éxito en lugar de alert
+    setSuccessMessage(
+      canCancel
+        ? bookingToCancel.paymentMethod === "transfer"
+          ? "Tu reserva ha sido cancelada. Recibirás un reembolso en los próximos días hábiles."
+          : "Tu reserva ha sido cancelada. El reembolso se procesará automáticamente."
+        : bookingToCancel.paymentMethod === "transfer"
+          ? "Tu reserva ha sido cancelada. Como la cancelación es con menos de 24 horas de anticipación, no se realizará reembolso."
+          : "Tu reserva ha sido cancelada. Como la cancelación es con menos de 24 horas de anticipación, se aplicará el cargo completo.",
+    )
+    setShowSuccessModal(true)
   }
 
-  // Handle profile picture change
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0]
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreviewImage(reader.result)
-        // Actualizar el estado de profileData para incluir la imagen
         setProfileData({
           ...profileData,
           profilePicture: reader.result,
@@ -131,10 +132,7 @@ const ClientDashboard = () => {
     }
   }
 
-  // Handle profile update
-  const handleProfileUpdate = (e) => {
-    e.preventDefault()
-
+  const handleProfileUpdate = () => {
     const updatedUser = {
       ...currentUser,
       firstName: profileData.firstName,
@@ -143,13 +141,14 @@ const ClientDashboard = () => {
       phone: profileData.phone,
       profilePicture: previewImage || currentUser?.profilePicture,
     }
-
     updateUser(updatedUser)
-    alert("Perfil actualizado correctamente")
+
+    
     setShowProfileModal(false)
+    setSuccessMessage("Perfil actualizado correctamente")
+    setShowSuccessModal(true)
   }
 
-  // Filter upcoming and past bookings
   const today = new Date().toISOString().split("T")[0]
   const upcomingBookings = bookings.filter(
     (booking) =>
@@ -162,6 +161,9 @@ const ClientDashboard = () => {
       (booking.date === today && booking.time < new Date().toTimeString().slice(0, 5)) ||
       booking.status === "cancelled",
   )
+
+  
+  const confirmedBookings = bookings.filter((booking) => booking.status === "confirmed")
 
   return (
     <div className="client-dashboard">
@@ -198,14 +200,6 @@ const ClientDashboard = () => {
           </button>
 
           <button
-            className={`client-nav-item ${activeTab === "favorites" ? "active" : ""}`}
-            onClick={() => setActiveTab("favorites")}
-          >
-            <span className="client-nav-icon">❤️</span>
-            <span>Favoritos</span>
-          </button>
-
-          <button
             className={`client-nav-item ${activeTab === "history" ? "active" : ""}`}
             onClick={() => setActiveTab("history")}
           >
@@ -234,14 +228,71 @@ const ClientDashboard = () => {
         <div className="client-header">
           <h1 className="client-title">
             {activeTab === "bookings" && "Mis Reservas"}
-            {activeTab === "favorites" && "Mis Favoritos"}
             {activeTab === "history" && "Mi Historial"}
             {activeTab === "profile" && "Mi Perfil"}
           </h1>
           <div className="client-header-actions">
-            <button className="client-action-btn" title="Notificaciones">
-              <span className="client-action-icon">🔔</span>
-            </button>
+            <div className="client-notification-container" ref={notificationsRef}>
+              <button
+                className="client-action-btn"
+                title="Notificaciones"
+                onClick={() => {
+                  setShowNotifications(!showNotifications)
+                  setNotificationsRead(true)
+                }}
+              >
+                <span className="client-action-icon">🔔</span>
+                {confirmedBookings.length > 0 && !notificationsRead && (
+                  <span className="client-notification-badge">{confirmedBookings.length}</span>
+                )}
+              </button>
+              {showNotifications && (
+                <div className="client-notifications-dropdown">
+                  <div className="client-notifications-header">
+                    <h3>Notificaciones</h3>
+                    <span className="client-notifications-count">{confirmedBookings.length}</span>
+                  </div>
+                  <div className="client-notifications-content">
+                    {confirmedBookings.length > 0 ? (
+                      <ul className="client-notifications-list">
+                        {confirmedBookings.map((booking) => (
+                          <li
+                            key={booking.id}
+                            className="client-notification-item"
+                            onClick={() => {
+                              setShowNotifications(false)
+                              openDetailsModal(booking)
+                            }}
+                          >
+                            <div className="client-notification-icon">✅</div>
+                            <div className="client-notification-details">
+                              <div className="client-notification-title">Reserva Confirmada</div>
+                              <div className="client-notification-subject">{booking.serviceName}</div>
+                              <div className="client-notification-time">
+                                {booking.date} a las {booking.time}
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="client-notifications-empty">No hay notificaciones nuevas</div>
+                    )}
+                  </div>
+                  <div className="client-notifications-footer">
+                    <button
+                      className="client-notifications-view-all"
+                      onClick={() => {
+                        setShowNotifications(false)
+                        setActiveTab("bookings")
+                      }}
+                    >
+                      Ver todas mis reservas
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             <button className="client-action-btn" title="Editar Perfil" onClick={() => setShowProfileModal(true)}>
               <span className="client-action-icon">⚙️</span>
             </button>
@@ -275,10 +326,7 @@ const ClientDashboard = () => {
                           </span>
                         </div>
                         <div className="client-booking-actions">
-                          <button
-                            className="client-booking-action-btn view"
-                            onClick={() => alert(`Ver detalles de la reserva #${booking.id}`)}
-                          >
+                          <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
                           {(booking.status === "pending" || booking.status === "confirmed") && (
@@ -322,10 +370,7 @@ const ClientDashboard = () => {
                           </span>
                         </div>
                         <div className="client-booking-actions">
-                          <button
-                            className="client-booking-action-btn view"
-                            onClick={() => alert(`Ver detalles de la reserva #${booking.id}`)}
-                          >
+                          <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
                           {booking.status === "completed" && (
@@ -348,17 +393,6 @@ const ClientDashboard = () => {
                 ) : (
                   <p className="client-no-data">No tienes reservas pasadas</p>
                 )}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "favorites" && (
-            <div className="client-favorites">
-              <p className="client-placeholder">No tienes servicios favoritos guardados</p>
-              <div className="client-placeholder-actions">
-                <Link to="/services" className="client-action-link">
-                  Explorar Servicios
-                </Link>
               </div>
             </div>
           )}
@@ -389,10 +423,7 @@ const ClientDashboard = () => {
                           </span>
                         </div>
                         <div className="client-booking-actions">
-                          <button
-                            className="client-booking-action-btn view"
-                            onClick={() => alert(`Ver detalles de la reserva #${booking.id}`)}
-                          >
+                          <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
                           {booking.status === "completed" && (
@@ -506,7 +537,6 @@ const ClientDashboard = () => {
                 Estás por cancelar tu reserva para <strong>{bookingToCancel.serviceName}</strong> el día{" "}
                 <strong>{bookingToCancel.date}</strong> a las <strong>{bookingToCancel.time}</strong>.
               </p>
-
               {canCancelBooking(bookingToCancel) ? (
                 <div className="client-cancellation-notice success">
                   <p>
@@ -526,7 +556,6 @@ const ClientDashboard = () => {
                   </p>
                 </div>
               )}
-
               <div className="client-form-group">
                 <label>Motivo de la cancelación:</label>
                 <textarea
@@ -560,106 +589,164 @@ const ClientDashboard = () => {
         </div>
       )}
 
-      {/* Edit Profile Modal */}
-      {showProfileModal && (
-        <div className="client-modal-overlay">
-          <div className="client-modal">
-            <div className="client-modal-header">
-              <h2>Editar Perfil</h2>
+      {/* Modal para Ver Detalles */}
+      {showDetailsModal && selectedBookingDetails && (
+        <SimpleModal
+          isOpen={showDetailsModal}
+          onClose={() => setShowDetailsModal(false)}
+          title={`Detalles de Reserva #${selectedBookingDetails.id}`}
+        >
+          <div className="booking-details">
+            <div className="booking-details-section">
+              <h3>Información del Servicio</h3>
+              <p>
+                <strong>Servicio:</strong> {selectedBookingDetails.serviceName}
+              </p>
+              <p>
+                <strong>Profesional:</strong> {selectedBookingDetails.professionalName}
+              </p>
+              <p>
+                <strong>Duración:</strong> {selectedBookingDetails.duration}
+              </p>
+              <p>
+                <strong>Precio:</strong> ${selectedBookingDetails.price?.toLocaleString() || "N/A"}
+              </p>
             </div>
-            <div className="client-modal-content">
-              <form onSubmit={handleProfileUpdate}>
-                <div className="client-profile-picture-upload">
-                  <div className="client-profile-picture-preview">
-                    {previewImage ? (
-                      <img src={previewImage || "/placeholder.svg"} alt="Vista previa" />
-                    ) : currentUser?.profilePicture ? (
-                      <img src={currentUser.profilePicture || "/placeholder.svg"} alt="Perfil actual" />
-                    ) : (
-                      <div className="client-profile-picture-placeholder">
-                        {currentUser?.firstName?.charAt(0)}
-                        {currentUser?.lastName?.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                  <div className="client-profile-picture-actions">
-                    <label className="client-upload-btn">
-                      Cambiar Foto
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleProfilePictureChange}
-                        style={{ display: "none" }}
-                      />
-                    </label>
-                    {(previewImage || currentUser?.profilePicture) && (
-                      <button
-                        type="button"
-                        className="client-remove-photo-btn"
-                        onClick={() => {
-                          setPreviewImage(null)
-                          setProfileData({ ...profileData, profilePicture: null })
-                        }}
-                      >
-                        Quitar Foto
-                      </button>
-                    )}
-                  </div>
-                </div>
 
-                <div className="client-form-row">
-                  <div className="client-form-group">
-                    <label>Nombre</label>
-                    <input
-                      type="text"
-                      value={profileData.firstName}
-                      onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="client-form-group">
-                    <label>Apellido</label>
-                    <input
-                      type="text"
-                      value={profileData.lastName}
-                      onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
-                      required
-                    />
-                  </div>
-                </div>
+            <div className="booking-details-section">
+              <h3>Fecha y Hora</h3>
+              <p>
+                <strong>Fecha:</strong> {selectedBookingDetails.date}
+              </p>
+              <p>
+                <strong>Hora:</strong> {selectedBookingDetails.time}
+              </p>
+            </div>
 
-                <div className="client-form-group">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    value={profileData.email}
-                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div className="client-form-group">
-                  <label>Teléfono</label>
-                  <input
-                    type="tel"
-                    value={profileData.phone}
-                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div className="client-modal-footer">
-                  <button type="button" className="client-modal-btn cancel" onClick={() => setShowProfileModal(false)}>
-                    Cancelar
-                  </button>
-                  <button type="submit" className="client-modal-btn save">
-                    Guardar Cambios
-                  </button>
-                </div>
-              </form>
+            <div className="booking-details-section">
+              <h3>Estado de la Reserva</h3>
+              <p>
+                <strong>Estado:</strong>{" "}
+                <span className={`booking-status-text ${selectedBookingDetails.status}`}>
+                  {selectedBookingDetails.status === "pending" && "Pendiente"}
+                  {selectedBookingDetails.status === "confirmed" && "Confirmada"}
+                  {selectedBookingDetails.status === "completed" && "Completada"}
+                  {selectedBookingDetails.status === "cancelled" && "Cancelada"}
+                </span>
+              </p>
+              {selectedBookingDetails.paymentStatus && (
+                <p>
+                  <strong>Estado de Pago:</strong>{" "}
+                  <span className={`payment-status-text ${selectedBookingDetails.paymentStatus}`}>
+                    {selectedBookingDetails.paymentStatus === "paid" && "Pagado"}
+                    {selectedBookingDetails.paymentStatus === "pending" && "Pendiente"}
+                    {selectedBookingDetails.paymentStatus === "refunded" && "Reembolsado"}
+                  </span>
+                </p>
+              )}
+              {selectedBookingDetails.cancellationReason && (
+                <p>
+                  <strong>Motivo de Cancelación:</strong> {selectedBookingDetails.cancellationReason}
+                </p>
+              )}
             </div>
           </div>
-        </div>
+        </SimpleModal>
+      )}
+
+           {/* Edit Profile Modal */}
+      {showProfileModal && (
+        <SimpleModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
+          title="Editar Perfil"
+          onConfirm={handleProfileUpdate}
+          confirmText="Guardar Cambios"
+          cancelText="Cancelar"
+        >
+          <div className="client-profile-picture-upload">
+            <div className="client-profile-picture-preview">
+              {previewImage ? (
+                <img src={previewImage || "/placeholder.svg"} alt="Vista previa" />
+              ) : currentUser?.profilePicture ? (
+                <img src={currentUser.profilePicture || "/placeholder.svg"} alt="Perfil actual" />
+              ) : (
+                <div className="client-profile-picture-placeholder">
+                  {currentUser?.firstName?.charAt(0)}
+                  {currentUser?.lastName?.charAt(0)}
+                </div>
+              )}
+            </div>
+            <div className="client-profile-picture-actions">
+              <label className="client-upload-btn">
+                Cambiar Foto
+                <input type="file" accept="image/*" onChange={handleProfilePictureChange} style={{ display: "none" }} />
+              </label>
+              {(previewImage || currentUser?.profilePicture) && (
+                <button
+                  type="button"
+                  className="client-remove-photo-btn"
+                  onClick={() => {
+                    setPreviewImage(null)
+                    setProfileData({ ...profileData, profilePicture: null })
+                  }}
+                >
+                  Quitar Foto
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="client-form-row">
+            <div className="client-form-group">
+              <label>Nombre</label>
+              <input
+                type="text"
+                value={profileData.firstName}
+                onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
+                required
+              />
+            </div>
+            <div className="client-form-group">
+              <label>Apellido</label>
+              <input
+                type="text"
+                value={profileData.lastName}
+                onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="client-form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              value={profileData.email}
+              onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="client-form-group">
+            <label>Teléfono</label>
+            <input
+              type="tel"
+              value={profileData.phone}
+              onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+            />
+          </div>
+        </SimpleModal>
+      )}
+
+      {/* Modal de éxito */}
+      {showSuccessModal && (
+        <SimpleModal isOpen={showSuccessModal} onClose={() => setShowSuccessModal(false)} title="Operación Exitosa">
+          <div className="success-modal-content">
+            <div className="success-icon">✓</div>
+            <p className="success-message">{successMessage}</p>
+          </div>
+        </SimpleModal>
       )}
     </div>
   )

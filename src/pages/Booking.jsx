@@ -17,9 +17,20 @@ const Booking = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
   const [availableTimeSlots, setAvailableTimeSlots] = useState([])
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
+  // bookingConfirmed indicates that the booking details have been set (before payment)
   const [bookingConfirmed, setBookingConfirmed] = useState(false)
   const [bookingData, setBookingData] = useState(null)
   const [error, setError] = useState("")
+
+  // New state variables for payment flow:
+  // selectedPaymentMethod: "MercadoPago" or "Efectivo"
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null)
+  // paymentReceipt will hold the file (or its name) once uploaded
+  const [paymentReceipt, setPaymentReceipt] = useState(null)
+  // timeLeft (in seconds) for MercadoPago receipt submission (15 min = 900 sec)
+  const [timeLeft, setTimeLeft] = useState(15 * 60)
+  // finalConfirmation indicates the end of the payment process
+  const [finalConfirmation, setFinalConfirmation] = useState(false)
 
   // Redirect to login if not logged in
   useEffect(() => {
@@ -28,10 +39,9 @@ const Booking = () => {
     }
   }, [isLoggedIn, navigate, serviceId])
 
-  // Fetch service data
+  // Fetch service data (for demo, using a local search)
   useEffect(() => {
     if (serviceId) {
-      // In a real app, this would be an API call
       const foundService = services.find((s) => s.id === serviceId)
       if (foundService) {
         setService(foundService)
@@ -42,34 +52,46 @@ const Booking = () => {
     }
   }, [serviceId])
 
-  // Fetch available time slots for selected date
+  // Fetch available time slots for the selected date (using mock data)
   useEffect(() => {
     if (selectedDate) {
-      // In a real app, this would be an API call with the selected date
-      // For now, we'll use mock data
       setAvailableTimeSlots(mockTimeSlots.filter((slot) => slot.available))
     }
   }, [selectedDate])
 
-  // Handle date change
+  // Start countdown if MercadoPago is selected and payment is not yet finalized
+  useEffect(() => {
+    if (selectedPaymentMethod === "MercadoPago" && !finalConfirmation) {
+      if (timeLeft <= 0) {
+        alert("El tiempo para subir el comprobante de pago ha expirado. Por favor, intenta la reserva nuevamente.")
+        // Reset and return to services page
+        navigate("/services")
+        return
+      }
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1)
+      }, 1000)
+      return () => clearInterval(timer)
+    }
+  }, [selectedPaymentMethod, timeLeft, finalConfirmation, navigate])
+
+  // Handlers for date and time slot selection
   const handleDateChange = (date) => {
     setSelectedDate(date.toISOString().split("T")[0])
     setSelectedTimeSlot(null)
   }
 
-  // Handle time slot selection
   const handleTimeSlotSelect = (timeSlot) => {
     setSelectedTimeSlot(timeSlot)
   }
 
-  // Handle booking confirmation
+  // Handle initial booking confirmation (before payment)
   const handleConfirmBooking = () => {
     if (!selectedTimeSlot) {
-      setError("Por favor selecciona un horario")
+      setError("Por favor seleccioná un horario")
       return
     }
 
-    // In a real app, this would be an API call to create the booking
     const newBooking = {
       id: Math.floor(Math.random() * 1000).toString(),
       userId: currentUser.id,
@@ -87,18 +109,37 @@ const Booking = () => {
       createdAt: new Date().toISOString(),
     }
 
-    // Store booking data for confirmation screen
     setBookingData(newBooking)
     setBookingConfirmed(true)
   }
 
-  // Handle payment
-  const handlePayment = () => {
-    // In a real app, this would integrate with MercadoPago or another payment processor
-    alert("En una aplicación real, esto te llevaría a la pasarela de pago de MercadoPago")
+  // Handler for file upload (MercadoPago)
+  const handleReceiptUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      // For simplicity, storing the file object; in a real app, you might convert to base64 or handle upload separately
+      setPaymentReceipt(file)
+    }
+  }
 
-    // Navigate to user dashboard or home
-    navigate("/")
+  // Handler to finalize payment for MercadoPago
+  const handleConfirmMercadoPago = () => {
+    if (!paymentReceipt) {
+      setError("Por favor, subí tu comprobante de pago.")
+      return
+    }
+    // In a real application, you'd verify the uploaded receipt and update the booking status accordingly.
+    // Then, you move to the final confirmation phase.
+    setFinalConfirmation(true)
+    setTimeout(() => navigate("/"), 5000) // Redirect to Home after 5 seconds
+  }
+
+  // Handler to confirm cash (Efectivo) payment
+  const handleConfirmEfectivo = () => {
+    // In cash, show disclaimer and accept terms
+    // Once accepted, finalize the booking.
+    setFinalConfirmation(true)
+    setTimeout(() => navigate("/"), 5000)
   }
 
   if (loading) {
@@ -127,59 +168,42 @@ const Booking = () => {
     )
   }
 
-  if (bookingConfirmed && bookingData) {
+  // If the booking is confirmed and payment is finalized, show the final confirmation screen.
+  if (bookingConfirmed && bookingData && finalConfirmation) {
     return (
       <div className="booking-page">
         <div className="booking-container">
           <div className="booking-confirmation">
             <div className="booking-confirmation-header">
-              <h2>Reserva Confirmada</h2>
-              <p>Tu reserva ha sido creada exitosamente.</p>
+              <h2>Reserva Exitosa</h2>
+              <p>Tu reserva ha sido confirmada. Serás redirigido a Inicio en unos momentos.</p>
             </div>
-
             <div className="booking-confirmation-details">
               <h3>Detalles de la Reserva</h3>
-
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Servicio:</span>
                 <span className="booking-detail-value">{bookingData.serviceName}</span>
               </div>
-
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Fecha:</span>
                 <span className="booking-detail-value">{bookingData.date}</span>
               </div>
-
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Hora:</span>
                 <span className="booking-detail-value">{bookingData.time}</span>
               </div>
-
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Duración:</span>
                 <span className="booking-detail-value">{bookingData.duration}</span>
               </div>
-
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Profesional:</span>
                 <span className="booking-detail-value">{bookingData.professionalName}</span>
               </div>
-
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Precio:</span>
                 <span className="booking-detail-value">${bookingData.price.toLocaleString()}</span>
               </div>
-            </div>
-
-            <div className="booking-payment-section">
-              <h3>Proceder al Pago</h3>
-              <p>Para confirmar tu reserva, por favor realiza el pago.</p>
-              <button onClick={handlePayment} className="booking-payment-button">
-                Pagar con MercadoPago
-              </button>
-               <button onClick={handlePayment} className="booking-payment-button">
-                Pagar con Efectivo
-              </button>
             </div>
           </div>
         </div>
@@ -187,6 +211,113 @@ const Booking = () => {
     )
   }
 
+  // Payment Flow: booking is confirmed (details set) but payment not yet completed.
+  if (bookingConfirmed && bookingData) {
+    return (
+      <div className="booking-page">
+        <div className="booking-container">
+          <div className="booking-confirmation">
+            <div className="booking-confirmation-header">
+              <h2>Reserva Confirmada</h2>
+              <p>Revisa los detalles de tu reserva y procede al pago.</p>
+            </div>
+            <div className="booking-confirmation-details">
+              <h3>Detalles de la Reserva</h3>
+              <div className="booking-detail-item">
+                <span className="booking-detail-label">Servicio:</span>
+                <span className="booking-detail-value">{bookingData.serviceName}</span>
+              </div>
+              <div className="booking-detail-item">
+                <span className="booking-detail-label">Fecha:</span>
+                <span className="booking-detail-value">{bookingData.date}</span>
+              </div>
+              <div className="booking-detail-item">
+                <span className="booking-detail-label">Hora:</span>
+                <span className="booking-detail-value">{bookingData.time}</span>
+              </div>
+              <div className="booking-detail-item">
+                <span className="booking-detail-label">Duración:</span>
+                <span className="booking-detail-value">{bookingData.duration}</span>
+              </div>
+              <div className="booking-detail-item">
+                <span className="booking-detail-label">Profesional:</span>
+                <span className="booking-detail-value">{bookingData.professionalName}</span>
+              </div>
+              <div className="booking-detail-item">
+                <span className="booking-detail-label">Precio:</span>
+                <span className="booking-detail-value">${bookingData.price.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div className="booking-payment-section">
+              {/* If no payment method is selected, show selection buttons */}
+              {!selectedPaymentMethod && (
+                <>
+                  <h3>Proceder al Pago</h3>
+                  <p>Seleccioná tu método de pago.</p>
+                  <div className="booking-payment-buttons">
+                    <button
+                      onClick={() => {
+                        setSelectedPaymentMethod("MercadoPago")
+                        setTimeLeft(15 * 60) // Reset countdown to 15 minutes
+                      }}
+                      className="booking-payment-button"
+                    >
+                      Pagar con MercadoPago
+                    </button>
+                    <button
+                      onClick={() => setSelectedPaymentMethod("Efectivo")}
+                      className="booking-payment-button booking-cash-button"
+                    >
+                      Pagar con Efectivo
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* MercadoPago Flow */}
+              {selectedPaymentMethod === "MercadoPago" && (
+                <>
+                  <h3>Pagar con MercadoPago</h3>
+                  <p>
+                    Subí tu comprobante de pago. Tenés{" "}
+                    {Math.floor(timeLeft / 60)} minutos {timeLeft % 60} segundos para hacerlo.
+                  </p>
+                  <input
+                    type="file"
+                    onChange={handleReceiptUpload}
+                    accept="image/*"
+                    className="booking-receipt-input"
+                  />
+                  {paymentReceipt && <p>Comprobante subido: {paymentReceipt.name}</p>}
+                  <button onClick={handleConfirmMercadoPago} className="booking-payment-button">
+                    Confirmar Comprobante
+                  </button>
+                </>
+              )}
+
+              {/* Efectivo Flow */}
+              {selectedPaymentMethod === "Efectivo" && (
+                <>
+                  <h3>Pagar con Efectivo</h3>
+                  <p>
+                    Al elegir pagar en efectivo, tu reserva queda registrada, pero recordá que solo podés cancelarla a través
+                    de tu cuenta y con 24 horas de anticipación. De lo contrario, se considerará pagada. Si no abonás el pago,
+                    no podrás reservar nuevamente en el spa.
+                  </p>
+                  <button onClick={handleConfirmEfectivo} className="booking-payment-button">
+                    Aceptar y Confirmar Reserva
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // If booking is not yet confirmed, show the booking form.
   return (
     <div className="booking-page">
       <div className="booking-container">
@@ -200,7 +331,7 @@ const Booking = () => {
 
             <div className="booking-content">
               <div className="booking-date-selection">
-                <h2>Selecciona una Fecha</h2>
+                <h2>Seleccioná una Fecha</h2>
                 <input
                   type="date"
                   value={selectedDate}
@@ -217,7 +348,9 @@ const Booking = () => {
                     {availableTimeSlots.map((slot, index) => (
                       <button
                         key={index}
-                        className={`booking-time-slot ${selectedTimeSlot === slot ? "selected" : ""}`}
+                        className={`booking-time-slot ${
+                          selectedTimeSlot === slot ? "selected" : ""
+                        }`}
                         onClick={() => handleTimeSlotSelect(slot)}
                       >
                         {slot.time}
@@ -260,7 +393,11 @@ const Booking = () => {
                 </div>
               </div>
 
-              <button onClick={handleConfirmBooking} className="booking-confirm-button" disabled={!selectedTimeSlot}>
+              <button
+                onClick={handleConfirmBooking}
+                className="booking-confirm-button"
+                disabled={!selectedTimeSlot}
+              >
                 Confirmar Reserva
               </button>
             </div>

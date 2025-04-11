@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import Video from "../components/Video";
+import ScrollArrow from "../assets/scrolldown-arrow.svg"
+import videoBg from "../assets/contact-bg.mp4";
 import '../styles/contact.css';
 
 const Contact = () => {
@@ -106,12 +109,18 @@ const Contact = () => {
   return (
     <div className="contact-page">
       {/* Hero Section */}
-      <div className="contact-hero">
-        <div className="contact-hero-content">
-          <h1 className="contact-hero-title">Contacto</h1>
-          <p className="contact-hero-subtitle">Estamos acá para responder tus consultas</p>
+       <Video videoSrc={videoBg} height="h-screen">
+        <div className="container">
+          <div className="text-container">
+            <h1 className="about-hero-title">Contáctanos</h1>
+            <p className="about-hero-subtitle">Estamos acá para responder tus consultas
+          </p>
+          </div>
+          <h5 className="scroll-instruction">Deslizá hacia abajo</h5>
+                            <img src={ScrollArrow} className="scroll-arrow"/>
         </div>
-      </div>
+      </Video>
+
 
       {/* Contact Form Section */}
       <section className="contact-form-section">

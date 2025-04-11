@@ -32,20 +32,19 @@ const Login = () => {
     setError("")
     setIsLoading(true)
     try {
-      // Se pasan como argumentos separados (email, password)
       const response = await login(formData.email, formData.password)
       if (!response.success) {
         setError(response.error)
         return
       }
       const user = response.user
-      // Redirigir según el rol del usuario
       if (user.role === "admin") {
         navigate("/admin/dashboard")
       } else if (user.role === "professional") {
         navigate("/professional/dashboard")
+      } else if (user.role === "client") {
+        navigate("/client/dashboard")
       } else {
-        // Si hay una ruta de redirección, usarla
         navigate(from)
       }
     } catch {

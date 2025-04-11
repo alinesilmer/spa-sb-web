@@ -24,9 +24,6 @@
   }
 }
 
-.navbar-container-menu {
-  display: flex;
-}
 .menu-header {
   display: flex;
   justify-content: flex-end;

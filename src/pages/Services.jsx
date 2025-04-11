@@ -6,6 +6,9 @@ import { services } from "../data/mockData" // Import from mockData.js
 import ServiceCard from "../components/ServiceCard"
 import ServiceModal from "../components/ServiceModal"
 import CategoryIcons from "../components/CategoryIcons"
+import Video from "../components/Video";
+import ScrollArrow from "../assets/scrolldown-arrow.svg"
+import videoBg from "../assets/service-video-bg.mp4";
 import "../styles/services.css"
 
 const Services = () => {
@@ -83,13 +86,17 @@ const Services = () => {
 
   return (
     <div className="services-page">
-      {/* Hero Section */}
-      <div className="services-hero">
-        <div className="services-hero-content">
-          <h1 className="services-hero-title">Nuestros Servicios</h1>
-          <p className="services-hero-subtitle">Descubre nuestros tratamientos exclusivos para cuerpo y mente</p>
+      <Video videoSrc={videoBg} height="h-screen">
+        <div className="container">
+          <div className="text-container">
+            <h1 className="about-hero-title">Nuestros Servicios</h1>
+            <p className="about-hero-subtitle">Descubre nuestros tratamientos exclusivos para cuerpo y mente
+          </p>
+          </div>
+          <h5 className="scroll-instruction">Deslizá hacia abajo</h5>
+                            <img src={ScrollArrow} className="scroll-arrow"/>
         </div>
-      </div>
+      </Video>
 
       {/* Search and Filter Section */}
       <div className="services-filter-section">

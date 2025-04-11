@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/promcarrousel.css';
 import Card from './Card';
 
@@ -19,6 +20,7 @@ const PromCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const carouselRef = useRef(null);
+   const navigate = useNavigate();
   
 /*HAY QUE REEMPLAZAR LAS IMÁGENES CON ASSETS*/ 
   const services = [
@@ -111,12 +113,15 @@ const PromCarousel = () => {
           <ArrowLeft />
         </button>
         
-        <div className="carousel-viewport" ref={carouselRef}>
+       <div className="carousel-viewport" ref={carouselRef}>
           <div className={`carousel-track position-${currentIndex}`}>
             {visibleCards.map((service) => (
+              // Wrap each slide with an onClick handler that redirects to the booking page.
               <div 
                 key={service.id} 
                 className={`carousel-slide ${service.position}`}
+                onClick={() => navigate(`/booking/${service.id}`)} // Navigate to /booking/:serviceId on click.
+                style={{ cursor: 'pointer' }} // Change cursor style to indicate clickability.
               >
                 <Card 
                   title={service.title} 

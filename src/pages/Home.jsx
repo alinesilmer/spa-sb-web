@@ -39,7 +39,7 @@ const Home = () => {
               <h4 className="home-subtitle">Explorá el Arte del Bienestar</h4>
                   <h5 className="home-body">Descubrí el placer del descanso en nuestro Spa. <br></br>Un oasis de calma diseñado para rejuvenecerte, con terapias que renuevan cuerpo y mente.
  </h5>
-                   <Link to="/booking" className="home-booking-link">Reservar Ya</Link>
+                   <Link to="/services" className="home-booking-link">Ver Servicios</Link>
               </div>
     
               <div className="home-img-container">

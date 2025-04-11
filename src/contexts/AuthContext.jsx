@@ -9,7 +9,10 @@ export const useAuth = () => {
   return useContext(AuthContext)
 }
 
-// Mock user data
+// ================================
+// Mock user data for demo purposes.
+// In a real app, you would handle real data from a backend.
+// ================================
 const mockUsers = [
   {
     id: "1",
@@ -18,7 +21,7 @@ const mockUsers = [
     firstName: "Admin",
     lastName: "User",
     role: "admin",
-    // Uncomment the next line to provide a custom picture or leave undefined for the default:
+    // Uncomment the next line for a custom picture or leave undefined to use default:
     // profilePicture: "/images/admin.png",
   },
   {
@@ -48,20 +51,47 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-  // Check if user is already logged in (from localStorage)
+  // On app load, check for an existing session.
+  // For a real backend, you might also retrieve a JWT or auth token
+  // from localStorage and verify it with an API call.
   useEffect(() => {
     const storedUser = localStorage.getItem("user")
+    // If using tokens, also check for a token:
+    // const token = localStorage.getItem("token")
+    // Optionally, validate the token by requesting a backend endpoint.
     if (storedUser) {
       setCurrentUser(JSON.parse(storedUser))
     }
     setLoading(false)
   }, [])
 
-  // Login function
+  // Login function – in a real app, replace this with an API call.
   const login = (email, password) => {
     setError("")
 
-    // Find user in mock data
+    // ****************************
+    // REAL BACKEND TIP:
+    // Instead of searching through mockUsers, you would send a request like:
+    //
+    //   fetch('https://your-backend.com/api/login', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ email, password })
+    //   })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     if(data.success){
+    //       // data.user -> contains user data
+    //       // data.token -> your JWT or auth token
+    //     } else {
+    //       // handle error message
+    //     }
+    //   })
+    //
+    // And then store both the user and the token.
+    // ****************************
+
+    // Find user in mock data (for demo purposes only)
     const user = mockUsers.find((user) => user.email === email && user.password === password)
 
     if (user) {
@@ -74,7 +104,13 @@ export const AuthProvider = ({ children }) => {
         userWithoutPassword.profilePicture = "/default-profile.png"
       }
 
-      // Store in state and localStorage
+      // REAL BACKEND: Here you would extract the token from your server's response.
+      // For example: const token = data.token;
+      //
+      // Then store it in localStorage:
+      // localStorage.setItem("token", token)
+
+      // Store the user data in state and in localStorage
       setCurrentUser(userWithoutPassword)
       localStorage.setItem("user", JSON.stringify(userWithoutPassword))
       return { success: true, user: userWithoutPassword }
@@ -84,17 +120,18 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Register function
+  // Register function – similar idea applies as in login.
+  // In a real app, you would call an API to create a new user and obtain a token (if applicable).
   const register = (userData) => {
     setError("")
 
-    // Check if email already exists
+    // Check if the email already exists (mock check)
     if (mockUsers.some((user) => user.email === userData.email)) {
       setError("Este email ya está registrado")
       return { success: false, error: "Este email ya está registrado" }
     }
 
-    // Create new user
+    // Create a new user object
     const newUser = {
       id: `${mockUsers.length + 1}`,
       email: userData.email,
@@ -104,27 +141,34 @@ export const AuthProvider = ({ children }) => {
       role: "client",
     }
 
-    // Add to mock users (in a real app, this would be saved to a database)
+    // In a real app, send a POST request to your backend:
+    // fetch('https://your-backend.com/api/register', { ... })
+    // and then handle the response accordingly.
     mockUsers.push(newUser)
 
-    // Create a user object without the password
+    // Remove the password before storing in client-side state
     const userWithoutPassword = { ...newUser }
     delete userWithoutPassword.password
 
     // Set a default profile picture
     userWithoutPassword.profilePicture = "/default-profile.png"
 
-    // Store in state and localStorage
+    // REAL BACKEND: If your registration API returns a token, store it:
+    // localStorage.setItem("token", data.token)
+
+    // Store the user in state and localStorage
     setCurrentUser(userWithoutPassword)
     localStorage.setItem("user", JSON.stringify(userWithoutPassword))
 
     return { success: true, user: userWithoutPassword }
   }
 
-  // Logout function
+  // Logout function – remember to remove the token too.
   const logout = () => {
     setCurrentUser(null)
     localStorage.removeItem("user")
+    // REAL BACKEND: Also remove the token when logging out:
+    // localStorage.removeItem("token")
     return { success: true }
   }
 

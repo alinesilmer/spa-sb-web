@@ -2,7 +2,6 @@
 import React, { useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
-import ClientDashboard from "../pages/client/Dashboard"
 import "../styles/menudropdown.css"
 
 const MenuDropdown = ({ isMenuOpen, setIsMenuOpen }) => {
@@ -63,9 +62,13 @@ const MenuDropdown = ({ isMenuOpen, setIsMenuOpen }) => {
           </div>
           <ul className="menu-list">
             <li className="menu-item">
-              <Link to="Dashboard" element={<ClientDashboard />} className="menu-link" onClick={() => setIsMenuOpen(false)}>
-                Mi Perfil
-              </Link>
+             <Link 
+  to="/client/dashboard" 
+  className="menu-link" 
+  onClick={() => setIsMenuOpen(false)}
+>
+  Mi Perfil
+</Link>
             </li>
             <li className="menu-item">
               <button className="menu-link" onClick={() => { logout(); setIsMenuOpen(false) }}>

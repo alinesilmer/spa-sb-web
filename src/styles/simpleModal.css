@@ -1,0 +1,269 @@
+.simple-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
+.simple-modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.simple-modal-header h2 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  color: #333;
+}
+
+.simple-modal-content {
+  margin: 15px 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.simple-modal-footer {
+  text-align: right;
+}
+
+.simple-modal-footer button {
+  margin-left: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  transition: background 0.3s ease;
+}
+
+.simple-modal-footer button.cancel {
+  background: #f5f5f5;
+  color: #555;
+}
+
+.simple-modal-footer button.cancel:hover {
+  background: #e0e0e0;
+}
+
+.simple-modal-footer button.confirm {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.simple-modal-footer button.confirm:hover {
+  background: #c0392b;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Message Response Modal Styles */
+.message-details {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.message-details p {
+  margin: 5px 0;
+}
+
+.response-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.response-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: vertical;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+}
+
+/* User Details Modal Styles */
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 15px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e2a3a3;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.user-info {
+  width: 100%;
+}
+
+.user-info p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e74c3c;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add styles for response confirmation */
+.response-confirmation {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.confirmation-icon {
+  width: 60px;
+  height: 60px;
+  background-color: #2ecc71;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 15px;
+}
+
+.response-confirmation p {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0;
+}
+
+/* Service Details Modal Styles */
+.service-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.service-image {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.service-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.service-info h3 {
+  font-family: "Playfair Display", serif;
+  color: var(--secondary-color);
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.service-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.service-meta-item {
+  flex: 1;
+  min-width: 120px;
+}
+
+.service-description h4,
+.service-benefits h4,
+.service-includes h4 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  color: var(--secondary-color);
+  margin-top: 15px;
+  margin-bottom: 8px;
+}
+
+.service-description p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.service-benefits ul,
+.service-includes ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.service-benefits li,
+.service-includes li {
+  margin-bottom: 5px;
+}
+
+@media (min-width: 768px) {
+  .service-details {
+    max-width: 700px;
+  }
+}

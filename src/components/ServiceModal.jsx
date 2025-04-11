@@ -1,10 +1,10 @@
-"use client"
-import { Link } from "react-router-dom"
-import "../styles/service-modal.css"
-import { useAuth } from "../contexts/AuthContext"
+"use client";
+import { Link } from "react-router-dom";
+import "../styles/service-modal.css";
+import { useAuth } from "../contexts/AuthContext";
 
 const ServiceModal = ({ service, onClose, isLoggedIn }) => {
-  const { currentUser } = useAuth()
+  const { currentUser } = useAuth();
 
   return (
     <div className="service-modal-overlay" onClick={onClose}>
@@ -27,7 +27,11 @@ const ServiceModal = ({ service, onClose, isLoggedIn }) => {
         </button>
         <div className="service-modal-content">
           <div className="service-modal-image">
-            <img src={service.image || "/placeholder.svg?height=400&width=600"} alt={service.name} />
+            <img
+              src={service.image || "/placeholder.svg?height=400&width=600"}
+              alt={service.name}
+              className="modal-image"
+            />
           </div>
           <div className="service-modal-details">
             <h2 className="service-modal-title">{service.name}</h2>
@@ -92,7 +96,7 @@ const ServiceModal = ({ service, onClose, isLoggedIn }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ServiceModal
+export default ServiceModal;

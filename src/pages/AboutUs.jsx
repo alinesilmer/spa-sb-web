@@ -4,6 +4,7 @@ import { useState } from "react"
 import { teamMembers, spaInfo } from "../data/mockData"
 import "../styles/about-us.css"
 import Video from "../components/Video";
+import ScrollArrow from "../assets/scrolldown-arrow.svg"
 import videoBg from "../assets/about-us-bg.mp4";
 
 const AboutUs = () => {
@@ -17,6 +18,8 @@ const AboutUs = () => {
             <h1 className="about-hero-title">Sobre Nosotros</h1>
           <p className="about-hero-subtitle">Conocé nuestra historia, misión y al equipo detrás de Sentirse Bien Spa</p>
           </div>
+          <h5 className="scroll-instruction">Deslizá hacia abajo</h5>
+                            <img src={ScrollArrow} className="scroll-arrow"/>
         </div>
       </Video>
       

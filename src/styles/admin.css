@@ -567,10 +567,6 @@
   transition: all 0.3s ease;
 }
 
-.admin-search-btn:hover {
-  background-color: #d48a8a;
-}
-
 .admin-filters {
   display: flex;
   gap: 10px;

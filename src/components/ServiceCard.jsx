@@ -1,11 +1,15 @@
-"use client"
-import "../styles/service-card.css"
+"use client";
+import "../styles/service-card.css";
 
 const ServiceCard = ({ service, onViewMore, onBooking }) => {
   return (
     <div className="service-card">
       <div className="service-card-image">
-        <img src={service.image || "/placeholder.svg?height=300&width=400"} alt={service.name} />
+        <img
+          src={service.image || "/placeholder.svg?height=300&width=400"}
+          alt={service.name}
+          className="responsive-image"
+        />
       </div>
       <div className="service-card-content">
         <h3 className="service-card-title">{service.name}</h3>
@@ -24,7 +28,7 @@ const ServiceCard = ({ service, onViewMore, onBooking }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ServiceCard
+export default ServiceCard;
