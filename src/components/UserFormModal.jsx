@@ -18,25 +18,25 @@ const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
   };
 
   const handleSubmit = () => {
-    // Basic validation
+    
     if (!userData.firstName || !userData.lastName || !userData.email || !userData.password) {
-      alert("Por favor completa todos los campos obligatorios");
+      alert("Por favor completá todos los campos obligatorios");
       return;
     }
 
-    // Email validation
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userData.email)) {
-      alert("Por favor ingresa un email válido");
+      alert("Por favor ingresá un email válido");
       return;
     }
 
     onSaveUser({
       ...userData,
-      id: Date.now().toString() // Generate a temporary ID
+      id: Date.now().toString() 
     });
     
-    // Reset form
+    
     setUserData({
       firstName: "",
       lastName: "",

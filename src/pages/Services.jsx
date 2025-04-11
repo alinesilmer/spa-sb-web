@@ -18,9 +18,9 @@ const Services = () => {
   const [filteredServices, setFilteredServices] = useState([])
   const [selectedService, setSelectedService] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
-  const [isLoggedIn] = useState(false) // This would come from the auth context
+  const [isLoggedIn] = useState(false) 
 
-  // Check if we need to highlight a specific service from search
+  
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     const highlightId = params.get("highlight")
@@ -30,7 +30,7 @@ const Services = () => {
       if (serviceToHighlight) {
         setSelectedService(serviceToHighlight)
 
-        // Set the active category to match the highlighted service
+     
         if (serviceToHighlight.category) {
           setActiveCategory(serviceToHighlight.category)
         }
@@ -39,7 +39,6 @@ const Services = () => {
   }, [location.search])
 
   useEffect(() => {
-    // Filter services based on active category and search term
     let filtered = services
     if (activeCategory !== "todo") {
       filtered = filtered.filter((service) => service.category === activeCategory)
@@ -60,10 +59,8 @@ const Services = () => {
 
   const handleBooking = (service) => {
     if (!isLoggedIn) {
-      // Show login required modal
       document.getElementById("login-required-modal").classList.add("visible")
     } else {
-      // Redirect to booking page
       navigate(`/booking/${service.id}`)
     }
   }
@@ -71,7 +68,6 @@ const Services = () => {
   const closeModal = () => {
     setSelectedService(null)
 
-    // Remove the highlight parameter from URL if it exists
     const params = new URLSearchParams(location.search)
     if (params.has("highlight")) {
       params.delete("highlight")
@@ -90,7 +86,7 @@ const Services = () => {
         <div className="container">
           <div className="text-container">
             <h1 className="about-hero-title">Nuestros Servicios</h1>
-            <p className="about-hero-subtitle">Descubre nuestros tratamientos exclusivos para cuerpo y mente
+            <p className="about-hero-subtitle">Descubrí nuestros tratamientos exclusivos para cuerpo y mente
           </p>
           </div>
           <h5 className="scroll-instruction">Deslizá hacia abajo</h5>
@@ -169,7 +165,7 @@ const Services = () => {
       <div id="login-required-modal" className="login-required-modal">
         <div className="login-required-content">
           <h3>Iniciar Sesión</h3>
-          <p>Para reservar este servicio, por favor inicia sesión.</p>
+          <p>Para reservar este servicio, por favor iniciá sesión.</p>
           <div className="login-required-actions">
             <button
               className="login-required-login-btn"

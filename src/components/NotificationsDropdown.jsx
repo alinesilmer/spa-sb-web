@@ -37,7 +37,6 @@ const NotificationsDropdown = ({ isOpen, onClose, messages, onViewMessage }) => 
           className="notifications-view-all"
           onClick={() => {
             onClose()
-            // Navigate to messages tab
             document.querySelector(`button[data-tab="messages"]`)?.click()
           }}
         >

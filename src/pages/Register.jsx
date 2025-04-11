@@ -15,7 +15,7 @@ const Register = () => {
     password: "",
     confirmPassword: "",
     phone: "",
-    role: "client", // Default role is client
+    role: "client", 
     professionalInfo: {
       specialties: [],
       experience: "",
@@ -58,7 +58,7 @@ const Register = () => {
     if (file) {
       setProfilePicture(file)
       
-      // Create preview
+      
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreviewImage(reader.result)
@@ -70,32 +70,32 @@ const Register = () => {
   const validateForm = () => {
     const newErrors = {}
     
-    // Validate required fields
+    
     if (!formData.firstName.trim()) newErrors.firstName = "El nombre es requerido"
     if (!formData.lastName.trim()) newErrors.lastName = "El apellido es requerido"
     if (!formData.email.trim()) newErrors.email = "El email es requerido"
     if (!formData.password) newErrors.password = "La contraseña es requerida"
-    if (!formData.confirmPassword) newErrors.confirmPassword = "Confirma tu contraseña"
+    if (!formData.confirmPassword) newErrors.confirmPassword = "Confirmá tu contraseña"
     if (!formData.phone.trim()) newErrors.phone = "El teléfono es requerido"
-    if (!formData.agreeToTerms) newErrors.agreeToTerms = "Debes aceptar los términos y condiciones"
+    if (!formData.agreeToTerms) newErrors.agreeToTerms = "Debés aceptar los términos y condiciones"
     
-    // Validate email format
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (formData.email && !emailRegex.test(formData.email)) {
       newErrors.email = "Formato de email inválido"
     }
     
-    // Validate password strength
+    
     if (formData.password && formData.password.length < 6) {
       newErrors.password = "La contraseña debe tener al menos 6 caracteres"
     }
     
-    // Validate password match
+    
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Las contraseñas no coinciden"
     }
     
-    // Validate professional fields if role is professional
+    
     if (formData.role === "professional" || formData.role === "admin") {
       if (!formData.professionalInfo.specialties.length) {
         newErrors["professionalInfo.specialties"] = "Selecciona al menos una especialidad"
@@ -117,15 +117,13 @@ const Register = () => {
     
     if (validateForm()) {
       try {
-        // In a real app, this would be an API call
         await register({
           ...formData,
-          profilePicture: previewImage, // In a real app, you'd upload the file to a server
+          profilePicture: previewImage, 
         })
         
         setRegistrationSuccess(true)
         
-        // Redirect to login after 3 seconds
         setTimeout(() => {
           navigate("/login")
         }, 3000)

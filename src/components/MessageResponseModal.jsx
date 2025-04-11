@@ -13,7 +13,7 @@ const MessageResponseModal = ({ isOpen, onClose, message, onSendResponse }) => {
       setResponse("")
       setShowConfirmation(true)
 
-      // Hide confirmation after 2 seconds and close modal
+    
       setTimeout(() => {
         setShowConfirmation(false)
         onClose()

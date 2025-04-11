@@ -81,7 +81,7 @@ const FAQSection = () => {
         <div className="faq-right">
           <h2 className="contact-title">¿Necesitás más ayuda?</h2>
           <p className="contact-description">
-            Si tu duda no está en la lista o quieres más detalles, ¡estaremos encantados de atenderte personalmente!
+            Si tu duda no está en la lista o querés más detalles, ¡estaremos encantados de atenderte personalmente!
           </p>
           <Link to="/contact" className="contact-button">
             Ir al Formulario de Contacto

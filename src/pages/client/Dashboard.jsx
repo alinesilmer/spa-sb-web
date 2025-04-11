@@ -342,7 +342,7 @@ const ClientDashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="client-no-data">No tienes reservas próximas</p>
+                  <p className="client-no-data">No tenés reservas próximas</p>
                 )}
               </div>
 
@@ -391,7 +391,7 @@ const ClientDashboard = () => {
                     )}
                   </div>
                 ) : (
-                  <p className="client-no-data">No tienes reservas pasadas</p>
+                  <p className="client-no-data">No tenés reservas pasadas</p>
                 )}
               </div>
             </div>
@@ -439,7 +439,7 @@ const ClientDashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="client-no-data">No tienes reservas pasadas</p>
+                  <p className="client-no-data">No tenés reservas pasadas</p>
                 )}
               </div>
             </div>

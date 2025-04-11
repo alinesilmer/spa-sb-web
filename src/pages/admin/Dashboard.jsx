@@ -168,9 +168,7 @@ const AdminDashboard = () => {
   }
 
   const handleSaveProfile = (updatedProfile) => {
-    // In a real app, you would update the user profile in the backend
     console.log("Saving profile:", updatedProfile)
-    // For demo purposes, we'll just show an alert
     alert("Perfil actualizado correctamente")
   }
 
@@ -831,7 +829,7 @@ const AdminDashboard = () => {
           onConfirm={handleDelete}
           confirmText="Eliminar"
         >
-          <p>¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.</p>
+          <p>¿Estás seguro de que deseás eliminar este elemento? Esta acción no se puede deshacer.</p>
         </SimpleModal>
       )}
 

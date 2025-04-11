@@ -48,7 +48,6 @@ const Home = () => {
           </div>
           
           <div className="home-prom-container">
-              {/*make the carrousel work please*/}
               <PromCarrousel />
           </div>
 

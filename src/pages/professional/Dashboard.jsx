@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
-import { mockBookings, mockTimeSlots } from "../../data/mockBookings"
+import { mockBookings } from "../../data/mockBookings"
 import "../../styles/professional.css"
 import SimpleModal from "../../components/SimpleModal"
 
@@ -12,11 +12,6 @@ const ProfessionalDashboard = () => {
   const [activeTab, setActiveTab] = useState("schedule")
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
   const [bookings, setBookings] = useState(mockBookings)
-  const [timeSlots, setTimeSlots] = useState(mockTimeSlots)
-  const [blockedSlots, setBlockedSlots] = useState([])
-  const [showBlockModal, setShowBlockModal] = useState(false)
-  const [selectedTimeToBlock, setSelectedTimeToBlock] = useState(null)
-  const [blockReason, setBlockReason] = useState("")
   const [showAppointmentDetailsModal, setShowAppointmentDetailsModal] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
   const [showServiceDetailsModal, setShowServiceDetailsModal] = useState(false)
@@ -26,7 +21,7 @@ const ProfessionalDashboard = () => {
   const notificationsRef = useRef(null)
   const [notificationsRead, setNotificationsRead] = useState(false)
 
-  // Nuevos estados para los modales de éxito
+ 
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [setSuccessAction] = useState("")
@@ -96,7 +91,7 @@ const ProfessionalDashboard = () => {
     }
   }, [isProfessional, navigate])
 
-  // Handle click outside notifications dropdown
+  
   useEffect(() => {
     function handleClickOutside(event) {
       if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
@@ -144,37 +139,6 @@ const ProfessionalDashboard = () => {
     setSelectedDate(currentDate.toISOString().split("T")[0])
   }
 
-  const handleBlockTimeSlot = (timeSlot) => {
-    setSelectedTimeToBlock(timeSlot)
-    setShowBlockModal(true)
-  }
-
-  // Modificar confirmBlockTimeSlot para mostrar un modal de éxito en lugar de un alert
-  const confirmBlockTimeSlot = () => {
-    if (selectedTimeToBlock) {
-      setBlockedSlots([
-        ...blockedSlots,
-        {
-          date: selectedDate,
-          time: selectedTimeToBlock.time,
-          reason: blockReason,
-        },
-      ])
-      setTimeSlots(
-        timeSlots.map((slot) => (slot.time === selectedTimeToBlock.time ? { ...slot, available: false } : slot)),
-      )
-      setShowBlockModal(false)
-
-      // Mostrar modal de éxito
-      setSuccessMessage(`Horario ${selectedTimeToBlock.time} bloqueado correctamente`)
-      setSuccessAction("block-time")
-      setShowSuccessModal(true)
-
-      setSelectedTimeToBlock(null)
-      setBlockReason("")
-    }
-  }
-
   const handleAppointmentStatusChange = (appointmentId, newStatus) => {
     setBookings(bookings.map((booking) => (booking.id === appointmentId ? { ...booking, status: newStatus } : booking)))
   }
@@ -201,13 +165,12 @@ const ProfessionalDashboard = () => {
     }
   }
 
-  // Modificar el handleProfileUpdate para mostrar un modal de éxito en lugar de un alert
-  const handleProfileUpdate = (e) => {
-    if (e) e.preventDefault()
-    // Aquí iría la lógica para actualizar el perfil
+  
+  const handleProfileUpdate = () => {
+  
     setShowProfileModal(false)
 
-    // Mostrar modal de éxito
+   
     setSuccessMessage("Perfil actualizado correctamente")
     setSuccessAction("profile-update")
     setShowSuccessModal(true)
@@ -353,7 +316,6 @@ const ProfessionalDashboard = () => {
                     )}
                   </div>
                   <div className="professional-notifications-footer">
-                    {/* Modificar para que lleve a la sección "Mi Agenda" */}
                     <button
                       className="professional-notifications-view-all"
                       onClick={() => {
@@ -391,122 +353,103 @@ const ProfessionalDashboard = () => {
                     ▶
                   </button>
                 </div>
-                {/* Eliminar el botón "+ Bloquear Horario" */}
               </div>
 
-              <div className="professional-schedule-grid">
-                <div className="professional-time-slots">
-                  <h3 className="professional-section-title">Horarios del Día</h3>
-                  <div className="professional-slots-grid">
-                    {timeSlots.map((slot, index) => (
-                      <div
-                        key={index}
-                        className={`professional-time-slot ${!slot.available ? "booked" : ""}`}
-                        onClick={() => slot.available && handleBlockTimeSlot(slot)}
-                      >
-                        <span className="professional-slot-time">{slot.time}</span>
-                        <span className="professional-slot-status">{slot.available ? "Disponible" : "Reservado"}</span>
-                      </div>
-                    ))}
-                  </div>
+              <div className="professional-appointments">
+                <div className="professional-today-appointments">
+                  <h3 className="professional-section-title">Citas de Hoy</h3>
+                  {todayAppointments.length > 0 ? (
+                    <div className="professional-appointments-list">
+                      {todayAppointments.map((appointment) => (
+                        <div className="professional-appointment-card" key={appointment.id}>
+                          <div className="professional-appointment-time">{appointment.time}</div>
+                          <div className="professional-appointment-details">
+                            <h4 className="professional-appointment-service">{appointment.serviceName}</h4>
+                            <p className="professional-appointment-client">Cliente #{appointment.userId}</p>
+                            <p className="professional-appointment-duration">{appointment.duration}</p>
+                          </div>
+                          <div className="professional-appointment-status">
+                            <span className={`appointment-status ${appointment.status}`}>
+                              {appointment.status === "pending" && "Pendiente"}
+                              {appointment.status === "confirmed" && "Confirmada"}
+                              {appointment.status === "completed" && "Completada"}
+                            </span>
+                          </div>
+                          <div className="professional-appointment-actions">
+                            <button
+                              className="professional-appointment-action-btn"
+                              onClick={() => handleViewAppointmentDetails(appointment)}
+                            >
+                              Ver
+                            </button>
+                            {appointment.status === "confirmed" && (
+                              <button
+                                className="professional-appointment-action-btn complete"
+                                onClick={() => handleAppointmentStatusChange(appointment.id, "completed")}
+                              >
+                                Completar
+                              </button>
+                            )}
+                            {appointment.status === "pending" && (
+                              <button
+                                className="professional-appointment-action-btn complete"
+                                onClick={() => handleAppointmentStatusChange(appointment.id, "confirmed")}
+                              >
+                                Confirmar
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="professional-no-data">No hay citas programadas para hoy</p>
+                  )}
                 </div>
 
-                <div className="professional-appointments">
-                  <div className="professional-today-appointments">
-                    <h3 className="professional-section-title">Citas de Hoy</h3>
-                    {todayAppointments.length > 0 ? (
-                      <div className="professional-appointments-list">
-                        {todayAppointments.map((appointment) => (
-                          <div className="professional-appointment-card" key={appointment.id}>
-                            <div className="professional-appointment-time">{appointment.time}</div>
-                            <div className="professional-appointment-details">
-                              <h4 className="professional-appointment-service">{appointment.serviceName}</h4>
-                              <p className="professional-appointment-client">Cliente #{appointment.userId}</p>
-                              <p className="professional-appointment-duration">{appointment.duration}</p>
-                            </div>
-                            <div className="professional-appointment-status">
-                              <span className={`appointment-status ${appointment.status}`}>
-                                {appointment.status === "pending" && "Pendiente"}
-                                {appointment.status === "confirmed" && "Confirmada"}
-                                {appointment.status === "completed" && "Completada"}
-                              </span>
-                            </div>
-                            <div className="professional-appointment-actions">
-                              <button
-                                className="professional-appointment-action-btn"
-                                onClick={() => handleViewAppointmentDetails(appointment)}
-                              >
-                                Ver
-                              </button>
-                              {appointment.status === "confirmed" && (
-                                <button
-                                  className="professional-appointment-action-btn complete"
-                                  onClick={() => handleAppointmentStatusChange(appointment.id, "completed")}
-                                >
-                                  Completar
-                                </button>
-                              )}
-                              {appointment.status === "pending" && (
-                                <button
-                                  className="professional-appointment-action-btn complete"
-                                  onClick={() => handleAppointmentStatusChange(appointment.id, "confirmed")}
-                                >
-                                  Confirmar
-                                </button>
-                              )}
-                            </div>
+                <div className="professional-upcoming-appointments">
+                  <h3 className="professional-section-title">Próximas Citas</h3>
+                  {upcomingAppointments.length > 0 ? (
+                    <div className="professional-appointments-list">
+                      {upcomingAppointments.map((appointment) => (
+                        <div className="professional-appointment-card" key={appointment.id}>
+                          <div className="professional-appointment-date">
+                            <div className="appointment-date">{appointment.date}</div>
+                            <div className="appointment-time">{appointment.time}</div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="professional-no-data">No hay citas programadas para hoy</p>
-                    )}
-                  </div>
-
-                  <div className="professional-upcoming-appointments">
-                    <h3 className="professional-section-title">Próximas Citas</h3>
-                    {upcomingAppointments.length > 0 ? (
-                      <div className="professional-appointments-list">
-                        {upcomingAppointments.map((appointment) => (
-                          <div className="professional-appointment-card" key={appointment.id}>
-                            <div className="professional-appointment-date">
-                              <div className="appointment-date">{appointment.date}</div>
-                              <div className="appointment-time">{appointment.time}</div>
-                            </div>
-                            <div className="professional-appointment-details">
-                              <h4 className="professional-appointment-service">{appointment.serviceName}</h4>
-                              <p className="professional-appointment-client">Cliente #{appointment.userId}</p>
-                              <p className="professional-appointment-duration">{appointment.duration}</p>
-                            </div>
-                            <div className="professional-appointment-status">
-                              <span className={`appointment-status ${appointment.status}`}>
-                                {appointment.status === "pending" && "Pendiente"}
-                                {appointment.status === "confirmed" && "Confirmada"}
-                              </span>
-                            </div>
-                            <div className="professional-appointment-actions">
-                              <button
-                                className="professional-appointment-action-btn"
-                                onClick={() => handleViewAppointmentDetails(appointment)}
-                              >
-                                Ver
-                              </button>
-                              {appointment.status === "pending" && (
-                                <button
-                                  className="professional-appointment-action-btn complete"
-                                  onClick={() => handleAppointmentStatusChange(appointment.id, "confirmed")}
-                                >
-                                  Confirmar
-                                </button>
-                              )}
-                            </div>
+                          <div className="professional-appointment-details">
+                            <h4 className="professional-appointment-service">{appointment.serviceName}</h4>
+                            <p className="professional-appointment-client">Cliente #{appointment.userId}</p>
+                            <p className="professional-appointment-duration">{appointment.duration}</p>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="professional-no-data">No hay próximas citas programadas</p>
-                    )}
-                  </div>
+                          <div className="professional-appointment-status">
+                            <span className={`appointment-status ${appointment.status}`}>
+                              {appointment.status === "pending" && "Pendiente"}
+                              {appointment.status === "confirmed" && "Confirmada"}
+                            </span>
+                          </div>
+                          <div className="professional-appointment-actions">
+                            <button
+                              className="professional-appointment-action-btn"
+                              onClick={() => handleViewAppointmentDetails(appointment)}
+                            >
+                              Ver
+                            </button>
+                            {appointment.status === "pending" && (
+                              <button
+                                className="professional-appointment-action-btn complete"
+                                onClick={() => handleAppointmentStatusChange(appointment.id, "confirmed")}
+                              >
+                                Confirmar
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="professional-no-data">No hay próximas citas programadas</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -785,55 +728,6 @@ const ProfessionalDashboard = () => {
           )}
         </div>
       </div>
-
-      {/* Modal de bloqueo de horario */}
-      {showBlockModal && (
-        <SimpleModal
-          isOpen={showBlockModal}
-          onClose={() => {
-            setShowBlockModal(false)
-            setSelectedTimeToBlock(null)
-            setBlockReason("")
-          }}
-          title="Bloquear Horario"
-          onConfirm={selectedTimeToBlock && blockReason ? confirmBlockTimeSlot : null}
-          confirmText={selectedTimeToBlock && blockReason ? "Bloquear Horario" : null}
-          cancelText="Cancelar"
-        >
-          <p>Selecciona el horario que deseas bloquear para el día {selectedDate}:</p>
-          {!selectedTimeToBlock && (
-            <div className="professional-modal-time-slots">
-              {timeSlots
-                .filter((slot) => slot.available)
-                .map((slot, index) => (
-                  <button
-                    key={index}
-                    className="professional-modal-time-slot"
-                    onClick={() => setSelectedTimeToBlock(slot)}
-                  >
-                    {slot.time}
-                  </button>
-                ))}
-            </div>
-          )}
-          {selectedTimeToBlock && (
-            <div className="professional-modal-selected-time">
-              <p>
-                Horario seleccionado: <strong>{selectedTimeToBlock.time}</strong>
-              </p>
-              <div className="professional-form-group">
-                <label>Motivo del bloqueo:</label>
-                <input
-                  type="text"
-                  value={blockReason}
-                  onChange={(e) => setBlockReason(e.target.value)}
-                  placeholder="Ej: Almuerzo, Reunión, etc."
-                />
-              </div>
-            </div>
-          )}
-        </SimpleModal>
-      )}
 
       {/* Modal de detalles de cita */}
       {showAppointmentDetailsModal && selectedAppointment && (

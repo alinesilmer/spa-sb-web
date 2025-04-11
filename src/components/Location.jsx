@@ -7,8 +7,7 @@ const Location = () => {
         <div className="location-header">
           <h1 className="location-title">Nuestra Ubicación</h1>
           <p className="location-description">
-            Estamos ubicados en el corazón de la ciudad, en un entorno tranquilo y accesible, cerca de todas las
-            atracciones principales y con fácil acceso al transporte público.
+            Estamos ubicados en el corazón de la ciudad de Resistencia, en un entorno tranquilo y accesible, y con fácil acceso al transporte público.
           </p>
         </div>
 

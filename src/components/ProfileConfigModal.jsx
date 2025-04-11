@@ -18,19 +18,18 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
   };
 
   const handleSubmit = () => {
-    // Validate passwords if trying to change them
     if (profileData.newPassword) {
       if (profileData.newPassword !== profileData.confirmPassword) {
         alert("Las contraseñas no coinciden");
         return;
       }
       if (!profileData.currentPassword) {
-        alert("Debes ingresar tu contraseña actual");
+        alert("Debés ingresar tu contraseña actual");
         return;
       }
     }
 
-    // Create updated user object
+    
     const updatedUser = {
       ...user,
       firstName: profileData.firstName,
@@ -39,7 +38,7 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
       phone: profileData.phone
     };
 
-    // If changing password, include it
+   
     if (profileData.newPassword) {
       updatedUser.password = profileData.newPassword;
     }

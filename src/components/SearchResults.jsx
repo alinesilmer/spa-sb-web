@@ -15,7 +15,7 @@ const SearchResults = ({ results, onResultClick, query }) => {
     )
   }
 
-  // Group results by type
+ 
   const groupedResults = results.reduce((acc, result) => {
     if (!acc[result.type]) {
       acc[result.type] = []

@@ -19,11 +19,11 @@ const Header = () => {
   const searchRef = useRef(null)
   const location = useLocation()
 
-  // Define the routes where the navbar is part of the landing (public pages)
+  
   const publicRoutes = ["/", "/about-us", "/services", "/contact"]
   const isPublicRoute = publicRoutes.includes(location.pathname)
 
-  // Set header visibility based on scroll position. When on a public page, header remains hidden if scrollY <= 50.
+  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -33,7 +33,6 @@ const Header = () => {
       }
     }
     window.addEventListener("scroll", handleScroll)
-    // Call once in case the user reloads while scrolled down
     handleScroll()
     return () => {
       window.removeEventListener("scroll", handleScroll)
@@ -81,7 +80,6 @@ const Header = () => {
     setIsSearchOpen(false)
     setSearchQuery("")
     setShowResults(false)
-    // If it's a service, we'll need to highlight it on the services page
     if (result.path.includes("highlight")) {
       // The navigation will be handled by the Link component
       // We'll just close the search

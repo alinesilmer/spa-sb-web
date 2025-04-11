@@ -15,7 +15,7 @@ const ForgotPassword = () => {
     setMessage("")
     setIsSending(true)
 
-    // Simulamos el envío de email con un retraso
+  
     setTimeout(() => {
       setIsSending(false)
       setMessage("Si este email está registrado, se han enviado instrucciones para recuperar tu contraseña.")

@@ -48,7 +48,7 @@ const Reviews = () => {
   const [visibleReviews, setVisibleReviews] = useState([]);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
-  // Handle window resize for responsive design
+  
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -58,17 +58,17 @@ const Reviews = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Determine how many reviews to show based on screen size
+  
   useEffect(() => {
-    let count = 3; // Default for desktop
+    let count = 3; 
     
     if (windowWidth < 768) {
-      count = 1; // Mobile
+      count = 1; 
     } else if (windowWidth < 1024) {
-      count = 2; // Tablet
+      count = 2; 
     }
     
-    // Create array of visible reviews
+    
     const visible = [];
     for (let i = 0; i < count; i++) {
       const index = (activeIndex + i) % reviewsData.length;
@@ -78,7 +78,7 @@ const Reviews = () => {
     setVisibleReviews(visible);
   }, [activeIndex, windowWidth]);
 
-  // Navigate through reviews
+  
   const handleNext = () => {
     setActiveIndex((prevIndex) => (prevIndex + 1) % reviewsData.length);
   };
@@ -87,7 +87,7 @@ const Reviews = () => {
     setActiveIndex((prevIndex) => (prevIndex - 1 + reviewsData.length) % reviewsData.length);
   };
 
-  // Render stars based on rating
+  
   const renderStars = (rating) => {
     return Array(5).fill(0).map((_, i) => (
       <span key={i} className={`review-star ${i < rating ? 'filled' : ''}`}>★</span>

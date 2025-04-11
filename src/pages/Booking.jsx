@@ -17,29 +17,26 @@ const Booking = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
   const [availableTimeSlots, setAvailableTimeSlots] = useState([])
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
-  // bookingConfirmed indicates that the booking details have been set (before payment)
   const [bookingConfirmed, setBookingConfirmed] = useState(false)
   const [bookingData, setBookingData] = useState(null)
   const [error, setError] = useState("")
 
-  // New state variables for payment flow:
+  
   // selectedPaymentMethod: "MercadoPago" or "Efectivo"
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null)
-  // paymentReceipt will hold the file (or its name) once uploaded
   const [paymentReceipt, setPaymentReceipt] = useState(null)
-  // timeLeft (in seconds) for MercadoPago receipt submission (15 min = 900 sec)
+
   const [timeLeft, setTimeLeft] = useState(15 * 60)
-  // finalConfirmation indicates the end of the payment process
   const [finalConfirmation, setFinalConfirmation] = useState(false)
 
-  // Redirect to login if not logged in
+
   useEffect(() => {
     if (!isLoggedIn) {
       navigate("/login", { state: { from: `/booking/${serviceId}` } })
     }
   }, [isLoggedIn, navigate, serviceId])
 
-  // Fetch service data (for demo, using a local search)
+ 
   useEffect(() => {
     if (serviceId) {
       const foundService = services.find((s) => s.id === serviceId)
@@ -52,19 +49,19 @@ const Booking = () => {
     }
   }, [serviceId])
 
-  // Fetch available time slots for the selected date (using mock data)
+  
   useEffect(() => {
     if (selectedDate) {
       setAvailableTimeSlots(mockTimeSlots.filter((slot) => slot.available))
     }
   }, [selectedDate])
 
-  // Start countdown if MercadoPago is selected and payment is not yet finalized
+
   useEffect(() => {
     if (selectedPaymentMethod === "MercadoPago" && !finalConfirmation) {
       if (timeLeft <= 0) {
-        alert("El tiempo para subir el comprobante de pago ha expirado. Por favor, intenta la reserva nuevamente.")
-        // Reset and return to services page
+        alert("El tiempo para subir el comprobante de pago ha expirado. Por favor, intentá la reserva nuevamente.")
+       
         navigate("/services")
         return
       }
@@ -75,7 +72,7 @@ const Booking = () => {
     }
   }, [selectedPaymentMethod, timeLeft, finalConfirmation, navigate])
 
-  // Handlers for date and time slot selection
+  
   const handleDateChange = (date) => {
     setSelectedDate(date.toISOString().split("T")[0])
     setSelectedTimeSlot(null)
@@ -85,7 +82,7 @@ const Booking = () => {
     setSelectedTimeSlot(timeSlot)
   }
 
-  // Handle initial booking confirmation (before payment)
+ 
   const handleConfirmBooking = () => {
     if (!selectedTimeSlot) {
       setError("Por favor seleccioná un horario")
@@ -97,7 +94,7 @@ const Booking = () => {
       userId: currentUser.id,
       serviceId: service.id,
       serviceName: service.name,
-      professionalId: "2", // Hardcoded for demo
+      professionalId: "2", // Hardcoded to test
       professionalName: "Professional User",
       date: selectedDate,
       time: selectedTimeSlot.time,
@@ -113,31 +110,25 @@ const Booking = () => {
     setBookingConfirmed(true)
   }
 
-  // Handler for file upload (MercadoPago)
+  
   const handleReceiptUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
-      // For simplicity, storing the file object; in a real app, you might convert to base64 or handle upload separately
       setPaymentReceipt(file)
     }
   }
 
-  // Handler to finalize payment for MercadoPago
+
   const handleConfirmMercadoPago = () => {
     if (!paymentReceipt) {
       setError("Por favor, subí tu comprobante de pago.")
       return
     }
-    // In a real application, you'd verify the uploaded receipt and update the booking status accordingly.
-    // Then, you move to the final confirmation phase.
     setFinalConfirmation(true)
-    setTimeout(() => navigate("/"), 5000) // Redirect to Home after 5 seconds
+    setTimeout(() => navigate("/"), 5000) 
   }
 
-  // Handler to confirm cash (Efectivo) payment
   const handleConfirmEfectivo = () => {
-    // In cash, show disclaimer and accept terms
-    // Once accepted, finalize the booking.
     setFinalConfirmation(true)
     setTimeout(() => navigate("/"), 5000)
   }
@@ -168,7 +159,7 @@ const Booking = () => {
     )
   }
 
-  // If the booking is confirmed and payment is finalized, show the final confirmation screen.
+
   if (bookingConfirmed && bookingData && finalConfirmation) {
     return (
       <div className="booking-page">
@@ -219,7 +210,7 @@ const Booking = () => {
           <div className="booking-confirmation">
             <div className="booking-confirmation-header">
               <h2>Reserva Confirmada</h2>
-              <p>Revisa los detalles de tu reserva y procede al pago.</p>
+              <p>Revisá los detalles de tu reserva y procedé al pago.</p>
             </div>
             <div className="booking-confirmation-details">
               <h3>Detalles de la Reserva</h3>
@@ -302,7 +293,7 @@ const Booking = () => {
                   <h3>Pagar con Efectivo</h3>
                   <p>
                     Al elegir pagar en efectivo, tu reserva queda registrada, pero recordá que solo podés cancelarla a través
-                    de tu cuenta y con 24 horas de anticipación. De lo contrario, se considerará pagada. Si no abonás el pago,
+                    de tu cuenta y con 24 horas de anticipación. De lo contrario, se deberá abonar la cantidad total igualmente. Si no abonás el pago,
                     no podrás reservar nuevamente en el spa.
                   </p>
                   <button onClick={handleConfirmEfectivo} className="booking-payment-button">
@@ -317,7 +308,7 @@ const Booking = () => {
     )
   }
 
-  // If booking is not yet confirmed, show the booking form.
+
   return (
     <div className="booking-page">
       <div className="booking-container">

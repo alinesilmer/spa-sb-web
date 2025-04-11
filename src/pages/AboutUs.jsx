@@ -6,6 +6,7 @@ import "../styles/about-us.css"
 import Video from "../components/Video";
 import ScrollArrow from "../assets/scrolldown-arrow.svg"
 import videoBg from "../assets/about-us-bg.mp4";
+import TeamPic from "../assets/sentirsebienteam.png"
 
 const AboutUs = () => {
   const [activeTab, setActiveTab] = useState("history")
@@ -65,7 +66,7 @@ const AboutUs = () => {
               <h2 className="about-section-title">Visión</h2>
               <p className="about-text">{spaInfo.about.vision}</p>
               <div className="about-image">
-                <img src="https://i.pinimg.com/736x/bd/7e/d3/bd7ed3680337d33af267960e54cc5cd1.jpg" alt="Misión y Visión" />
+                <img src="https://i.pinimg.com/736x/7e/ff/9a/7eff9abafb8f41586de11e646fe669d5.jpg" alt="Misión y Visión" />
               </div>
             </div>
           )}
@@ -81,7 +82,7 @@ const AboutUs = () => {
                 ))}
               </ul>
               <div className="about-image">
-                <img src="https://i.pinimg.com/736x/f1/45/02/f14502f77e1d664237da3dbbe9d17833.jpg" alt="Características del Spa" />
+                <img src={ TeamPic } alt="Características del Spa" className="team-img" />
               </div>
             </div>
           )}

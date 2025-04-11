@@ -81,29 +81,13 @@ const Contact = () => {
         message: ''
       });
       
-      // Reset submission status after 5 seconds
+     
       setTimeout(() => {
         setIsSubmitted(false);
       }, 5000);
     }, 1500);
     
-    // In a real application, you would send the form data to your backend
-    /*
-    // Backend logic (to be implemented with Firebase)
-    const sendContactForm = async (formData) => {
-      try {
-        const db = firebase.firestore();
-        await db.collection('contactMessages').add({
-          ...formData,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        return { success: true };
-      } catch (error) {
-        console.error('Error sending contact form:', error);
-        return { success: false, error };
-      }
-    };
-    */
+  
   };
 
   return (

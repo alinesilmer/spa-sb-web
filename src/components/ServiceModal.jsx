@@ -84,9 +84,9 @@ const ServiceModal = ({ service, onClose, isLoggedIn }) => {
                     Iniciar Sesión para Reservar
                   </Link>
                   <p className="service-modal-register-prompt">
-                    ¿No tienes una cuenta?{" "}
+                    ¿No tenés una cuenta?{" "}
                     <Link to="/register" className="service-modal-register-link">
-                      Regístrate aquí
+                      Registrate acá
                     </Link>
                   </p>
                 </>

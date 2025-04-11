@@ -4,7 +4,7 @@ export const services = [
     id: "1",
     name: "Masaje Anti-stress",
     shortDescription:
-      "Relaja tu cuerpo y mente con nuestro masaje anti-stress.",
+      "Relajá tu cuerpo y mente con nuestro masaje anti-stress.",
     description:
       "Nuestro masaje anti-stress está diseñado para aliviar la tensión acumulada y proporcionar una profunda sensación de bienestar. Utilizamos técnicas especiales que combinan movimientos suaves y presión moderada para relajar los músculos y reducir el estrés.",
     category: "corporales",
@@ -56,14 +56,14 @@ export const services = [
     id: "3",
     name: "Masaje con Piedras Calientes",
     shortDescription:
-      "Experimenta la relajación profunda con piedras volcánicas calientes.",
+      "Experimentá la relajación profunda con piedras volcánicas calientes.",
     description:
       "Este masaje utiliza piedras volcánicas calientes que se colocan estratégicamente en puntos energéticos del cuerpo. El calor penetra profundamente en los músculos, proporcionando una relajación intensa y aliviando tensiones acumuladas.",
     category: "corporales",
     price: 7000,
     duration: 70,
     image:
-      "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/af/e6/20/afe620ca3873940e63ff73b6b3f44b48.jpg",
     benefits: [
       "Relaja profundamente el sistema nervioso",
       "Mejora la circulación sanguínea",
@@ -88,7 +88,7 @@ export const services = [
     price: 6500,
     duration: 60,
     image:
-      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/c8/d0/e0/c8d0e08352f318b994e5104e6ef0d64f.jpg",
     benefits: [
       "Reduce la retención de líquidos",
       "Elimina toxinas del organismo",
@@ -114,7 +114,7 @@ export const services = [
     price: 8500,
     duration: 45,
     image:
-      "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800&auto=format&fit=crop&q=60",
+      "https://www.ckea.com.ar/assets/img/ckea/productos/Velaslim-Plus-17307579281.jpg",
     benefits: [
       "Reduce la celulitis",
       "Reafirma la piel flácida",
@@ -133,7 +133,7 @@ export const services = [
     id: "6",
     name: "Limpieza Facial Profunda",
     shortDescription:
-      "Elimina impurezas y revitaliza tu piel con nuestra limpieza facial completa.",
+      "Eliminá impurezas y revitalizá tu piel con nuestra limpieza facial completa.",
     description:
       "Nuestra limpieza facial profunda elimina impurezas, puntos negros y células muertas, dejando tu piel completamente renovada. Incluye análisis de piel, exfoliación, extracción, mascarilla personalizada y protección final.",
     category: "faciales",
@@ -188,14 +188,14 @@ export const services = [
     id: "8",
     name: "Tratamiento Anti-Age",
     shortDescription:
-      "Combate los signos del envejecimiento con nuestro tratamiento rejuvenecedor.",
+      "Combatí los signos del envejecimiento con nuestro tratamiento rejuvenecedor.",
     description:
       "Tratamiento facial avanzado que combate eficazmente los signos del envejecimiento. Utilizamos péptidos, vitamina C y otros activos anti-edad que estimulan la producción de colágeno, reducen líneas de expresión y mejoran la firmeza de la piel.",
     category: "faciales",
     price: 7500,
     duration: 75,
     image:
-      "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/56/77/98/56779821e384baa38d86aecf4db833d0.jpg",
     benefits: [
       "Reduce líneas de expresión y arrugas",
       "Aumenta la producción de colágeno y elastina",
@@ -224,7 +224,7 @@ export const services = [
     price: 6500,
     duration: 45,
     image:
-      "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/43/df/b3/43dfb3fd2a0fdf5ab94c8599a6c8ed51.jpg",
     benefits: [
       "Elimina células muertas e impurezas",
       "Reduce manchas y cicatrices leves",
@@ -244,14 +244,14 @@ export const services = [
     id: "10",
     name: "Radiofrecuencia Facial",
     shortDescription:
-      "Reafirma y tensa la piel con nuestra avanzada radiofrecuencia facial.",
+      "Reafirmá y tensá la piel con nuestra avanzada radiofrecuencia facial.",
     description:
       "La radiofrecuencia facial es un tratamiento no invasivo que utiliza energía térmica para estimular la producción de colágeno y elastina. El calor controlado penetra en las capas profundas de la piel, logrando un efecto lifting y mejorando visiblemente la firmeza facial.",
     category: "faciales",
     price: 7000,
     duration: 50,
     image:
-      "https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/c8/b9/ad/c8b9add9652a2b001454670a4dbe8a68.jpg",
     benefits: [
       "Efecto lifting sin cirugía",
       "Reafirma óvalo facial y cuello",
@@ -279,7 +279,7 @@ export const services = [
     price: 7000,
     duration: 50,
     image:
-      "https://images.unsplash.com/photo-1571942676516-bcab84649e44?w=800&auto=format&fit=crop&q=60",
+      "https://d22fxaf9t8d39k.cloudfront.net/aed9a579cc66c1caa07518934425f54401b684e77af624269477b8a4a90602058409.jpg",
     benefits: [
       "Efecto lifting inmediato",
       "Reduce la inflamación y rojeces",
@@ -301,14 +301,14 @@ export const services = [
     id: "12",
     name: "Manicura Spa",
     shortDescription:
-      "Cuida y embellece tus manos con nuestra manicura completa.",
+      "Cuidá y embellecé tus manos con nuestra manicura completa.",
     description:
       "Nuestra manicura spa es un tratamiento completo que incluye limado, tratamiento de cutículas, exfoliación, masaje hidratante y esmaltado. Utilizamos productos de alta calidad para dejar tus manos suaves, hidratadas y perfectamente arregladas.",
     category: "belleza",
     price: 2500,
     duration: 40,
     image:
-      "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/b5/5f/f4/b55ff43d2be99dc9e94e10ef5031726b.jpg",
     benefits: [
       "Mantiene las uñas sanas y fuertes",
       "Hidrata profundamente la piel",
@@ -329,7 +329,7 @@ export const services = [
     id: "13",
     name: "Pedicura Spa",
     shortDescription:
-      "Renueva y embellece tus pies con nuestro tratamiento completo.",
+      "Renová y embellecé tus pies con nuestro tratamiento completo.",
     description:
       "Nuestra pedicura spa es un tratamiento completo que incluye baño de pies, eliminación de durezas, tratamiento de cutículas, exfoliación, masaje y esmaltado. Ideal para mantener tus pies saludables, suaves y estéticamente perfectos.",
     category: "belleza",
@@ -358,14 +358,14 @@ export const services = [
     id: "14",
     name: "Depilación Definitiva",
     shortDescription:
-      "Elimina el vello no deseado de forma permanente con nuestra tecnología láser.",
+      "Eliminá el vello no deseado de forma permanente con nuestra tecnología láser.",
     description:
       "Nuestro sistema de depilación definitiva utiliza la más avanzada tecnología láser para eliminar el vello no deseado de forma permanente. El tratamiento es seguro, efectivo y personalizado según tu tipo de piel y vello, garantizando resultados óptimos con el mínimo de sesiones.",
     category: "belleza",
     price: 4000,
     duration: 30,
     image:
-      "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/c8/21/09/c82109dbc84f0b4d8dd0b353fe3da949.jpg",
     benefits: [
       "Eliminación permanente del vello",
       "Tratamiento rápido e indoloro",
@@ -385,14 +385,14 @@ export const services = [
     id: "15",
     name: "Maquillaje Profesional",
     shortDescription:
-      "Luce radiante en cualquier ocasión con nuestro servicio de maquillaje profesional.",
+      "Lucí radiante en cualquier ocasión con nuestro servicio de maquillaje profesional.",
     description:
       "Nuestro servicio de maquillaje profesional está diseñado para realzar tu belleza natural y adaptarse a cualquier ocasión. Utilizamos productos de alta gama y técnicas avanzadas para crear un look personalizado que refleje tu estilo y personalidad.",
     category: "belleza",
     price: 4500,
     duration: 60,
     image:
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/49/d2/13/49d2131b897d20b9f0f95deb013b8863.jpg",
     benefits: [
       "Maquillaje personalizado según tu estilo",
       "Productos de alta gama hipoalergénicos",
@@ -414,14 +414,14 @@ export const services = [
     id: "16",
     name: "Hidromasajes",
     shortDescription:
-      "Relájate y disfruta de los beneficios terapéuticos de nuestros hidromasajes.",
+      "Relajate y disfrutá de los beneficios terapéuticos de nuestros hidromasajes.",
     description:
       "Nuestros hidromasajes combinan los beneficios terapéuticos del agua caliente con potentes jets de masaje para proporcionar una experiencia de relajación completa. Ideal para aliviar tensiones musculares, mejorar la circulación y reducir el estrés.",
     category: "grupales",
     price: 3500,
     duration: 45,
     image:
-      "https://images.unsplash.com/photo-1531825552325-9b2cb8b6a88b?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/e7/c1/58/e7c158596e4e5351f7ad2d5559be75ef.jpg",
     benefits: [
       "Relaja la musculatura",
       "Mejora la circulación sanguínea",
@@ -441,14 +441,14 @@ export const services = [
     id: "17",
     name: "Sauna Finlandés",
     shortDescription:
-      "Experimenta los beneficios desintoxicantes del auténtico sauna finlandés.",
+      "Experimentá los beneficios desintoxicantes del auténtico sauna finlandés.",
     description:
       "Nuestro sauna finlandés tradicional utiliza calor seco a alta temperatura para proporcionar una profunda desintoxicación. El calor dilata los poros, elimina toxinas a través del sudor y proporciona una sensación de bienestar general y relajación profunda.",
     category: "grupales",
     price: 3000,
     duration: 30,
     image:
-      "https://images.unsplash.com/photo-1554629947-334ff61d85dc?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/b3/8a/e6/b38ae6f65bf95267901f5e4b41c36b2f.jpg",
     benefits: [
       "Elimina toxinas a través del sudor",
       "Mejora la circulación sanguínea",
@@ -468,14 +468,14 @@ export const services = [
     id: "18",
     name: "Circuito de Aguas",
     shortDescription:
-      "Disfruta de nuestro completo circuito de aguas para una experiencia de bienestar total.",
+      "Disfrutá de nuestro completo circuito de aguas para una experiencia de bienestar total.",
     description:
       "Nuestro circuito de aguas es una experiencia completa que combina diferentes instalaciones acuáticas terapéuticas. Incluye piscina climatizada, jacuzzi, sauna, baño turco y duchas de sensaciones, diseñadas para proporcionar beneficios específicos para el cuerpo y la mente.",
     category: "grupales",
     price: 5000,
     duration: 90,
     image:
-      "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&auto=format&fit=crop&q=60",
+      "https://i.pinimg.com/736x/34/d0/16/34d0160b798b6b05e68fc717cc3c0d42.jpg",
     benefits: [
       "Experiencia completa de hidroterapia",
       "Mejora la circulación y el sistema linfático",

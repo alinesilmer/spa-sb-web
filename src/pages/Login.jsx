@@ -118,7 +118,7 @@ const Login = () => {
           </div>
 
           <div className="auth-footer">
-            ¿No tienes una cuenta?{" "}
+            ¿No tenés una cuenta?{" "}
             <Link to="/register" className="auth-link">
               Regístrate
             </Link>

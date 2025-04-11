@@ -89,7 +89,7 @@ const PromCarousel = () => {
     return result;
   };
 
-  // Auto-play functionality
+  
   useEffect(() => {
     const interval = setInterval(() => {
       goToNext();
@@ -116,12 +116,11 @@ const PromCarousel = () => {
        <div className="carousel-viewport" ref={carouselRef}>
           <div className={`carousel-track position-${currentIndex}`}>
             {visibleCards.map((service) => (
-              // Wrap each slide with an onClick handler that redirects to the booking page.
               <div 
                 key={service.id} 
                 className={`carousel-slide ${service.position}`}
-                onClick={() => navigate(`/booking/${service.id}`)} // Navigate to /booking/:serviceId on click.
-                style={{ cursor: 'pointer' }} // Change cursor style to indicate clickability.
+                onClick={() => navigate(`/booking/${service.id}`)} 
+                style={{ cursor: 'pointer' }} 
               >
                 <Card 
                   title={service.title} 
