@@ -53,11 +53,6 @@ const MenuDropdown = ({ isMenuOpen, setIsMenuOpen }) => {
       {currentUser ? (
         <div className="menu-section">
           <div className="profile-info">
-            <img
-              src={currentUser.profilePicture || "/default-profile.png"}
-              alt="Perfil"
-              className="profile-picture"
-            />
             <h3 className="menu-title">Bienvenido, {currentUser.firstName}</h3>
           </div>
           <ul className="menu-list">

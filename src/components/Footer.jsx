@@ -54,10 +54,6 @@ const Footer = () => {
         
         <div className="footer-bottom">
           <p className="copyright">&copy; 2025 Sentirse Bien Spa. Todos los derechos reservados.</p>
-          <div className="footer-bottom-links">
-            <a href="#" className="footer-bottom-link">Términos y Condiciones</a>
-            <a href="#" className="footer-bottom-link">Política de Privacidad</a>
-          </div>
         </div>
       </div>
     </footer>

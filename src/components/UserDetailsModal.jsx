@@ -11,15 +11,6 @@ const UserDetailsModal = ({ isOpen, onClose, user }) => {
       title="Detalles del Usuario"
     >
       <div className="user-details">
-        <div className="user-avatar">
-          {user.profilePicture ? (
-            <img src={user.profilePicture || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`} />
-          ) : (
-            <div className="avatar-placeholder">
-              {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-            </div>
-          )}
-        </div>
         <div className="user-info">
           <p><strong>Nombre:</strong> {user.firstName} {user.lastName}</p>
           <p><strong>Email:</strong> {user.email}</p>

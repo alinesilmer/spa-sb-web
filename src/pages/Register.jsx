@@ -27,8 +27,7 @@ const Register = () => {
   const [errors, setErrors] = useState({})
   const [showProfessionalFields, setShowProfessionalFields] = useState(false)
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
-  const [setProfilePicture] = useState(null)
-  const [previewImage, setPreviewImage] = useState(null)
+  const [showApprovalPopup, setShowApprovalPopup] = useState(false)
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -53,23 +52,8 @@ const Register = () => {
     }
   }
 
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setProfilePicture(file)
-      
-      
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreviewImage(reader.result)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
   const validateForm = () => {
     const newErrors = {}
-    
     
     if (!formData.firstName.trim()) newErrors.firstName = "El nombre es requerido"
     if (!formData.lastName.trim()) newErrors.lastName = "El apellido es requerido"
@@ -79,24 +63,20 @@ const Register = () => {
     if (!formData.phone.trim()) newErrors.phone = "El teléfono es requerido"
     if (!formData.agreeToTerms) newErrors.agreeToTerms = "Debés aceptar los términos y condiciones"
     
-    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (formData.email && !emailRegex.test(formData.email)) {
       newErrors.email = "Formato de email inválido"
     }
     
-    
     if (formData.password && formData.password.length < 6) {
       newErrors.password = "La contraseña debe tener al menos 6 caracteres"
     }
-    
     
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Las contraseñas no coinciden"
     }
     
-    
-    if (formData.role === "professional" || formData.role === "admin") {
+    if (formData.role === "professional") {
       if (!formData.professionalInfo.specialties.length) {
         newErrors["professionalInfo.specialties"] = "Selecciona al menos una especialidad"
       }
@@ -116,10 +96,14 @@ const Register = () => {
     e.preventDefault()
     
     if (validateForm()) {
+      if (formData.role === "professional") {
+        setShowApprovalPopup(true)
+        return
+      }
+      
       try {
         await register({
-          ...formData,
-          profilePicture: previewImage, 
+          ...formData
         })
         
         setRegistrationSuccess(true)
@@ -130,6 +114,24 @@ const Register = () => {
       } catch (error) {
         setErrors({ submit: error.message })
       }
+    }
+  }
+
+  const handleProfessionalConfirm = async () => {
+    try {
+      await register({
+        ...formData
+      })
+      
+      setShowApprovalPopup(false)
+      setRegistrationSuccess(true)
+      
+      setTimeout(() => {
+        navigate("/login")
+      }, 3000)
+    } catch (error) {
+      setErrors({ submit: error.message })
+      setShowApprovalPopup(false)
     }
   }
 
@@ -250,24 +252,6 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="profilePicture">Foto de Perfil (opcional)</label>
-              <div className="profile-picture-upload">
-                {previewImage && (
-                  <div className="profile-picture-preview">
-                    <img src={previewImage || "/placeholder.svg"} alt="Vista previa" />
-                  </div>
-                )}
-                <input
-                  type="file"
-                  id="profilePicture"
-                  name="profilePicture"
-                  accept="image/*"
-                  onChange={handleProfilePictureChange}
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
               <label htmlFor="role">Tipo de Usuario</label>
               <select
                 id="role"
@@ -283,7 +267,6 @@ const Register = () => {
             {showProfessionalFields && (
               <div className="professional-fields">
                 <h3>Información Profesional</h3>
-                
 
                 <div className="form-group">
                   <label htmlFor="experience">Años de Experiencia</label>
@@ -364,6 +347,37 @@ const Register = () => {
           </div>
         </div>
       </div>
+      
+      {/* Professional Approval Popup */}
+      {showApprovalPopup && (
+        <div className="approval-popup-overlay">
+          <div className="approval-popup">
+            <div className="approval-popup-header">
+              <h2>Información Importante</h2>
+            </div>
+            <div className="approval-popup-content">
+              <div className="approval-icon">ℹ️</div>
+              <p>Tu cuenta de profesional será enviada para aprobación por parte del administrador.</p>
+              <p>Una vez que tu cuenta sea aprobada, recibirás un correo electrónico de confirmación.</p>
+              <p>¿Deseas continuar con el registro?</p>
+            </div>
+            <div className="approval-popup-footer">
+              <button 
+                className="approval-popup-btn cancel" 
+                onClick={() => setShowApprovalPopup(false)}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="approval-popup-btn confirm" 
+                onClick={handleProfessionalConfirm}
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

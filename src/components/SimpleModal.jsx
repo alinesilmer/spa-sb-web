@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/simpleModal.css";
 
-const SimpleModal = ({ isOpen, onClose, title, children, onConfirm, confirmText = "Confirmar", cancelText = "Cancelar" }) => {
+const SimpleModal = ({ isOpen, onClose, title, children, onConfirm, confirmText = "Confirmar", cancelText = "Cerrar"}) => {
   if (!isOpen) return null;
 
   return (

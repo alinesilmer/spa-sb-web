@@ -16,7 +16,7 @@ const Login = () => {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  // Obtener la ruta de redirección si existe
+  
   const from = location.state?.from || "/"
 
   const handleChange = (e) => {

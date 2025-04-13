@@ -39,6 +39,61 @@ const AdminDashboard = () => {
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [showServiceDetailsModal, setShowServiceDetailsModal] = useState(false)
   const [showServiceEditModal, setShowServiceEditModal] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
+  
+  // Add state for pending professionals
+  const [pendingProfessionals, setPendingProfessionals] = useState([
+    {
+      id: "101",
+      firstName: "María",
+      lastName: "González",
+      email: "maria@example.com",
+      phone: "+54 9 3624 567890",
+      role: "professional",
+      status: "pending",
+      requestDate: "2025-04-10",
+      professionalInfo: {
+        specialties: ["Masajes", "Tratamientos Faciales"],
+        experience: "5 años",
+        certification: "Certificado en Terapias Corporales",
+        bio: "Especialista en masajes terapéuticos y tratamientos faciales rejuvenecedores."
+      }
+    },
+    {
+      id: "102",
+      firstName: "Carlos",
+      lastName: "Rodríguez",
+      email: "carlos@example.com",
+      phone: "+54 9 3624 123789",
+      role: "professional",
+      status: "pending",
+      requestDate: "2025-04-12",
+      professionalInfo: {
+        specialties: ["Fisioterapia", "Rehabilitación"],
+        experience: "8 años",
+        certification: "Licenciado en Kinesiología",
+        bio: "Especializado en rehabilitación física y tratamientos para deportistas."
+      }
+    },
+    {
+      id: "103",
+      firstName: "Laura",
+      lastName: "Martínez",
+      email: "laura@example.com",
+      phone: "+54 9 3624 456123",
+      role: "professional",
+      status: "pending",
+      requestDate: "2025-04-15",
+      professionalInfo: {
+        specialties: ["Estética", "Depilación"],
+        experience: "3 años",
+        certification: "Técnica en Estética Profesional",
+        bio: "Especialista en tratamientos estéticos y cuidado de la piel."
+      }
+    }
+  ])
+  
   const [users, setUsers] = useState([
     {
       id: "1",
@@ -46,7 +101,6 @@ const AdminDashboard = () => {
       lastName: "User",
       email: "admin@example.com",
       role: "admin",
-      profilePicture: "/default-profile.png",
     },
     {
       id: "2",
@@ -55,7 +109,6 @@ const AdminDashboard = () => {
       email: "pro@example.com",
       role: "professional",
       specialties: ["Masajes", "Tratamientos Corporales"],
-      profilePicture: "/default-profile.png",
     },
     {
       id: "3",
@@ -63,7 +116,6 @@ const AdminDashboard = () => {
       lastName: "User",
       email: "user@example.com",
       role: "client",
-      profilePicture: "/default-profile.png",
     },
   ])
 
@@ -113,6 +165,10 @@ const AdminDashboard = () => {
       setUsers(users.filter((user) => user.id !== itemToDelete))
     }
     setShowDeleteModal(false)
+    
+    // Show success message
+    setSuccessMessage("Elemento eliminado correctamente");
+    setShowSuccessModal(true);
   }
 
   // Service handlers - now separated for view and edit
@@ -137,6 +193,10 @@ const AdminDashboard = () => {
       setServicesList([...servicesList, newService])
     }
     setShowServiceEditModal(false)
+    
+    // Show success message
+    setSuccessMessage(serviceData.id ? "Servicio actualizado correctamente" : "Servicio creado correctamente");
+    setShowSuccessModal(true);
   }
 
   // Other handlers
@@ -155,6 +215,10 @@ const AdminDashboard = () => {
 
   const handleAddUser = (userData) => {
     setUsers([...users, userData])
+    
+    // Show success message
+    setSuccessMessage("Usuario agregado correctamente");
+    setShowSuccessModal(true);
   }
 
   const handleViewUserDetails = (user) => {
@@ -169,8 +233,45 @@ const AdminDashboard = () => {
 
   const handleSaveProfile = (updatedProfile) => {
     console.log("Saving profile:", updatedProfile)
-    alert("Perfil actualizado correctamente")
+    
+    // Show success message
+    setSuccessMessage("Perfil actualizado correctamente");
+    setShowSuccessModal(true);
   }
+  
+  // Add functions to handle professional approvals
+  const handleApproveRequest = (professionalId) => {
+    // Update the professional status
+    const professionalToApprove = pendingProfessionals.find(
+      (professional) => professional.id === professionalId
+    );
+    
+    if (professionalToApprove) {
+      // Add the professional to users list
+      const updatedProfessional = { ...professionalToApprove, status: "approved" };
+      setUsers([...users, updatedProfessional]);
+      
+      // Remove from pending list
+      setPendingProfessionals(pendingProfessionals.filter(
+        (professional) => professional.id !== professionalId
+      ));
+      
+      // Show success message
+      setSuccessMessage("Profesional aprobado correctamente");
+      setShowSuccessModal(true);
+    }
+  };
+
+  const handleRejectRequest = (professionalId) => {
+    // Remove the professional from pending list
+    setPendingProfessionals(pendingProfessionals.filter(
+      (professional) => professional.id !== professionalId
+    ));
+    
+    // Show success message
+    setSuccessMessage("Solicitud rechazada correctamente");
+    setShowSuccessModal(true);
+  };
 
   const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
@@ -203,16 +304,6 @@ const AdminDashboard = () => {
         <div className="admin-sidebar-header">
           <h2>Panel de Administración</h2>
           <div className="admin-user-info">
-            <div className="admin-avatar">
-              {currentUser?.profilePicture ? (
-                <img src={currentUser.profilePicture || "/placeholder.svg"} alt="Perfil" />
-              ) : (
-                <>
-                  {currentUser?.firstName?.charAt(0)}
-                  {currentUser?.lastName?.charAt(0)}
-                </>
-              )}
-            </div>
             <div className="admin-user-details">
               <p className="admin-user-name">
                 {currentUser?.firstName} {currentUser?.lastName}
@@ -258,6 +349,16 @@ const AdminDashboard = () => {
             <span className="admin-nav-icon">👥</span>
             <span>Usuarios</span>
           </button>
+          
+          {/* Add a new nav item for professional approvals */}
+          <button
+            className={`admin-nav-item ${activeTab === "approvals" ? "active" : ""}`}
+            onClick={() => setActiveTab("approvals")}
+            data-tab="approvals"
+          >
+            <span className="admin-nav-icon">✅</span>
+            <span>Aprobaciones</span>
+          </button>
 
           <button
             className={`admin-nav-item ${activeTab === "messages" ? "active" : ""}`}
@@ -284,6 +385,7 @@ const AdminDashboard = () => {
             {activeTab === "bookings" && "Gestión de Reservas"}
             {activeTab === "services" && "Gestión de Servicios"}
             {activeTab === "users" && "Gestión de Usuarios"}
+            {activeTab === "approvals" && "Aprobación de Profesionales"}
             {activeTab === "messages" && "Mensajes de Contacto"}
           </h1>
           <div className="admin-header-actions">
@@ -729,6 +831,103 @@ const AdminDashboard = () => {
               </div>
             </div>
           )}
+          
+          {/* Add the approvals tab content */}
+          {activeTab === "approvals" && (
+            <div className="admin-approvals">
+              <div className="admin-section-actions">
+                <div className="admin-search">
+                  <input
+                    type="text"
+                    placeholder="Buscar solicitudes..."
+                    className="admin-search-input"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <button className="admin-search-btn">🔍</button>
+                </div>
+              </div>
+
+              {pendingProfessionals.length > 0 ? (
+                <div className="admin-approvals-grid">
+                  {pendingProfessionals
+                    .filter(
+                      (professional) =>
+                        searchTerm === "" ||
+                        `${professional.firstName} ${professional.lastName}`
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase()) ||
+                        professional.email.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map((professional) => (
+                      <div className="admin-approval-card" key={professional.id}>
+                        <div className="admin-approval-header">
+                          <div className="admin-approval-user-info">
+                            <div className="admin-approval-avatar">
+                              {professional.firstName.charAt(0)}
+                              {professional.lastName.charAt(0)}
+                            </div>
+                            <div>
+                              <h3 className="admin-approval-name">
+                                {professional.firstName} {professional.lastName}
+                              </h3>
+                              <p className="admin-approval-date">Solicitud: {professional.requestDate}</p>
+                            </div>
+                          </div>
+                          <div className="admin-approval-status">Pendiente</div>
+                        </div>
+
+                        <div className="admin-approval-details">
+                          <div className="admin-approval-detail">
+                            <span className="admin-approval-label">Email:</span>
+                            <span className="admin-approval-value">{professional.email}</span>
+                          </div>
+                          <div className="admin-approval-detail">
+                            <span className="admin-approval-label">Teléfono:</span>
+                            <span className="admin-approval-value">{professional.phone}</span>
+                          </div>
+                          <div className="admin-approval-detail">
+                            <span className="admin-approval-label">Especialidades:</span>
+                            <span className="admin-approval-value">
+                              {professional.professionalInfo.specialties.join(", ")}
+                            </span>
+                          </div>
+                          <div className="admin-approval-detail">
+                            <span className="admin-approval-label">Experiencia:</span>
+                            <span className="admin-approval-value">{professional.professionalInfo.experience}</span>
+                          </div>
+                          <div className="admin-approval-detail">
+                            <span className="admin-approval-label">Certificación:</span>
+                            <span className="admin-approval-value">{professional.professionalInfo.certification}</span>
+                          </div>
+                          <div className="admin-approval-detail">
+                            <span className="admin-approval-label">Biografía:</span>
+                            <p className="admin-approval-bio">{professional.professionalInfo.bio}</p>
+                          </div>
+                        </div>
+
+                        <div className="admin-approval-actions">
+                          <button
+                            className="admin-approval-btn reject"
+                            onClick={() => handleRejectRequest(professional.id)}
+                          >
+                            Rechazar
+                          </button>
+                          <button
+                            className="admin-approval-btn approve"
+                            onClick={() => handleApproveRequest(professional.id)}
+                          >
+                            Aprobar
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="admin-no-data">No hay solicitudes de profesionales pendientes</div>
+              )}
+            </div>
+          )}
 
           {activeTab === "messages" && (
             <div className="admin-messages">
@@ -968,6 +1167,18 @@ const AdminDashboard = () => {
         user={currentUser}
         onSaveProfile={handleSaveProfile}
       />
+      
+      {/* Success Modal */}
+      <SimpleModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Operación Exitosa"
+      >
+        <div className="success-modal-content">
+          <div className="confirmation-icon">✓</div>
+          <p className="success-message">{successMessage}</p>
+        </div>
+      </SimpleModal>
     </div>
   )
 }

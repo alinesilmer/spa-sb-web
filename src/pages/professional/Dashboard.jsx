@@ -21,7 +21,6 @@ const ProfessionalDashboard = () => {
   const notificationsRef = useRef(null)
   const [notificationsRead, setNotificationsRead] = useState(false)
 
- 
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [setSuccessAction] = useState("")
@@ -81,9 +80,7 @@ const ProfessionalDashboard = () => {
     lastName: currentUser?.lastName || "",
     email: currentUser?.email || "",
     phone: currentUser?.phone || "",
-    profilePicture: currentUser?.profilePicture || null,
   })
-  const [previewImage, setPreviewImage] = useState(null)
 
   useEffect(() => {
     if (!isProfessional) {
@@ -91,7 +88,6 @@ const ProfessionalDashboard = () => {
     }
   }, [isProfessional, navigate])
 
-  
   useEffect(() => {
     function handleClickOutside(event) {
       if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
@@ -153,24 +149,8 @@ const ProfessionalDashboard = () => {
     setShowServiceDetailsModal(true)
   }
 
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreviewImage(reader.result)
-        setProfileForm({ ...profileForm, profilePicture: reader.result })
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  
   const handleProfileUpdate = () => {
-  
     setShowProfileModal(false)
-
-   
     setSuccessMessage("Perfil actualizado correctamente")
     setSuccessAction("profile-update")
     setShowSuccessModal(true)
@@ -189,16 +169,6 @@ const ProfessionalDashboard = () => {
         <div className="professional-sidebar-header">
           <h2>Panel Profesional</h2>
           <div className="professional-user-info">
-            <div className="professional-avatar">
-              {currentUser?.profilePicture ? (
-                <img src={currentUser.profilePicture || "/placeholder.svg"} alt="Perfil" />
-              ) : (
-                <>
-                  {currentUser?.firstName?.charAt(0)}
-                  {currentUser?.lastName?.charAt(0)}
-                </>
-              )}
-            </div>
             <div className="professional-user-details">
               <p className="professional-user-name">
                 {currentUser?.firstName} {currentUser?.lastName}
@@ -633,16 +603,6 @@ const ProfessionalDashboard = () => {
           {activeTab === "profile" && (
             <div className="professional-profile">
               <div className="professional-profile-header">
-                <div className="professional-profile-avatar">
-                  {currentUser?.profilePicture ? (
-                    <img src={currentUser.profilePicture || "/placeholder.svg"} alt="Perfil" />
-                  ) : (
-                    <>
-                      {currentUser?.firstName?.charAt(0)}
-                      {currentUser?.lastName?.charAt(0)}
-                    </>
-                  )}
-                </div>
                 <div className="professional-profile-info">
                   <h2 className="professional-profile-name">
                     {currentUser?.firstName} {currentUser?.lastName}
@@ -875,31 +835,6 @@ const ProfessionalDashboard = () => {
           cancelText="Cancelar"
         >
           <form onSubmit={(e) => e.preventDefault()}>
-            <div className="professional-profile-picture-upload">
-              <div className="professional-profile-picture-preview">
-                {previewImage ? (
-                  <img src={previewImage || "/placeholder.svg"} alt="Vista previa" />
-                ) : profileForm.profilePicture ? (
-                  <img src={profileForm.profilePicture || "/placeholder.svg"} alt="Perfil actual" />
-                ) : (
-                  <div className="professional-profile-picture-placeholder">
-                    {profileForm.firstName.charAt(0)}
-                    {profileForm.lastName.charAt(0)}
-                  </div>
-                )}
-              </div>
-              <div className="professional-profile-picture-actions">
-                <label className="professional-upload-btn">
-                  Cambiar Foto
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleProfilePictureChange}
-                    style={{ display: "none" }}
-                  />
-                </label>
-              </div>
-            </div>
             <div className="professional-form-group">
               <label>Nombre</label>
               <input

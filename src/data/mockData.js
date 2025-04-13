@@ -491,6 +491,124 @@ export const services = [
       "Infusión o zumo natural",
     ],
   },
+  {
+    id: "19",
+    name: "Ultracavitación",
+    shortDescription: "Reducción localizada de grasa corporal sin cirugía.",
+    description:
+      "La ultracavitación es una técnica no invasiva que utiliza ondas ultrasónicas para eliminar grasa localizada. Ideal para zonas como abdomen, muslos y glúteos. Es una alternativa segura y eficaz a la liposucción tradicional.",
+    category: "corporales",
+    price: 7000,
+    duration: 60,
+    image:
+      "https://i.pinimg.com/736x/53/17/ad/5317adbfc084cf6555e1eb2008a1ee14.jpg",
+    benefits: [
+      "Reduce la grasa localizada",
+      "Mejora la textura de la piel",
+      "Estimula el drenaje linfático",
+      "Define contornos corporales",
+      "No requiere tiempo de recuperación",
+    ],
+    includes: [
+      "Evaluación corporal previa",
+      "Aplicación de ultracavitación",
+      "Recomendaciones post sesión",
+    ],
+  },
+  {
+    id: "20",
+    name: "Yoga grupal",
+    shortDescription: "Conectá cuerpo, mente y respiración en armonía.",
+    description:
+      "Clases grupales de yoga diseñadas para mejorar la flexibilidad, reducir el estrés y fomentar el bienestar general. Guiadas por instructoras profesionales en un ambiente tranquilo y cómodo.",
+    category: "grupales",
+    price: 4000,
+    duration: 60,
+    image:
+      "https://i.pinimg.com/736x/bd/40/70/bd40706a5caf46f4139a021298f48ad4.jpg",
+    benefits: [
+      "Mejora la flexibilidad y postura",
+      "Reduce el estrés y la ansiedad",
+      "Fomenta la conexión mente-cuerpo",
+      "Aumenta la energía y vitalidad",
+      "Favorece el descanso profundo",
+    ],
+    includes: [
+      "Clase guiada por instructor/a certificado",
+      "Colchonetas y elementos incluidos",
+      "Infusión post clase",
+    ],
+  },
+  {
+    id: "21",
+    name: "Lifting de pestañas",
+    shortDescription: "Realzá tu mirada con pestañas curvas y naturales.",
+    description:
+      "Tratamiento estético que eleva, curva y da volumen a tus pestañas naturales sin necesidad de extensiones. Resultados duraderos que destacan tu mirada de forma natural y elegante.",
+    category: "belleza",
+    price: 4500,
+    duration: 45,
+    image:
+      "https://i.pinimg.com/736x/55/ad/0d/55ad0de37779b72bc94ba4045fddb385.jpg",
+    benefits: [
+      "Realza la mirada",
+      "Efecto de pestañas más largas y curvadas",
+      "Resultados duraderos (4-6 semanas)",
+      "No requiere mantenimiento diario",
+    ],
+    includes: [
+      "Limpieza de pestañas",
+      "Aplicación del lifting",
+      "Nutrición post tratamiento",
+    ],
+  },
+  {
+    id: "22",
+    name: "Depilación facial",
+    shortDescription:
+      "Eliminación suave del vello facial para una piel más limpia.",
+    description:
+      "Eliminación del vello no deseado del rostro con técnicas cuidadosas y productos hipoalergénicos. Ideal para mantener una piel prolija, suave y lista para cualquier tratamiento posterior.",
+    category: "belleza",
+    price: 3000,
+    duration: 30,
+    image:
+      "https://i.pinimg.com/736x/ea/f5/ce/eaf5ce2e6c93dcbc0b659ddf95b789e2.jpg",
+    benefits: [
+      "Piel más suave y prolija",
+      "Facilita la aplicación de maquillaje",
+      "Reduce impurezas y vellos encarnados",
+      "Técnicas cuidadosas y sin irritación",
+    ],
+    includes: [
+      "Evaluación del tipo de piel",
+      "Depilación con productos suaves",
+      "Hidratación posterior",
+    ],
+  },
+  {
+    id: "23",
+    name: "Masaje circulatorio",
+    shortDescription: "Mejorá tu circulación y sentite más liviano/a.",
+    description:
+      "Masaje terapéutico que estimula la circulación sanguínea y linfática, ideal para aliviar la pesadez, prevenir la retención de líquidos y mejorar el bienestar corporal general.",
+    category: "corporales",
+    price: 5500,
+    duration: 50,
+    image:
+      "https://i.pinimg.com/736x/2e/cd/c4/2ecdc4b7384c0ab6af391315a8acf72a.jpg",
+    benefits: [
+      "Estimula el flujo sanguíneo",
+      "Reduce la retención de líquidos",
+      "Previene várices y celulitis",
+      "Disminuye la sensación de piernas cansadas",
+    ],
+    includes: [
+      "Masaje realizado por profesional",
+      "Aceites naturales y aromaterapia",
+      "Ambiente relajado con música suave",
+    ],
+  },
 ];
 
 // Mock data for team members

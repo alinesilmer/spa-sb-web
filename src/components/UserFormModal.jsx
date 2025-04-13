@@ -9,7 +9,6 @@ const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
     password: "",
     phone: "",
     role: "client",
-    profilePicture: "/default-profile.png"
   });
 
   const handleChange = (e) => {
@@ -44,7 +43,6 @@ const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
       password: "",
       phone: "",
       role: "client",
-      profilePicture: "/default-profile.png"
     });
     
     onClose();

@@ -33,28 +33,6 @@
   align-items: center;
 }
 
-.client-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: var(--highlight-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin-right: 15px;
-  overflow: hidden;
-}
-
-.client-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .client-user-details {
   flex: 1;
 }
@@ -396,28 +374,6 @@
   margin-bottom: 30px;
 }
 
-.client-profile-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: var(--highlight-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 2rem;
-  margin-right: 30px;
-  overflow: hidden;
-}
-
-.client-profile-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .client-profile-info {
   flex: 1;
 }
@@ -722,81 +678,6 @@
   color: #856404;
 }
 
-/* Profile Picture Upload */
-.client-profile-picture-upload {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.client-profile-picture-preview {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 15px;
-  overflow: hidden;
-}
-
-.client-profile-picture-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.client-profile-picture-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--highlight-color);
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 2rem;
-}
-
-.client-profile-picture-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.client-upload-btn {
-  padding: 8px 15px;
-  border-radius: 20px;
-  background-color: var(--highlight-color);
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.client-upload-btn:hover {
-  background-color: #d48a8a;
-}
-
-.client-remove-photo-btn {
-  padding: 8px 15px;
-  border-radius: 20px;
-  border: 1px solid #ddd;
-  background-color: white;
-  font-family: "Montserrat", sans-serif;
-  font-size: 0.8rem;
-  color: #555;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.client-remove-photo-btn:hover {
-  background-color: #f5f5f5;
-}
-
 /* Booking details */
 .booking-details {
   padding: 15px;
@@ -1056,10 +937,6 @@
   .client-profile-header {
     flex-direction: column;
     text-align: center;
-  }
-
-  .client-profile-avatar {
-    margin: 0 0 20px;
   }
 
   .client-edit-profile-btn {

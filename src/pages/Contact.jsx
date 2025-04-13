@@ -24,7 +24,7 @@ const Contact = () => {
       [name]: value
     }));
     
-    // Clear error when user types
+    
     if (formErrors[name]) {
       setFormErrors(prev => ({
         ...prev,

@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext"
 import { mockBookings } from "../../data/mockBookings"
 import "../../styles/client.css"
 import SimpleModal from "../../components/SimpleModal"
+
 const ClientDashboard = () => {
   const navigate = useNavigate()
   const { currentUser, logout, isClient, updateUser } = useAuth()
@@ -19,9 +20,7 @@ const ClientDashboard = () => {
     lastName: "",
     email: "",
     phone: "",
-    profilePicture: null,
   })
-  const [previewImage, setPreviewImage] = useState(null)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [selectedBookingDetails, setSelectedBookingDetails] = useState(null)
   const [showNotifications, setShowNotifications] = useState(false)
@@ -45,7 +44,6 @@ const ClientDashboard = () => {
         lastName: currentUser.lastName || "",
         email: currentUser.email || "",
         phone: currentUser.phone || "",
-        profilePicture: currentUser.profilePicture || null,
       })
     }
   }, [currentUser])
@@ -117,21 +115,6 @@ const ClientDashboard = () => {
     setShowSuccessModal(true)
   }
 
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreviewImage(reader.result)
-        setProfileData({
-          ...profileData,
-          profilePicture: reader.result,
-        })
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
   const handleProfileUpdate = () => {
     const updatedUser = {
       ...currentUser,
@@ -139,12 +122,13 @@ const ClientDashboard = () => {
       lastName: profileData.lastName,
       email: profileData.email,
       phone: profileData.phone,
-      profilePicture: previewImage || currentUser?.profilePicture,
     }
     updateUser(updatedUser)
 
-    
+    // Close the modal
     setShowProfileModal(false)
+
+    // Show success message
     setSuccessMessage("Perfil actualizado correctamente")
     setShowSuccessModal(true)
   }
@@ -162,7 +146,6 @@ const ClientDashboard = () => {
       booking.status === "cancelled",
   )
 
-  
   const confirmedBookings = bookings.filter((booking) => booking.status === "confirmed")
 
   return (
@@ -171,16 +154,6 @@ const ClientDashboard = () => {
         <div className="client-sidebar-header">
           <h2>Mi Panel</h2>
           <div className="client-user-info">
-            <div className="client-avatar">
-              {currentUser?.profilePicture ? (
-                <img src={currentUser.profilePicture || "/placeholder.svg"} alt="Perfil" />
-              ) : (
-                <>
-                  {currentUser?.firstName?.charAt(0)}
-                  {currentUser?.lastName?.charAt(0)}
-                </>
-              )}
-            </div>
             <div className="client-user-details">
               <p className="client-user-name">
                 {currentUser?.firstName} {currentUser?.lastName}
@@ -448,16 +421,6 @@ const ClientDashboard = () => {
           {activeTab === "profile" && (
             <div className="client-profile">
               <div className="client-profile-header">
-                <div className="client-profile-avatar">
-                  {currentUser?.profilePicture ? (
-                    <img src={currentUser.profilePicture || "/placeholder.svg"} alt="Perfil" />
-                  ) : (
-                    <>
-                      {currentUser?.firstName?.charAt(0)}
-                      {currentUser?.lastName?.charAt(0)}
-                    </>
-                  )}
-                </div>
                 <div className="client-profile-info">
                   <h2 className="client-profile-name">
                     {currentUser?.firstName} {currentUser?.lastName}
@@ -654,7 +617,7 @@ const ClientDashboard = () => {
         </SimpleModal>
       )}
 
-           {/* Edit Profile Modal */}
+      {/* Edit Profile Modal */}
       {showProfileModal && (
         <SimpleModal
           isOpen={showProfileModal}
@@ -664,39 +627,6 @@ const ClientDashboard = () => {
           confirmText="Guardar Cambios"
           cancelText="Cancelar"
         >
-          <div className="client-profile-picture-upload">
-            <div className="client-profile-picture-preview">
-              {previewImage ? (
-                <img src={previewImage || "/placeholder.svg"} alt="Vista previa" />
-              ) : currentUser?.profilePicture ? (
-                <img src={currentUser.profilePicture || "/placeholder.svg"} alt="Perfil actual" />
-              ) : (
-                <div className="client-profile-picture-placeholder">
-                  {currentUser?.firstName?.charAt(0)}
-                  {currentUser?.lastName?.charAt(0)}
-                </div>
-              )}
-            </div>
-            <div className="client-profile-picture-actions">
-              <label className="client-upload-btn">
-                Cambiar Foto
-                <input type="file" accept="image/*" onChange={handleProfilePictureChange} style={{ display: "none" }} />
-              </label>
-              {(previewImage || currentUser?.profilePicture) && (
-                <button
-                  type="button"
-                  className="client-remove-photo-btn"
-                  onClick={() => {
-                    setPreviewImage(null)
-                    setProfileData({ ...profileData, profilePicture: null })
-                  }}
-                >
-                  Quitar Foto
-                </button>
-              )}
-            </div>
-          </div>
-
           <div className="client-form-row">
             <div className="client-form-group">
               <label>Nombre</label>

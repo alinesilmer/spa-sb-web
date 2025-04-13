@@ -33,28 +33,6 @@
   align-items: center;
 }
 
-.professional-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: var(--accent-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin-right: 15px;
-  overflow: hidden;
-}
-
-.professional-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .professional-user-details {
   flex: 1;
 }
@@ -391,28 +369,6 @@
   font-weight: 600;
   color: var(--secondary-color);
   margin: 0 0 5px;
-}
-
-.professional-profile-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: var(--accent-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 2rem;
-  margin-right: 30px;
-  overflow: hidden;
-}
-
-.professional-profile-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .professional-appointment-client,
@@ -1043,65 +999,6 @@
   justify-content: flex-end;
 }
 
-/* Profile picture upload */
-.professional-profile-picture-upload {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.professional-profile-picture-preview {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 15px;
-  overflow: hidden;
-}
-
-.professional-profile-picture-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.professional-profile-picture-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--accent-color);
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-size: 2rem;
-}
-
-.professional-profile-picture-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.professional-upload-btn {
-  padding: 8px 15px;
-  border-radius: 20px;
-  background-color: var(--accent-color);
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.professional-upload-btn:hover {
-  background-color: #8a9b88;
-}
-
 /* Estilos para la sección Mi Agenda */
 .professional-agenda {
   margin-bottom: 30px;
@@ -1225,10 +1122,6 @@
   .professional-profile-header {
     flex-direction: column;
     text-align: center;
-  }
-
-  .professional-profile-avatar {
-    margin: 0 0 20px;
   }
 
   .professional-edit-profile-btn {

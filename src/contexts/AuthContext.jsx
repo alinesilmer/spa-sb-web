@@ -69,10 +69,6 @@ export const AuthProvider = ({ children }) => {
       const userWithoutPassword = { ...user }
       delete userWithoutPassword.password
       
-      
-      if (!userWithoutPassword.profilePicture) {
-        userWithoutPassword.profilePicture = "/default-profile.png"
-      }
 
       
       setCurrentUser(userWithoutPassword)
@@ -110,9 +106,6 @@ export const AuthProvider = ({ children }) => {
     
     const userWithoutPassword = { ...newUser }
     delete userWithoutPassword.password
-
-    
-    userWithoutPassword.profilePicture = "/default-profile.png"
 
     
     setCurrentUser(userWithoutPassword)

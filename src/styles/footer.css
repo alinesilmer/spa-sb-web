@@ -165,23 +165,6 @@
   gap: 1rem;
 }
 
-.footer-bottom-links {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.footer-bottom-link {
-  color: var(--secondary-color, #333);
-  text-decoration: none;
-  font-family: "Montserrat", sans-serif;
-  font-size: calc(var(--fs-xs) - 0.1rem);
-  transition: color 0.3s ease;
-}
-
-.footer-bottom-link:hover {
-  color: var(--highlight-color);
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .footer-main {

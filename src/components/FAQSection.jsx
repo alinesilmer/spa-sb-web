@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; 
-import "../styles/faqsection.css"; // Import the new, modern CSS
+import "../styles/faqsection.css"; 
 
 const FAQSection = () => {
   const [activeIndex, setActiveIndex] = useState(null);
