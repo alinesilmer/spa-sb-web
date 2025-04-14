@@ -1,16 +1,15 @@
 "use client"
-import React, { createContext, useState, useContext, useEffect } from "react"
-
+import React, { createContext, useState, useContext, useEffect } from "react";
+import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const AuthContext = createContext()
-
 
 export const useAuth = () => {
   return useContext(AuthContext)
 }
 
-
-const mockUsers = [
+/*const mockUsers = [
   {
     id: "1",
     email: "admin@example.com",
@@ -39,13 +38,12 @@ const mockUsers = [
     role: "client",
     
   },
-]
-
+]*/
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const [error, setError] = useState(null)
 
   
   useEffect(() => {
@@ -58,60 +56,80 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   
-  const login = (email, password) => {
-    setError("")
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+        email,
+        password
+      });
+      //console.log('Respuesta del servidor:', response.data);
 
-    
-    const user = mockUsers.find((user) => user.email === email && user.password === password)
+      const { user, token } = response.data;
+
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      setCurrentUser(user);
+      setError(null);
+
+      return { success: true, user };
+    } catch (err) {
+      const message = err.response?.data?.error || 'Error al iniciar sesión';
+      setError(message);
+      return { success: false, error: message };
+    }
+
+    /*const user = mockUsers.find((user) => user.email === email && user.password === password)
 
     if (user) {
     
       const userWithoutPassword = { ...user }
       delete userWithoutPassword.password
-      
-
-      
+            
       setCurrentUser(userWithoutPassword)
       localStorage.setItem("user", JSON.stringify(userWithoutPassword))
       return { success: true, user: userWithoutPassword }
     } else {
       setError("Email o contraseña incorrectos")
       return { success: false, error: "Email o contraseña incorrectos" }
-    }
+    }*/
   }
 
   
-  const register = (userData) => {
-    setError("")
+  const register = async (userData) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/auth/register`, userData);
 
-    
-    if (mockUsers.some((user) => user.email === userData.email)) {
-      setError("Este email ya está registrado")
-      return { success: false, error: "Este email ya está registrado" }
+      /*if (mockUsers.some((user) => user.email === userData.email)) {
+        setError("Este email ya está registrado")
+        return { success: false, error: "Este email ya está registrado" }
+      }
+      
+      const newUser = {
+        id: `${mockUsers.length + 1}`,
+        email: userData.email,
+        password: userData.password,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: "client",
+      }
+      
+      mockUsers.push(newUser)
+  
+      const userWithoutPassword = { ...newUser }
+      delete userWithoutPassword.password
+  
+      setCurrentUser(userWithoutPassword)
+      localStorage.setItem("user", JSON.stringify(userWithoutPassword))
+  
+      return { success: true, user: userWithoutPassword }*/
+
+      return { success: true, data: res.data.message, id: res.data.id };
+    } catch (err) {
+      const message = err.response?.data?.error || 'Error al registrarse';
+      setError(message);
+      return { success: false, error: message };
     }
-
-    
-    const newUser = {
-      id: `${mockUsers.length + 1}`,
-      email: userData.email,
-      password: userData.password,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      role: "client",
-    }
-
-    
-    mockUsers.push(newUser)
-
-    
-    const userWithoutPassword = { ...newUser }
-    delete userWithoutPassword.password
-
-    
-    setCurrentUser(userWithoutPassword)
-    localStorage.setItem("user", JSON.stringify(userWithoutPassword))
-
-    return { success: true, user: userWithoutPassword }
   }
 
   
