@@ -37,14 +37,15 @@ const Login = () => {
         setError(response.error)
         return
       }
+      
       const user = response.user
-      if (user.role === "admin") {
+      if (user.userType == "admin") {
         navigate("/admin/dashboard")
-      } else if (user.role === "professional") {
+      } else if (user.userType == "profesional") {
         navigate("/professional/dashboard")
-      } else if (user.role === "client") {
+      } else if (user.userType == "cliente") {
         navigate("/client/dashboard")
-      } else {
+      } else {        
         navigate(from)
       }
     } catch {

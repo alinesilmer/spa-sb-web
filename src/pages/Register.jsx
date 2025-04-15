@@ -9,13 +9,13 @@ const Register = () => {
   const navigate = useNavigate()
   const { register } = useAuth()
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    lastname: "",
     email: "",
     password: "",
     confirmPassword: "",
-    phone: "",
-    role: "client", 
+    telephone: "",
+    userType: "cliente", 
     professionalInfo: {
       specialties: [],
       experience: "",
@@ -33,7 +33,7 @@ const Register = () => {
     const { name, value, type, checked } = e.target
     
     if (name === "role") {
-      setShowProfessionalFields(value === "professional")
+      setShowProfessionalFields(value === "profesional")
     }
 
     if (type === "checkbox") {
@@ -55,12 +55,12 @@ const Register = () => {
   const validateForm = () => {
     const newErrors = {}
     
-    if (!formData.firstName.trim()) newErrors.firstName = "El nombre es requerido"
-    if (!formData.lastName.trim()) newErrors.lastName = "El apellido es requerido"
+    if (!formData.name.trim()) newErrors.name = "El nombre es requerido"
+    if (!formData.lastname.trim()) newErrors.lastname = "El apellido es requerido"
     if (!formData.email.trim()) newErrors.email = "El email es requerido"
     if (!formData.password) newErrors.password = "La contraseña es requerida"
     if (!formData.confirmPassword) newErrors.confirmPassword = "Confirmá tu contraseña"
-    if (!formData.phone.trim()) newErrors.phone = "El teléfono es requerido"
+    if (!formData.telephone.trim()) newErrors.telephone = "El teléfono es requerido"
     if (!formData.agreeToTerms) newErrors.agreeToTerms = "Debés aceptar los términos y condiciones"
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -76,7 +76,7 @@ const Register = () => {
       newErrors.confirmPassword = "Las contraseñas no coinciden"
     }
     
-    if (formData.role === "professional") {
+    if (formData.role === "profesional") {
       if (!formData.professionalInfo.specialties.length) {
         newErrors["professionalInfo.specialties"] = "Selecciona al menos una especialidad"
       }
@@ -168,29 +168,29 @@ const Register = () => {
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="firstName">Nombre</label>
+                <label htmlFor="name">Nombre</label>
                 <input
                   type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                  className={errors.firstName ? "error" : ""}
+                  className={errors.name ? "error" : ""}
                 />
-                {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+                {errors.name && <span className="error-message">{errors.name}</span>}
               </div>
 
               <div className="form-group">
-                <label htmlFor="lastName">Apellido</label>
+                <label htmlFor="lastname">Apellido</label>
                 <input
                   type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
+                  id="lastname"
+                  name="lastname"
+                  value={formData.lastname}
                   onChange={handleChange}
-                  className={errors.lastName ? "error" : ""}
+                  className={errors.lastname ? "error" : ""}
                 />
-                {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+                {errors.lastname && <span className="error-message">{errors.lastname}</span>}
               </div>
             </div>
 
@@ -238,17 +238,17 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Teléfono</label>
+              <label htmlFor="telephone">Teléfono</label>
               <input
                 type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
+                id="telephone"
+                name="telephone"
+                value={formData.telephone}
                 onChange={handleChange}
                 placeholder="+54 9 3624 123456"
-                className={errors.phone ? "error" : ""}
+                className={errors.telephone ? "error" : ""}
               />
-              {errors.phone && <span className="error-message">{errors.phone}</span>}
+              {errors.telephone && <span className="error-message">{errors.telephone}</span>}
             </div>
 
             <div className="form-group">

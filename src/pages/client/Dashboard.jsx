@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
-import { mockBookings } from "../../data/mockBookings"
+import { mockBookings, getBookings } from "../../data/mockBookings"
 import "../../styles/client.css"
 import SimpleModal from "../../components/SimpleModal"
 
@@ -36,14 +36,23 @@ const ClientDashboard = () => {
   }, [isClient, navigate])
 
   useEffect(() => {
-    if (currentUser) {
-      const userBookings = mockBookings.filter((booking) => booking.userId === currentUser.id)
-      setBookings(userBookings)
+    if (currentUser) {      
+      //const userBookings = mockBookings.filter((booking) => booking.userId === currentUser.id)
+
+      const getUserBookings = async () =>{
+        const authToken = localStorage.getItem('authToken')
+        const userBookings =  await getBookings(currentUser.id, authToken)
+        console.log(JSON.stringify(userBookings));
+          setBookings(userBookings.length > 0 ? userBookings : [])
+      }
+
+      getUserBookings();
+      
       setProfileData({
-        firstName: currentUser.firstName || "",
-        lastName: currentUser.lastName || "",
+        firstName: currentUser.name || "",
+        lastName: currentUser.lastname || "",
         email: currentUser.email || "",
-        phone: currentUser.phone || "",
+        phone: currentUser.telephone || "",
       })
     }
   }, [currentUser])
@@ -91,7 +100,7 @@ const ClientDashboard = () => {
         booking.id === bookingToCancel.id
           ? {
               ...booking,
-              status: "cancelled",
+              status: "cancelado",
               cancellationReason,
               refundEligible: canCancel,
             }
@@ -137,16 +146,16 @@ const ClientDashboard = () => {
   const upcomingBookings = bookings.filter(
     (booking) =>
       (booking.date > today || (booking.date === today && booking.time > new Date().toTimeString().slice(0, 5))) &&
-      booking.status !== "cancelled",
+      booking.status !== "cancelado",
   )
   const pastBookings = bookings.filter(
     (booking) =>
       booking.date < today ||
       (booking.date === today && booking.time < new Date().toTimeString().slice(0, 5)) ||
-      booking.status === "cancelled",
+      booking.status === "cancelado",
   )
 
-  const confirmedBookings = bookings.filter((booking) => booking.status === "confirmed")
+  const confirmedBookings = bookings.filter((booking) => booking.status === "confirmado")
 
   return (
     <div className="client-dashboard">
@@ -156,7 +165,7 @@ const ClientDashboard = () => {
           <div className="client-user-info">
             <div className="client-user-details">
               <p className="client-user-name">
-                {currentUser?.firstName} {currentUser?.lastName}
+                {currentUser?.name} {currentUser?.lastname}
               </p>
               <p className="client-user-role">Cliente</p>
             </div>
@@ -292,17 +301,17 @@ const ClientDashboard = () => {
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>
-                            {booking.status === "pending" && "Pendiente"}
-                            {booking.status === "confirmed" && "Confirmada"}
-                            {booking.status === "completed" && "Completada"}
-                            {booking.status === "cancelled" && "Cancelada"}
+                            {booking.status === "pendiente" && "Pendiente"}
+                            {booking.status === "confirmado" && "Confirmada"}
+                            {booking.status === "completado" && "Completada"}
+                            {booking.status === "cancelado" && "Cancelada"}
                           </span>
                         </div>
                         <div className="client-booking-actions">
                           <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
-                          {(booking.status === "pending" || booking.status === "confirmed") && (
+                          {(booking.status === "pendiente" || booking.status === "confirmado") && (
                             <button
                               className="client-booking-action-btn cancel"
                               onClick={() => openCancelModal(booking)}
@@ -336,17 +345,17 @@ const ClientDashboard = () => {
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>
-                            {booking.status === "pending" && "Pendiente"}
-                            {booking.status === "confirmed" && "Confirmada"}
-                            {booking.status === "completed" && "Completada"}
-                            {booking.status === "cancelled" && "Cancelada"}
+                            {booking.status === "pendiente" && "Pendiente"}
+                            {booking.status === "confirmado" && "Confirmada"}
+                            {booking.status === "completado" && "Completada"}
+                            {booking.status === "cancelado" && "Cancelada"}
                           </span>
                         </div>
                         <div className="client-booking-actions">
                           <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
-                          {booking.status === "completed" && (
+                          {booking.status === "completado" && (
                             <button
                               className="client-booking-action-btn review"
                               onClick={() => alert(`Dejar reseña para ${booking.serviceName}`)}
@@ -389,17 +398,17 @@ const ClientDashboard = () => {
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>
-                            {booking.status === "pending" && "Pendiente"}
-                            {booking.status === "confirmed" && "Confirmada"}
-                            {booking.status === "completed" && "Completada"}
-                            {booking.status === "cancelled" && "Cancelada"}
+                            {booking.status === "pendiente" && "Pendiente"}
+                            {booking.status === "confirmado" && "Confirmada"}
+                            {booking.status === "completado" && "Completada"}
+                            {booking.status === "cancelado" && "Cancelada"}
                           </span>
                         </div>
                         <div className="client-booking-actions">
                           <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
-                          {booking.status === "completed" && (
+                          {booking.status === "completado" && (
                             <button
                               className="client-booking-action-btn review"
                               onClick={() => alert(`Dejar reseña para ${booking.serviceName}`)}
@@ -439,11 +448,11 @@ const ClientDashboard = () => {
                   <div className="client-profile-form">
                     <div className="client-form-group">
                       <label>Nombre</label>
-                      <input type="text" value={currentUser?.firstName} readOnly />
+                      <input type="text" value={currentUser?.name} readOnly />
                     </div>
                     <div className="client-form-group">
                       <label>Apellido</label>
-                      <input type="text" value={currentUser?.lastName} readOnly />
+                      <input type="text" value={currentUser?.lastname} readOnly />
                     </div>
                     <div className="client-form-group">
                       <label>Email</label>
@@ -451,7 +460,7 @@ const ClientDashboard = () => {
                     </div>
                     <div className="client-form-group">
                       <label>Teléfono</label>
-                      <input type="tel" value={currentUser?.phone || "+54 9 3624 123456"} readOnly />
+                      <input type="tel" value={currentUser?.telephone || "+54 9 3624 123456"} readOnly />
                     </div>
                   </div>
                 </div>
@@ -594,7 +603,7 @@ const ClientDashboard = () => {
                   {selectedBookingDetails.status === "pending" && "Pendiente"}
                   {selectedBookingDetails.status === "confirmed" && "Confirmada"}
                   {selectedBookingDetails.status === "completed" && "Completada"}
-                  {selectedBookingDetails.status === "cancelled" && "Cancelada"}
+                  {selectedBookingDetails.status === "cancelado" && "Cancelada"}
                 </span>
               </p>
               {selectedBookingDetails.paymentStatus && (

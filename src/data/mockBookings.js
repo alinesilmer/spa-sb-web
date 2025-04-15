@@ -1,8 +1,55 @@
+//API BACKEND
+import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
+export async function getBookings(userid,authToken) {
+  try {  
+    const response = await axios.get(`${API_BASE_URL}/appointments/allAppt`, {
+      headers: {Authorization: `Bearer ${authToken}` }
+    });
+    
+    const data = response.data
+    const bookings = []
+    
+    if (data) {
+      for (let i = 0; i < data.length; i++) {
+        const item = data[i]
+        const booking = {
+          id: item.id,
+          userId: userid, // Regular user
+          serviceId: item.serviceId.id,
+          serviceName: item.serviceId.name,
+          professionalId: item.serviceId.professionalId,
+          professionalName: item.serviceId.professionalLastname,
+          date: item.date,
+          time: item.hour,
+          duration: item.serviceId.durationMin,
+          price: item.serviceId.price,
+          status: item.state,
+          paymentStatus: "paid",
+          paymentMethod: "mercadopago",
+          createdAt: "2025-05-01T14:30:00Z",      
+        }
+        bookings.push(booking)
+      } 
+      console.log("TURNOS ENCONTRADOS: "+bookings.length);
+    }
+    return bookings;
+  } catch (error) {
+    
+    console.log("ERROR AL CONSULTAR TURNOS. " + error);
+    
+    return [];
+  }
+}
+
+
+
 // Mock bookings data for testing
 export const mockBookings = [
   {
     id: "1",
-    userId: "3", // Regular user
+    userId: "FrvvcyfJNgP3QWut1VuB", // Regular user
     serviceId: "1",
     serviceName: "Masaje Anti-stress",
     professionalId: "2",
@@ -18,7 +65,7 @@ export const mockBookings = [
   },
   {
     id: "2",
-    userId: "3", // Regular user
+    userId: "FrvvcyfJNgP3QWut1VuB", // Regular user
     serviceId: "5",
     serviceName: "VelaSlim",
     professionalId: "2",
@@ -34,7 +81,7 @@ export const mockBookings = [
   },
   {
     id: "3",
-    userId: "3", // Regular user
+    userId: "FrvvcyfJNgP3QWut1VuB", // Regular user
     serviceId: "11",
     serviceName: "Criofrecuencia Facial",
     professionalId: "2",
@@ -50,7 +97,7 @@ export const mockBookings = [
   },
   {
     id: "4",
-    userId: "3", // Regular user
+    userId: "FrvvcyfJNgP3QWut1VuB", // Regular user
     serviceId: "9",
     serviceName: "Punta de Diamante",
     professionalId: "2",
@@ -67,7 +114,7 @@ export const mockBookings = [
   },
   {
     id: "5",
-    userId: "4", // Another client
+    userId: "FrvvcyfJNgP3QWut1VuB", // Another client
     serviceId: "2",
     serviceName: "Masaje Descontracturante",
     professionalId: "2",
@@ -83,7 +130,7 @@ export const mockBookings = [
   },
   {
     id: "6",
-    userId: "5", // Another client
+    userId: "FrvvcyfJNgP3QWut1VuB", // Another client
     serviceId: "16",
     serviceName: "Hidromasajes",
     professionalId: "2",

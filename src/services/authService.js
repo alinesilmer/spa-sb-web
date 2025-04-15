@@ -1,4 +1,24 @@
 // This file would handle authentication-related functions
+/*import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
+export const loginUser = async (email,password) => {
+  console.log("LOGINUSER");
+  
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+    email,
+    password});
+    data = response.message
+    console.log(JSON.stringify("data:"+data));
+    
+    return { success:true, data}
+  }catch (error) {
+    console.log(JSON.stringify(response));
+    return { success: false, error: response.data.message };
+  }
+}*/
+
 
 /*
 import { 
