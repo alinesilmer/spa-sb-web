@@ -481,23 +481,23 @@
   font-weight: 500;
 }
 
-.booking-status.pending,
+.booking-status.pendiente,
 .payment-status.pending {
   background-color: #fff3cd;
   color: #856404;
 }
 
-.booking-status.confirmed {
+.booking-status.confirmado {
   background-color: #d4edda;
   color: #155724;
 }
 
-.booking-status.completed {
+.booking-status.completado {
   background-color: #cce5ff;
   color: #004085;
 }
 
-.booking-status.cancelled,
+.booking-status.cancelado,
 .payment-status.refunded {
   background-color: #f8d7da;
   color: #721c24;
@@ -517,12 +517,12 @@
   color: #004085;
 }
 
-.user-role.professional {
+.user-role.profesional {
   background-color: #d4edda;
   color: #155724;
 }
 
-.user-role.client {
+.user-role.cliente {
   background-color: #e2e3e5;
   color: #383d41;
 }

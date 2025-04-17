@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
@@ -18,7 +17,6 @@ const Register = () => {
     userType: "cliente", 
     professionalInfo: {
       specialties: [],
-      experience: "",
       certification: "",
       bio: "",
     },
@@ -32,7 +30,7 @@ const Register = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     
-    if (name === "role") {
+    if (name === "userType") {
       setShowProfessionalFields(value === "profesional")
     }
 
@@ -76,36 +74,53 @@ const Register = () => {
       newErrors.confirmPassword = "Las contraseñas no coinciden"
     }
     
-    if (formData.role === "profesional") {
-      if (!formData.professionalInfo.specialties.length) {
+    if (formData.userType === "profesional") {
+      /*if (!formData.professionalInfo.specialties.length) {
         newErrors["professionalInfo.specialties"] = "Selecciona al menos una especialidad"
-      }
-      if (!formData.professionalInfo.experience) {
-        newErrors["professionalInfo.experience"] = "La experiencia es requerida"
-      }
+      }*/
       if (!formData.professionalInfo.certification) {
         newErrors["professionalInfo.certification"] = "La certificación es requerida"
       }
     }
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
+
+  const transformFormData = () => {
+    const { name, lastname, email, password, telephone, userType } = formData;
+    const { specialties, certification, bio } = formData.professionalInfo;
+  
+    const baseData = {
+      name,
+      lastname,
+      email,
+      password,
+      telephone,
+      userType,
+    };
+  
+    if (userType === "profesional") {
+      const profesionalData = {
+        ...baseData, specialties, certification, bio
+      };    
+      return profesionalData;
+    }
+  
+    return baseData;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     
     if (validateForm()) {
-      if (formData.role === "professional") {
+      if (formData.userType === "profesional") {        
         setShowApprovalPopup(true)
         return
       }
       
       try {
-        await register({
-          ...formData
-        })
-        
+        await register(transformFormData())
         setRegistrationSuccess(true)
         
         setTimeout(() => {
@@ -118,11 +133,8 @@ const Register = () => {
   }
 
   const handleProfessionalConfirm = async () => {
-    try {
-      await register({
-        ...formData
-      })
-      
+    try {    
+      await register(transformFormData())
       setShowApprovalPopup(false)
       setRegistrationSuccess(true)
       
@@ -252,36 +264,21 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="role">Tipo de Usuario</label>
+              <label htmlFor="userType">Tipo de Usuario</label>
               <select
-                id="role"
-                name="role"
-                value={formData.role}
+                id="userType"
+                name="userType"
+                value={formData.userType}
                 onChange={handleChange}
               >
-                <option value="client">Cliente</option>
-                <option value="professional">Profesional</option>
+                <option value="cliente">Cliente</option>
+                <option value="profesional">Profesional</option>
               </select>
             </div>
 
             {showProfessionalFields && (
               <div className="professional-fields">
                 <h3>Información Profesional</h3>
-
-                <div className="form-group">
-                  <label htmlFor="experience">Años de Experiencia</label>
-                  <input
-                    type="text"
-                    id="experience"
-                    name="professionalInfo.experience"
-                    value={formData.professionalInfo.experience}
-                    onChange={handleChange}
-                    className={errors["professionalInfo.experience"] ? "error" : ""}
-                  />
-                  {errors["professionalInfo.experience"] && (
-                    <span className="error-message">{errors["professionalInfo.experience"]}</span>
-                  )}
-                </div>
 
                 <div className="form-group">
                   <label htmlFor="certification">Certificaciones</label>

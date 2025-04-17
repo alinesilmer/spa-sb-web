@@ -107,17 +107,6 @@ const Login = () => {
             </button>
           </form>
 
-          <div className="auth-divider">
-            <span>O</span>
-          </div>
-
-          <div className="social-login">
-            <button className="social-btn">
-              <span className="social-icon">G</span>
-              Continuar con Google
-            </button>
-          </div>
-
           <div className="auth-footer">
             ¿No tenés una cuenta?{" "}
             <Link to="/register" className="auth-link">
@@ -128,9 +117,9 @@ const Login = () => {
           <div className="auth-demo-accounts">
             <p className="demo-title">Cuentas de demostración:</p>
             <ul className="demo-list">
-              <li>Admin: admin@example.com / admin123</li>
-              <li>Profesional: pro@example.com / pro123</li>
-              <li>Cliente: user@example.com / user123</li>
+              <li>Admin: admin@spa.com / admin123</li>
+              <li>Profesional: martinez@spa.com / prof123</li>
+              <li>Cliente: flor@spa.com / 123</li>
             </ul>
           </div>
         </div>
