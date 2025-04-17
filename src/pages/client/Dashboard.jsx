@@ -43,13 +43,12 @@ const ClientDashboard = () => {
       getUserBookings();
     }
 
-      setProfileData({
-        name: currentUser.name || "",
-        lastname: currentUser.lastname || "",
-        email: currentUser.email || "",
-        telephone: currentUser.telephone || "",
-      })
-
+    setProfileData({
+      name: currentUser.name || "",
+      lastname: currentUser.lastname || "",
+      email: currentUser.email || "",
+      telephone: currentUser.telephone || "",
+    })
   }, [currentUser])
 
   useEffect(() => {
@@ -713,7 +712,7 @@ const ClientDashboard = () => {
             <p className="error-message">{errorMessage}</p>
           </div>
         </SimpleModal>
-)}
+      )}
     </div>
   )
 }

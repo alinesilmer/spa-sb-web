@@ -75,19 +75,9 @@ const AdminDashboard = () => {
     if (currentUser) {      
       getUserBookings();
       loadUsers();
+      fetchPendingProfessionals();
     }
   }, [currentUser])
-
-  useEffect(() => {
-    const fetchPendingProfessionals = async () => {
-        const userType = "profesional";
-        const state = false;
-        const data = await getPendingProf(userType, state);
-        setPendingProfessionals(data);
-    };
-
-    fetchPendingProfessionals();
-  }, [])
 
   const getUserBookings = async () =>{
     const authToken = localStorage.getItem('authToken');
@@ -98,6 +88,13 @@ const AdminDashboard = () => {
   const loadUsers = async () => {
     const allUsers = await getUsers();
     setUsers(allUsers.length > 0 ? allUsers : []);
+  }
+
+  const fetchPendingProfessionals = async () => {
+    const userType = "profesional";
+    const state = false;
+    const data = await getPendingProf(userType, state);
+    setPendingProfessionals(data);
   }
 
   const recentBookings = [...bookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5)
@@ -137,25 +134,33 @@ const AdminDashboard = () => {
     setShowDeleteModal(true)
   }
 
-  const handleDelete = () => {
-    if (deleteType === "service") {
-      setServicesList(servicesList.filter((service) => service.id !== itemToOperate))
-    } else if (deleteType === "message") {
-      setMessages(messages.filter((message) => message.id !== itemToOperate))
-    } else if (deleteType === "user") {
-      setUsers(users.filter((user) => user.id !== itemToOperate))
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+
+      if (deleteType === "service") {
+        setServicesList(servicesList.filter((service) => service.id !== itemToOperate))
+      } else if (deleteType === "message") {
+        setMessages(messages.filter((message) => message.id !== itemToOperate))
+      } else if (deleteType === "user") {
+        await approveUser(token, id)
+      }
+      setShowDeleteModal(false)
+      setSuccessMessage("Elemento eliminado correctamente");
+      setShowSuccessModal(true);
+
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Error al cancelar el turno.";
+      setErrorMessage(errorMessage);
+    } finally {
+      setShowCancelModal(false)
     }
-    setShowDeleteModal(false)
-    
-    // Show success message
-    setSuccessMessage("Elemento eliminado correctamente");
-    setShowSuccessModal(true);
   }
 
   const handleCancelBooking = async () => {
     try {      
-      const authToken = localStorage.getItem('authToken');   
-      await cancelBooking(authToken, itemToOperate);
+      const token = localStorage.getItem('authToken');   
+      await cancelBooking(token, itemToOperate);
       setShowCancelModal(false)
       setSuccessMessage("Reserva cancelada correctamente");
       setShowSuccessModal(true);
@@ -170,14 +175,14 @@ const AdminDashboard = () => {
   }
 
   const handleConfirmBooking = async () => {
-    console.log("Confirmar reservar");
     try {      
-      const authToken = localStorage.getItem('authToken');   
-      await confirmBooking(authToken, itemToOperate);
+      const token = localStorage.getItem('authToken');   
+      await confirmBooking(token, itemToOperate);
       setShowConfirmModal(false)
       setSuccessMessage("Reserva confirmada correctamente");
       setShowSuccessModal(true);
       getUserBookings()
+
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Error al confirmar el turno.";
       setErrorMessage(errorMessage);
@@ -242,8 +247,8 @@ const AdminDashboard = () => {
     setShowUserDetailsModal(true)
   }
 
-  const handleEditUser = (user) => {
-    setCurrentUser2(user)
+  const handleEditUser = async (userId) => {
+    setCurrentUser2(userId)
     setShowUserFormModal(true)
   }
 
@@ -259,7 +264,7 @@ const AdminDashboard = () => {
       };
       delete updatedUser.id;
       
-      const token = localStorage.getItem("authToken");
+      const token = localStorage.getItem('authToken');
       await updateUser(token, updatedUser);
 
       setShowProfileModal(false)
@@ -274,58 +279,38 @@ const AdminDashboard = () => {
     }
   }
   
-  // Add functions to handle professional approvals
-  /*const handleApproveRequest = (professionalId) => {
-    const professionalToApprove = async () => {
-      try {
-        const authToken = localStorage.getItem(authToken);
-        await approveUser(authToken, professionalId)
-        setSuccessMessage("Solicitud de profesional aprobada")
-        setShowSuccessModal(true)
-        filteredUsers()
+  const handleApproveRequest = async (professionalId) => {
+    try {     
+      const token = localStorage.getItem('authToken');
+      await approveUser(token, professionalId)
 
-      } catch (error) {
-        console.error("Error al aprobar la solicitud: ", error);
-        const message = error.response?.data?.message || "Error al aprobar la solicitud.";
-        setErrorMessage(message);
-        setShowErrorModal(true);
-      }
-    }
-  };*/
+      setSuccessMessage("Solicitud de profesional aprobada")
+      setShowSuccessModal(true)
+      fetchPendingProfessionals()
 
-  const handleApproveRequest = (professionalId) => {
-    // Update the professional status
-    const professionalToApprove = pendingProfessionals.find(
-      (professional) => professional.id === professionalId
-    );
-    
-    if (professionalToApprove) {
-      // Add the professional to users list
-      const updatedProfessional = { ...professionalToApprove, status: "approved" };
-      setUsers([...users, updatedProfessional]);
-      
-      // Remove from pending list
-      setPendingProfessionals(pendingProfessionals.filter(
-        (professional) => professional.id !== professionalId
-      ));
-      
-      // Show success message
-      setSuccessMessage("Profesional aprobado correctamente");
-      setShowSuccessModal(true);
+    } catch (error) {
+      console.error("Error al aprobar la solicitud: ", error);
+      const message = error.response?.data?.message || "Error al aprobar la solicitud.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
     }
   };
 
-  const handleRejectRequest = (professionalId) => {
+  const handleRejectRequest = async (professionalId) => {
+    try {          
+      const token = localStorage.getItem('authToken');
+      await deleteUser(token, professionalId)
 
-    // TODO: DELETE: users/:id
-    // Remove the professional from pending list
-    setPendingProfessionals(pendingProfessionals.filter(
-      (professional) => professional.id !== professionalId
-    ));
-    
-    // Show success message
-    setSuccessMessage("Solicitud rechazada correctamente");
-    setShowSuccessModal(true);
+      setSuccessMessage("Solicitud de profesional rechazada")
+      setShowSuccessModal(true)
+      fetchPendingProfessionals()
+
+    } catch (error) {
+      console.error("Error al rechazar la solicitud: ", error);
+      const message = error.response?.data?.message || "Error al rechazar la solicitud.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    }
   };
 
   const filteredBookings = bookings.filter((booking) => {
@@ -680,6 +665,8 @@ const AdminDashboard = () => {
                                 className="admin-table-action-btn confirm"
                                 title="Confirmar reserva"
                                 onClick={() => confirmConfirm(booking.id, "booking")}
+                                disabled={booking.status === "confirmado"}
+                                style={booking.status === "confirmado" ? { opacity: 0.3 } : {}}
                               >
                                 ✅ 
                             </button>
@@ -687,6 +674,8 @@ const AdminDashboard = () => {
                               className="admin-table-action-btn cancel"
                               title="Cancelar reserva"
                               onClick={() => confirmCancel(booking.id, "booking")}
+                              disabled={booking.status === "cancelado"}
+                              style={booking.status === "cancelado" ? { opacity: 0.3 } : {}}
                             >
                               ❌
                             </button>
@@ -861,8 +850,8 @@ const AdminDashboard = () => {
                               className="admin-table-action-btn delete"
                               onClick={() => confirmDelete(user.id, "user")}
                               title="Eliminar usuario"
-                              disabled={user.id === "1"} // Prevent deleting the main admin
-                              style={user.id === "1" ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+                              disabled={user.userType === "admin"} // Prevent deleting the main admin
+                              style={user.userType === "admin" ? { opacity: 0.5, cursor: "not-allowed" } : {}}
                             >
                               🗑️
                             </button>
@@ -1241,6 +1230,15 @@ const AdminDashboard = () => {
           <p className="success-message">{successMessage}</p>
         </div>
       </SimpleModal>
+
+      {showErrorModal && (
+        <SimpleModal isOpen={showErrorModal} onClose={() => setShowErrorModal(false)} title="Error">
+          <div className="error-modal-content">
+            <div className="error-icon">⚠️</div>
+            <p className="error-message">{errorMessage}</p>
+          </div>
+        </SimpleModal>
+      )}
     </div>
   )
 }
