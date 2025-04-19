@@ -73,8 +73,9 @@ const Register = () => {
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Las contraseñas no coinciden"
     }
-    
+
     if (formData.userType === "profesional") {
+      // TODO: agregar logica para escribir especialidades, porque al momento no aparece nada, por eso comente la validacion
       /*if (!formData.professionalInfo.specialties.length) {
         newErrors["professionalInfo.specialties"] = "Selecciona al menos una especialidad"
       }*/

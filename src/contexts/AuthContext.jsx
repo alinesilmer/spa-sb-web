@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
+    setCurrentUser,
     isLoggedIn: !!currentUser,
     isAdmin: currentUser?.userType === "admin",
     isProfessional: currentUser?.userType === "profesional",

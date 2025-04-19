@@ -64,6 +64,7 @@ const ClientDashboard = () => {
     }
   }, [notificationsRef])
 
+    // TODO: cuando clickeas se quedan en la pantalla de localhost:5173/login pero en blanco, cuando refrescas si carga bien
   const handleLogout = () => {
     logout()
     navigate("/")
@@ -144,11 +145,10 @@ const ClientDashboard = () => {
         lastname: profileData.lastname,
         telephone: profileData.telephone,
       };
+      delete updatedUser.id;
  
       const token = localStorage.getItem("authToken");
       await updateUser(token, updatedUser);
-
-      setShowProfileModal(false)
       setSuccessMessage("Perfil actualizado correctamente")
       setShowSuccessModal(true)
 
@@ -157,6 +157,8 @@ const ClientDashboard = () => {
       const message = error.response?.data?.message || "Error al actualizar el usuario.";
       setErrorMessage(message);
       setShowErrorModal(true);
+    } finally {
+      setShowProfileModal(false);
     }
   }
 

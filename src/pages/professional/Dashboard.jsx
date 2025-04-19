@@ -2,21 +2,24 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
-import { mockBookings } from "../../data/mockBookings"
 import "../../styles/professional.css"
 import SimpleModal from "../../components/SimpleModal"
 import ScheduleSelector from "../../components/ScheduleSelector"
 import { getProfBookings, cancelBooking, confirmBooking } from '../../services/bookingService';
-import { updateUser, setSchedule } from '../../services/userService';
+import { updateUser, setSchedule, getClients } from '../../services/userService';
+import ClientHistoryModal from "../../components/ClientHistoryModal"
+import UserDetailsModal from "../../components/UserDetailsModal"
 
 const ProfessionalDashboard = () => {
   const navigate = useNavigate()
   const { currentUser, logout, isProfessional } = useAuth()
   const [activeTab, setActiveTab] = useState("schedule")
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
-  const [bookings, setBookings] = useState(mockBookings)
+  const [bookings, setBookings] = useState([])
+  const [clients, setClients] = useState([])
   const [showAppointmentDetailsModal, setShowAppointmentDetailsModal] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
+  const [selectedClient, setSelectedClient] = useState(null);
   const [itemToOperate, setItem] = useState(null)
   const [showServiceDetailsModal, setShowServiceDetailsModal] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
@@ -25,6 +28,8 @@ const ProfessionalDashboard = () => {
   const [selectedService, setSelectedService] = useState(null)
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfileModal, setShowProfileModal] = useState(false)
+  const [showClientProfileModal, setShowClientProfileModal] = useState(false);
+  const [showClientHistoryModal, setShowClientHistoryModal] = useState(false);
   const notificationsRef = useRef(null)
   const [notificationsRead, setNotificationsRead] = useState(false)
   const [pendingAction, setPendingAction] = useState(false);
@@ -33,18 +38,6 @@ const ProfessionalDashboard = () => {
   const [setSuccessAction] = useState("")
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
-
-  const clients = [
-    { id: "3", name: "Regular User", email: "user@example.com", telephone: "+54 9 3624 123456", lastVisit: "2025-04-25" },
-    { id: "4", name: "Client Two", email: "client2@example.com", telephone: "+54 9 3624 789012", lastVisit: "2025-05-10" },
-    {
-      id: "5",
-      name: "Client Three",
-      email: "client3@example.com",
-      telephone: "+54 9 3624 345678",
-      lastVisit: "2025-05-05",
-    },
-  ]
 
   const services = [
     {
@@ -84,7 +77,7 @@ const ProfessionalDashboard = () => {
   ]
 
   const [searchTerm, setSearchTerm] = useState("")
-  const [profileForm, setProfileForm] = useState({
+  const [profileData, setProfileData] = useState({
     name: "",
     lastname: "",
     email: "",
@@ -103,9 +96,10 @@ const ProfessionalDashboard = () => {
   useEffect(() => {
     if (currentUser) {      
       getUserBookings();
+      getMyClients();      
     } 
 
-    setProfileForm({
+    setProfileData({
       name: currentUser.name || "",
       lastname: currentUser.lastname || "",
       email: currentUser.email || "",
@@ -148,6 +142,7 @@ const ProfessionalDashboard = () => {
   // Get pending bookings for notifications
   const pendingBookings = professionalBookings.filter((booking) => booking.status === "pendiente")
 
+    // TODO: cuando clickeas se quedan en la pantalla de localhost:5173/login pero en blanco, cuando refrescas si carga bien
   const handleLogout = () => {
     logout()
     navigate("/")
@@ -167,45 +162,6 @@ const ProfessionalDashboard = () => {
     const currentDate = new Date(selectedDate)
     currentDate.setDate(currentDate.getDate() + 1)
     setSelectedDate(currentDate.toISOString().split("T")[0])
-  }
-
-  const handleViewAppointmentDetails = (appointment) => {
-    setSelectedAppointment(appointment)
-    setShowAppointmentDetailsModal(true)
-  }
-
-  const handleViewServiceDetails = (service) => {
-    setSelectedService(service)
-    setShowServiceDetailsModal(true)
-  }
-
-  // TODO: Se actualizan los datos en la BD, pero no se refresca el perfil con los datos actualizados. 
-  // Si se actualiza al cerrar e iniciar sesion de nuevo
-  const handleProfileUpdate = async () => {
-    try {
-      const updatedUser = {
-        ...currentUser,
-        name: profileData.name,
-        lastname: profileData.lastname,
-        telephone: profileData.telephone,
-        certification: profileData.certification,
-        bio: profileData.bio
-      };
- 
-      const token = localStorage.getItem("authToken");
-      await updateUser(token, updatedUser);
-
-      setShowProfileModal(false)
-      setSuccessMessage("Perfil actualizado correctamente")
-      setSuccessAction("profile-update")
-      setShowSuccessModal(true)
-
-    } catch (error) {
-      console.error("Error al actualizar perfil:", error);
-      const message = error.response?.data?.message || "Error al actualizar el usuario.";
-      setErrorMessage(message);
-      setShowErrorModal(true);
-    }
   }
 
   const confirmConfirm = (id) => {
@@ -252,6 +208,68 @@ const ProfessionalDashboard = () => {
     }
   }
 
+  const handleViewAppointmentDetails = (appointment) => {
+    setSelectedAppointment(appointment)
+    setShowAppointmentDetailsModal(true)
+  }
+
+  const handleViewServiceDetails = (service) => {
+    setSelectedService(service)
+    setShowServiceDetailsModal(true)
+  }
+
+  const getMyClients = async () =>{
+    const authToken = localStorage.getItem('authToken');
+    const clients =  await getClients(authToken);
+    setClients(clients.length > 0 ? clients : [])
+  }
+
+  const filteredClients = clients.filter(
+    (client) =>
+      searchTerm === "" ||
+      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.email.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
+
+  const handleViewProfileDetails = (client) => {
+    setSelectedClient(client);
+    setShowClientProfileModal(true);
+  };
+
+  const handleViewHistoryDetails = (client) => {
+    setSelectedClient(client);
+    setShowClientHistoryModal(true);
+  };
+
+  // TODO: Se actualizan los datos en la BD, pero no se refresca el perfil con los datos actualizados. 
+  // Si se actualiza al cerrar e iniciar sesion de nuevo
+  const handleProfileUpdate = async () => {
+    try {
+      const updatedUser = {
+        ...currentUser,
+        name: profileData.name,
+        lastname: profileData.lastname,
+        telephone: profileData.telephone,
+        certification: profileData.certification,
+        bio: profileData.bio
+      };
+ 
+      const token = localStorage.getItem("authToken");
+      await updateUser(token, updatedUser);
+
+      setShowProfileModal(false)
+      setSuccessMessage("Perfil actualizado correctamente")
+      setSuccessAction("profile-update")
+      setShowSuccessModal(true)
+
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+      const message = error.response?.data?.message || "Error al actualizar el usuario.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    }
+  }
+
   const handleScheduleSubmit = async (scheduleData) => {
     try {    
       const token = localStorage.getItem('authToken');   
@@ -272,13 +290,6 @@ const ProfessionalDashboard = () => {
       setShowConfirmDatesModal(false)
     }
   }
-
-  const filteredClients = clients.filter(
-    (client) =>
-      searchTerm === "" ||
-      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
 
   return (
     <div className="professional-dashboard">
@@ -666,10 +677,10 @@ const ProfessionalDashboard = () => {
                 <table className="professional-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
                       <th>Nombre</th>
                       <th>Email</th>
                       <th>Teléfono</th>
+                      <th>Servicio</th>
                       <th>Última Visita</th>
                       <th>Acciones</th>
                     </tr>
@@ -677,24 +688,24 @@ const ProfessionalDashboard = () => {
                   <tbody>
                     {filteredClients.map((client) => (
                       <tr key={client.id}>
-                        <td>#{client.id}</td>
-                        <td>{client.name}</td>
+                        <td>{client.lastname + ", " + client.name}</td>
                         <td>{client.email}</td>
                         <td>{client.telephone}</td>
-                        <td>{client.lastVisit}</td>
+                        <td>{client.lastService || "—"}</td>
+                        <td>{client.lastVisit || "—"}</td>
                         <td>
                           <div className="professional-table-actions">
                             <button
                               className="professional-table-action-btn view"
                               title="Ver perfil"
-                              onClick={() => alert(`Ver perfil de ${client.name}`)}
+                              onClick={() => handleViewProfileDetails(client)}
                             >
                               👁️
                             </button>
                             <button
                               className="professional-table-action-btn history"
                               title="Ver historial"
-                              onClick={() => alert(`Ver historial de ${client.name}`)}
+                              onClick={() => handleViewHistoryDetails(client)}
                             >
                               📋
                             </button>
@@ -971,6 +982,29 @@ const ProfessionalDashboard = () => {
         </SimpleModal>
       )}
 
+      {/* Modal de detalles de clientes */}
+      {showClientProfileModal && selectedClient && (
+        <UserDetailsModal
+          isOpen={showClientProfileModal}
+          onClose={() => {
+            setShowClientProfileModal(false);
+            setSelectedClient(null);
+          }}
+          user={selectedClient}
+        />
+      )}
+
+      {showClientHistoryModal && selectedClient && (
+        <ClientHistoryModal
+          isOpen={showClientHistoryModal}
+          onClose={() => {
+            setShowClientHistoryModal(false);
+            setSelectedClient(null);
+          }}
+          client={selectedClient}
+        />
+      )}
+
       {/* Modal de detalles de servicio */}
       {showServiceDetailsModal && selectedService && (
         <SimpleModal
@@ -1027,8 +1061,8 @@ const ProfessionalDashboard = () => {
               <label>Nombre</label>
               <input
                 type="text"
-                value={profileForm.name}
-                onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                value={ProfileData.name}
+                onChange={(e) => setProfileData({ ...ProfileData, name: e.target.value })}
                 required
               />
             </div>
@@ -1036,8 +1070,8 @@ const ProfessionalDashboard = () => {
               <label>Apellido</label>
               <input
                 type="text"
-                value={profileForm.lastname}
-                onChange={(e) => setProfileForm({ ...profileForm, lastname: e.target.value })}
+                value={ProfileData.lastname}
+                onChange={(e) => setProfileData({ ...ProfileData, lastname: e.target.value })}
                 required
               />
             </div>
@@ -1045,8 +1079,8 @@ const ProfessionalDashboard = () => {
               <label>Email</label>
               <input
                 type="email"
-                value={profileForm.email}
-                onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                value={ProfileData.email}
+                onChange={(e) => setProfileData({ ...ProfileData, email: e.target.value })}
                 required
               />
             </div>
@@ -1054,8 +1088,8 @@ const ProfessionalDashboard = () => {
               <label>Teléfono</label>
               <input
                 type="tel"
-                value={profileForm.telephone}
-                onChange={(e) => setProfileForm({ ...profileForm, telephone: e.target.value })}
+                value={ProfileData.telephone}
+                onChange={(e) => setProfileData({ ...ProfileData, telephone: e.target.value })}
               />
             </div>
           </form>

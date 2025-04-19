@@ -14,11 +14,12 @@ import NotificationsDropdown from "../../components/NotificationsDropdown"
 import SimpleModal from "../../components/SimpleModal"
 import ServiceDetailsModal from "../../components/ServiceDetailsModal"
 import { getBookings, cancelBooking, confirmBooking } from '../../services/bookingService';
-import { getUsers, getSpecificUser, updateUser, approveUser, deleteUser, realDeleteUser } from '../../services/userService';
+import { getUsers, getSpecificUser, updateUser, updateUserById, approveUser, deleteUser, realDeleteUser } from '../../services/userService';
+import { registerUser } from "../../services/authService"
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
-  const { currentUser, logout, isAdmin } = useAuth()
+  const { currentUser, logout, isAdmin, setCurrentUser } = useAuth()
   const [activeTab, setActiveTab] = useState("overview")
   const [users, setUsers] = useState([])
   const [bookings, setBookings] = useState([])
@@ -40,6 +41,8 @@ const AdminDashboard = () => {
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false)
   const [currentUser2, setCurrentUser2] = useState(null)
   const [showProfileModal, setShowProfileModal] = useState(false)
+  const [selectedUserToEdit, setSelectedUserToEdit] = useState(null);
+  const [editingOwnProfile, setEditingOwnProfile] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false)
   const [userRoleFilter, setUserRoleFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
@@ -145,16 +148,15 @@ const AdminDashboard = () => {
       } else if (deleteType === "user") {
         await deleteUser(token, itemToOperate)
       }
-      setShowDeleteModal(false)
       setSuccessMessage("Elemento eliminado correctamente");
       setShowSuccessModal(true);
       loadUsers()
       
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Error al cancelar el turno.";
+      const errorMessage = err.response?.data?.message || "Error al eliminar el turno.";
       setErrorMessage(errorMessage);
     } finally {
-      setShowCancelModal(false)
+      setShowDeleteModal(false)
     }
   }
 
@@ -162,11 +164,9 @@ const AdminDashboard = () => {
     try {      
       const token = localStorage.getItem('authToken');   
       await cancelBooking(token, itemToOperate);
-      setShowCancelModal(false)
       setSuccessMessage("Reserva cancelada correctamente");
       setShowSuccessModal(true);
       getUserBookings()
-
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Error al cancelar el turno.";
       setErrorMessage(errorMessage);
@@ -179,11 +179,9 @@ const AdminDashboard = () => {
     try {      
       const token = localStorage.getItem('authToken');   
       await confirmBooking(token, itemToOperate);
-      setShowConfirmModal(false)
       setSuccessMessage("Reserva confirmada correctamente");
       setShowSuccessModal(true);
       getUserBookings()
-
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Error al confirmar el turno.";
       setErrorMessage(errorMessage);
@@ -192,7 +190,6 @@ const AdminDashboard = () => {
     }
   }
 
-  // Service handlers - now separated for view and edit
   const handleViewServiceDetails = (service) => {
     setCurrentService(service)
     setShowServiceDetailsModal(true)
@@ -235,12 +232,16 @@ const AdminDashboard = () => {
   }
 
   const handleAddUser = async (userData) => {
-    console.log(JSON.stringify(userData));
-    setUsers([...users, userData])
-    
-    // Show success message
-    setSuccessMessage("Usuario agregado correctamente");
-    setShowSuccessModal(true);
+    try {
+      await registerUser(userData);
+      setUsers([...users, userData])
+      setSuccessMessage("Usuario agregado correctamente");
+      setShowSuccessModal(true);
+    } catch (error) {
+      const message = error.response?.data?.message || "Error al actualizar el usuario.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    }
   }
 
   const handleViewUserDetails = (user) => {
@@ -248,35 +249,40 @@ const AdminDashboard = () => {
     setShowUserDetailsModal(true)
   }
 
-  const handleEditUser = async (userId) => {
-    setCurrentUser2(userId)
-    setShowUserFormModal(true)
-  }
+  const handleOpenOwnProfile = () => {
+    setSelectedUserToEdit(currentUser);
+    setEditingOwnProfile(true);
+    setShowProfileModal(true);
+  };
+
+  const handleEditUser = (user) => {   
+    setSelectedUserToEdit(user);
+    setEditingOwnProfile(false);
+    setShowProfileModal(true);
+  };
 
   // TODO: Se actualizan los datos en la BD, pero no se refresca el perfil con los datos actualizados. 
   // Si se actualiza al cerrar e iniciar sesion de nuevo
-  const handleSaveProfile = async (profileData) => {
-    try {   
-      const updatedUser = {
-        ...currentUser,
-        name: profileData.name,
-        lastname: profileData.lastname,
-        telephone: profileData.telephone,
-      };
-      delete updatedUser.id;
-      
+  const handleSaveProfile = async (updatedUser) => {
+    try {       
       const token = localStorage.getItem('authToken');
-      await updateUser(token, updatedUser);
+      
+      if (editingOwnProfile) {     
+        await updateUser(token, updatedUser);
+        setCurrentUser((prev) => ({ ...prev, ...updatedUser }));
+      } else {
+        await updateUserById(token, updatedUser.id, updatedUser);
+        setCurrentUser2((prev) => ({ ...prev, ...updatedUser }));
+      }
 
-      setShowProfileModal(false)
       setSuccessMessage("Perfil actualizado correctamente")
       setShowSuccessModal(true)
-
-    } catch (error) {
-      console.error("Error al actualizar perfil:", error);
+    } catch (error) {      
       const message = error.response?.data?.message || "Error al actualizar el usuario.";
       setErrorMessage(message);
       setShowErrorModal(true);
+    } finally {
+      setShowProfileModal(false);
     }
   }
   
@@ -290,7 +296,6 @@ const AdminDashboard = () => {
       fetchPendingProfessionals()
 
     } catch (error) {
-      console.error("Error al aprobar la solicitud: ", error);
       const message = error.response?.data?.message || "Error al aprobar la solicitud.";
       setErrorMessage(message);
       setShowErrorModal(true);
@@ -307,7 +312,6 @@ const AdminDashboard = () => {
       fetchPendingProfessionals()
 
     } catch (error) {
-      console.error("Error al rechazar la solicitud: ", error);
       const message = error.response?.data?.message || "Error al rechazar la solicitud.";
       setErrorMessage(message);
       setShowErrorModal(true);
@@ -438,7 +442,7 @@ const AdminDashboard = () => {
               <span className="admin-action-icon">🔔</span>
               {unreadMessages.length > 0 && <span className="notification-badge">{unreadMessages.length}</span>}
             </button>
-            <button className="admin-action-btn" title="Configuración" onClick={() => setShowProfileModal(true)}>
+            <button className="admin-action-btn" title="Configuración" onClick={handleOpenOwnProfile}>
               <span className="admin-action-icon">⚙️</span>
             </button>
           </div>
@@ -1055,7 +1059,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Confirmation Modals */}
+      {/* Appointments Modals */}
       {showDeleteModal && (
         <SimpleModal
           isOpen={showDeleteModal}
@@ -1224,7 +1228,7 @@ const AdminDashboard = () => {
       <ProfileConfigModal
         isOpen={showProfileModal}
         onClose={() => setShowProfileModal(false)}
-        user={currentUser}
+        user={selectedUserToEdit}
         onSaveProfile={handleSaveProfile}
       />
       

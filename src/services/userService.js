@@ -8,6 +8,16 @@ export async function getUsers() {
   return response.data;
 };
 
+export async function getClients(authToken) {
+  const response = await axios.get(
+    `${API_BASE_URL}/users/clients`,
+    { headers: { Authorization: `Bearer ${authToken}` }, }
+  );
+  //console.log("getClients RESPONSE: " + JSON. stringify(response));
+
+  return response.data;
+};
+
 export async function getSpecificUser(userType, state) {
   const response = await axios.get(`${API_BASE_URL}/users?userType=${userType}&state=${state}`,);
   //console.log("getPendingProf RESPONSE: " + JSON. stringify(response));
@@ -25,13 +35,24 @@ export const updateUser = async (authToken, userData) => {
   return response.data;
 };
 
+export const updateUserById = async (authToken, userId, userData) => {
+  const response = await axios.put(
+    `${API_BASE_URL}/users/${userId}`,
+    userData,
+    { headers: { Authorization: `Bearer ${authToken}` }, }
+  );
+  console.log("updateUserBYID: " + JSON.stringify(userData) + ". RESPONSE: " + JSON. stringify(response));
+  
+  return response.data;
+};
+
 export const approveUser = async (authToken, userId) => { 
   const response = await axios.put(
     `${API_BASE_URL}/users/approveUser/${userId}`,
     {},
     { headers: { Authorization: `Bearer ${authToken}` }, }
   );
-  console.log("aproveUser: " + userId + ". RESPONSE: " + JSON. stringify(response));
+  //console.log("aproveUser: " + userId + ". RESPONSE: " + JSON. stringify(response));
   
   return response.data;
 };
@@ -42,7 +63,7 @@ export const deleteUser = async (authToken, userId) => {
     {},
     { headers: { Authorization: `Bearer ${authToken}` }, }
   );
-  console.log("deleteUser: " + userId + ". RESPONSE: " + JSON. stringify(response.data));
+  //console.log("deleteUser: " + userId + ". RESPONSE: " + JSON. stringify(response.data));
   
   return response.data;
 };
@@ -52,7 +73,7 @@ export const realDeleteUser = async (authToken, userId) => {
     `${API_BASE_URL}/users/${userId}`,
     { headers: { Authorization: `Bearer ${authToken}` }, }
   );
-  console.log("realDeleteUser: " + userId + ". RESPONSE: " + JSON. stringify(response.data));
+  //console.log("realDeleteUser: " + userId + ". RESPONSE: " + JSON. stringify(response.data));
   
   return response.data;
 };

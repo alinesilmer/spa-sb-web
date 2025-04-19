@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../styles/professional.css"
 
 const daysOfWeek = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"]
-const timeSlots = Array.from({ length: 12 }, (_, i) => `${(9 + i).toString().padStart(2, "0")}:00 hs`)
+const timeSlots = Array.from({ length: 12 }, (_, i) => `${(9 + i).toString().padStart(2, "0")}:00`)
 
 const ScheduleSelector = ({ onSubmit }) => {
   const [schedule, setSchedule] = useState(() =>
