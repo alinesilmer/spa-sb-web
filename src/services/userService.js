@@ -8,7 +8,7 @@ export async function getUsers() {
   return response.data;
 };
 
-export async function getPendingProf(userType, state) {
+export async function getSpecificUser(userType, state) {
   const response = await axios.get(`${API_BASE_URL}/users?userType=${userType}&state=${state}`,);
   //console.log("getPendingProf RESPONSE: " + JSON. stringify(response));
   return response.data;
@@ -36,14 +36,41 @@ export const approveUser = async (authToken, userId) => {
   return response.data;
 };
 
-export const deleteUser = async (authToken, userId) => {
-  console.log(userId);
+export const deleteUser = async (authToken, userId) => { 
+  const response = await axios.put(
+    `${API_BASE_URL}/users/delete/${userId}`,
+    {},
+    { headers: { Authorization: `Bearer ${authToken}` }, }
+  );
+  console.log("deleteUser: " + userId + ". RESPONSE: " + JSON. stringify(response.data));
   
+  return response.data;
+};
+
+export const realDeleteUser = async (authToken, userId) => { 
   const response = await axios.delete(
     `${API_BASE_URL}/users/${userId}`,
     { headers: { Authorization: `Bearer ${authToken}` }, }
   );
-  console.log("deleteUser: " + userId + ". RESPONSE: " + JSON. stringify(response));
+  console.log("realDeleteUser: " + userId + ". RESPONSE: " + JSON. stringify(response.data));
   
+  return response.data;
+};
+
+export async function getAvailable (authToken, serviceId, date) {
+  const response = await axios.get(
+    `${API_BASE_URL}/${serviceId}/available`, 
+    date,
+    { headers: { Authorization: `Bearer ${authToken}` }}
+  );
+  return response.data;
+};
+
+export const setSchedule = async (authToken, userId, scheduleData) => {
+  const response = await axios.post(
+    `${API_BASE_URL}/users/${userId}/setDates`, 
+    scheduleData, 
+    { headers: { Authorization: `Bearer ${authToken}` } }
+  );
   return response.data;
 };

@@ -14,7 +14,7 @@ import NotificationsDropdown from "../../components/NotificationsDropdown"
 import SimpleModal from "../../components/SimpleModal"
 import ServiceDetailsModal from "../../components/ServiceDetailsModal"
 import { getBookings, cancelBooking, confirmBooking } from '../../services/bookingService';
-import { getUsers, getPendingProf, updateUser, approveUser, deleteUser } from '../../services/userService';
+import { getUsers, getSpecificUser, updateUser, approveUser, deleteUser, realDeleteUser } from '../../services/userService';
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
   const fetchPendingProfessionals = async () => {
     const userType = "profesional";
     const state = false;
-    const data = await getPendingProf(userType, state);
+    const data = await getSpecificUser(userType, state);
     setPendingProfessionals(data);
   }
 
@@ -136,19 +136,20 @@ const AdminDashboard = () => {
 
   const handleDelete = async () => {
     try {
-      const token = localStorage.getItem('authToken');
-
+      const token = localStorage.getItem('authToken');    
+      
       if (deleteType === "service") {
         setServicesList(servicesList.filter((service) => service.id !== itemToOperate))
       } else if (deleteType === "message") {
         setMessages(messages.filter((message) => message.id !== itemToOperate))
       } else if (deleteType === "user") {
-        await approveUser(token, id)
+        await deleteUser(token, itemToOperate)
       }
       setShowDeleteModal(false)
       setSuccessMessage("Elemento eliminado correctamente");
       setShowSuccessModal(true);
-
+      loadUsers()
+      
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Error al cancelar el turno.";
       setErrorMessage(errorMessage);
@@ -299,7 +300,7 @@ const AdminDashboard = () => {
   const handleRejectRequest = async (professionalId) => {
     try {          
       const token = localStorage.getItem('authToken');
-      await deleteUser(token, professionalId)
+      await realDeleteUser(token, professionalId)
 
       setSuccessMessage("Solicitud de profesional rechazada")
       setShowSuccessModal(true)
@@ -809,6 +810,7 @@ const AdminDashboard = () => {
                   <thead>
                     <tr>
                       <th>ID</th>
+                      <th>Estado</th>
                       <th>Nombre y Apellido</th>
                       <th>Email</th>
                       <th>Rol</th>
@@ -819,6 +821,12 @@ const AdminDashboard = () => {
                     {filteredUsers.map((user) => (
                       <tr key={user.id}>
                         <td>{user.id}</td>
+                        <td>
+                          <span className={`user-state ${user.state}`}>
+                            {user.state === true && "Activo"}
+                            {user.state === false && "Inactivo"}
+                          </span>
+                        </td>
                         <td>
                           {user.name} {user.lastname}
                         </td>
@@ -1059,6 +1067,7 @@ const AdminDashboard = () => {
           <p>¿Estás seguro de que deseás eliminar este elemento? Esta acción no se puede deshacer.</p>
         </SimpleModal>
       )}
+
       {showCancelModal && (
         <SimpleModal
           isOpen={showCancelModal}

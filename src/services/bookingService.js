@@ -23,6 +23,8 @@ export async function getBookings(authToken, userid) {
         professionalName: item.serviceId.professionalLastname,
         clientId: item.serviceId.clientId,
         clientName: item.serviceId.clientLastname,
+        clientEmail: item.serviceId.clientEmail,
+        clientTelephone: item.serviceId.clientTelephone,
         date: item.date,
         time: item.hour,
         duration: item.serviceId.durationMin,
@@ -40,18 +42,45 @@ export async function getBookings(authToken, userid) {
   return bookings;
 };
 
-/*export async function getAvailable (authToken, serviceId, date) {
+export async function getProfBookings(authToken, userid) {
   const response = await axios.get(
-    `${API_BASE_URL}/${serviceId}/available`, 
-    date,
-    { headers: { Authorization: `Bearer ${authToken}` }}
+    `${API_BASE_URL}/appointments/allAppt`, 
+    { headers: { Authorization: `Bearer ${authToken}` } }
   );
-
+  
   const data = response.data;
-  const availableDates = [];
-
-  return availableDates;
-};*/
+  const bookings = [];
+  
+  if (data) {
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+      const booking = {
+        id: item.id,
+        userId: item.serviceId.clientId,
+        serviceId: item.serviceId.id,
+        serviceName: item.serviceId.name,
+        professionalId: userid,
+        professionalName: item.serviceId.professionalLastname,
+        clientId: item.serviceId.clientId,
+        clientName: item.serviceId.clientLastname,
+        clientEmail: item.serviceId.clientEmail,
+        clientTelephone: item.serviceId.clientTelephone,
+        date: item.date,
+        time: item.hour,
+        duration: item.serviceId.durationMin,
+        price: item.serviceId.price,
+        status: item.state,
+        paymentStatus: item.serviceId.paymentStatus,
+        paymentMethod: "mercadopago",
+        createdAt: "2025-05-01T14:30:00Z",      
+      };
+      bookings.push(booking);
+    } 
+  }
+  //console.log("getBookings " + userid + ". RESPONSE: " + JSON.stringify(bookings));
+  
+  return bookings;
+};
 
 export const createBooking = async (authToken, apptData) => {
   const response = await axios.post(

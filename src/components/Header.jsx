@@ -7,7 +7,8 @@ import "../styles/header.css"
 import MenuDropdown from "./MenuDropdown"
 import SearchResults from "./SearchResults"
 import { globalSearch } from "../utils/searchUtils"
-import { services, teamMembers } from "../data/mockData"
+import { services } from "../data/mockData"
+import { getSpecificUser } from '../services/userService'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -16,6 +17,7 @@ const Header = () => {
   const [searchResults, setSearchResults] = useState([])
   const [showResults, setShowResults] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [profUsers, setProfUsers] = useState([])
   const searchRef = useRef(null)
   const location = useLocation()
 
@@ -39,9 +41,17 @@ const Header = () => {
     }
   }, [])
 
-  // Decide header class:
-  // - On public pages, if the user hasn't scrolled down past 50px, add the "hidden" class.
-  // - Otherwise, use "opaque"
+  useEffect(() => {
+    const loadProfessionals = async () => {
+      const userType = "profesional"
+      const state = true
+      const data = await getSpecificUser(userType, state)
+      setProfUsers(data)
+    }
+    loadProfessionals()
+  }, [])
+
+
   let headerClass = "header"
   if (isPublicRoute) {
     headerClass += isScrolled ? " opaque" : " hidden"
@@ -67,7 +77,7 @@ const Header = () => {
     setSearchQuery(query)
     if (query.trim().length > 2) {
       // Search across all content
-      const results = globalSearch(query, { services, teamMembers })
+      const results = globalSearch(query, { services, teamMembers: profUsers } )
       setSearchResults(results)
       setShowResults(true)
     } else {
