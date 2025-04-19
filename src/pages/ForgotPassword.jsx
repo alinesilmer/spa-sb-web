@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import "../styles/auth.css"
+import { forgotPass } from '../services/authService';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("")
@@ -9,17 +10,21 @@ const ForgotPassword = () => {
   const [error, setError] = useState("")
   const [isSending, setIsSending] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setError("")
-    setMessage("")
+    setError(null)
+    setMessage(null)
     setIsSending(true)
 
-  
-    setTimeout(() => {
-      setIsSending(false)
-      setMessage("Si este email está registrado, se han enviado instrucciones para recuperar tu contraseña.")
-    }, 2000)
+    try {
+      await forgotPass(email);
+      setMessage("Si este email está registrado, se han enviado instrucciones para recuperar tu contraseña.");
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || "Ocurrió un error al intentar recuperar la contraseña.";
+      setError(errorMsg);
+    } finally {
+      setIsSending(false);
+    }
   }
 
   return (

@@ -2,7 +2,7 @@
 export const mockBookings = [
   {
     id: "1",
-    userId: "3", // Regular user
+    userId: "FrvvcyfJNgP3QWut1VuB", // Regular user
     serviceId: "1",
     serviceName: "Masaje Anti-stress",
     professionalId: "2",
@@ -18,7 +18,7 @@ export const mockBookings = [
   },
   {
     id: "2",
-    userId: "3", // Regular user
+    userId: "FrvvcyfJNgP3QWut1VuB", // Regular user
     serviceId: "5",
     serviceName: "VelaSlim",
     professionalId: "2",
@@ -34,7 +34,7 @@ export const mockBookings = [
   },
   {
     id: "3",
-    userId: "3", // Regular user
+    userId: "FrvvcyfJNgP3QWut1VuB", // Regular user
     serviceId: "11",
     serviceName: "Criofrecuencia Facial",
     professionalId: "2",
@@ -50,7 +50,7 @@ export const mockBookings = [
   },
   {
     id: "4",
-    userId: "3", // Regular user
+    userId: "FrvvcyfJNgP3QWut1VuB", // Regular user
     serviceId: "9",
     serviceName: "Punta de Diamante",
     professionalId: "2",
@@ -67,7 +67,7 @@ export const mockBookings = [
   },
   {
     id: "5",
-    userId: "4", // Another client
+    userId: "FrvvcyfJNgP3QWut1VuB", // Another client
     serviceId: "2",
     serviceName: "Masaje Descontracturante",
     professionalId: "2",
@@ -83,7 +83,7 @@ export const mockBookings = [
   },
   {
     id: "6",
-    userId: "5", // Another client
+    userId: "FrvvcyfJNgP3QWut1VuB", // Another client
     serviceId: "16",
     serviceName: "Hidromasajes",
     professionalId: "2",

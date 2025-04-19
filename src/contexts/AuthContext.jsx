@@ -1,51 +1,15 @@
 "use client"
-import React, { createContext, useState, useContext, useEffect } from "react"
-
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { loginUser, registerUser } from '../services/authService';
 
 const AuthContext = createContext()
 
-
-export const useAuth = () => {
-  return useContext(AuthContext)
-}
-
-
-const mockUsers = [
-  {
-    id: "1",
-    email: "admin@example.com",
-    password: "admin123",
-    firstName: "Admin",
-    lastName: "User",
-    role: "admin",
-    
-  },
-  {
-    id: "2",
-    email: "pro@example.com",
-    password: "pro123",
-    firstName: "Professional",
-    lastName: "User",
-    role: "professional",
-    specialties: ["Masajes", "Tratamientos Corporales"],
-    
-  },
-  {
-    id: "3",
-    email: "user@example.com",
-    password: "user123",
-    firstName: "Regular",
-    lastName: "User",
-    role: "client",
-    
-  },
-]
-
+export const useAuth = () => useContext(AuthContext)
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const [error, setError] = useState(null)
 
   
   useEffect(() => {
@@ -58,76 +22,54 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   
-  const login = (email, password) => {
-    setError("")
+  const login = async (email, password) => {
+    try {
+      const { token, user } = await loginUser (email, password);
 
-    
-    const user = mockUsers.find((user) => user.email === email && user.password === password)
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-    if (user) {
-    
-      const userWithoutPassword = { ...user }
-      delete userWithoutPassword.password
-      
+      setCurrentUser(user);
+      setError(null);
 
-      
-      setCurrentUser(userWithoutPassword)
-      localStorage.setItem("user", JSON.stringify(userWithoutPassword))
-      return { success: true, user: userWithoutPassword }
-    } else {
-      setError("Email o contraseña incorrectos")
-      return { success: false, error: "Email o contraseña incorrectos" }
+      return { success: true, user };
+    } catch (err) {
+      const message = err.response?.data?.message || 'Error al iniciar sesión';
+      setError(message);
+      return { success: false, error: message };
     }
   }
 
-  
-  const register = (userData) => {
-    setError("")
 
-    
-    if (mockUsers.some((user) => user.email === userData.email)) {
-      setError("Este email ya está registrado")
-      return { success: false, error: "Este email ya está registrado" }
+  // TODO: A pesar de presentar un error en el registro (ej mail ya registrado), siempre te dirige al login despues.
+  const register = async (userData) => {
+    try {      
+      const response = await registerUser (userData);
+      return { success: true, data: response.message, id: response.id };
+    } catch (err) {
+      const message = err.response?.data?.message || 'Error al registrarse';
+      setError(message);
+      return { success: false, error: message };
     }
-
-    
-    const newUser = {
-      id: `${mockUsers.length + 1}`,
-      email: userData.email,
-      password: userData.password,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      role: "client",
-    }
-
-    
-    mockUsers.push(newUser)
-
-    
-    const userWithoutPassword = { ...newUser }
-    delete userWithoutPassword.password
-
-    
-    setCurrentUser(userWithoutPassword)
-    localStorage.setItem("user", JSON.stringify(userWithoutPassword))
-
-    return { success: true, user: userWithoutPassword }
   }
 
   
   const logout = () => {
-    setCurrentUser(null)
-    localStorage.removeItem("user")
+    setCurrentUser(null);
+
+    localStorage.removeItem("user");
+    localStorage.removeItem("authToken");
     
     return { success: true }
   }
 
   const value = {
     currentUser,
+    setCurrentUser,
     isLoggedIn: !!currentUser,
-    isAdmin: currentUser?.role === "admin",
-    isProfessional: currentUser?.role === "professional",
-    isClient: currentUser?.role === "client",
+    isAdmin: currentUser?.userType === "admin",
+    isProfessional: currentUser?.userType === "profesional",
+    isClient: currentUser?.userType === "cliente",
     login,
     register,
     logout,

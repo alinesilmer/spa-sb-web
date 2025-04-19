@@ -3,12 +3,12 @@ import SimpleModal from "./SimpleModal";
 
 const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
   const [userData, setUserData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    lastname: "",
     email: "",
     password: "",
-    phone: "",
-    role: "client",
+    telephone: "",
+    userType: "cliente",
   });
 
   const handleChange = (e) => {
@@ -18,7 +18,7 @@ const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
 
   const handleSubmit = () => {
     
-    if (!userData.firstName || !userData.lastName || !userData.email || !userData.password) {
+    if (!userData.name || !userData.lastname || !userData.email || !userData.password) {
       alert("Por favor completá todos los campos obligatorios");
       return;
     }
@@ -37,12 +37,12 @@ const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
     
     
     setUserData({
-      firstName: "",
-      lastName: "",
+      name: "",
+      lastname: "",
       email: "",
       password: "",
-      phone: "",
-      role: "client",
+      telephone: "",
+      userType: "cliente",
     });
     
     onClose();
@@ -57,23 +57,23 @@ const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
       confirmText="Guardar"
     >
       <div className="admin-form-group">
-        <label htmlFor="firstName">Nombre</label>
+        <label htmlFor="name">Nombre</label>
         <input
           type="text"
-          id="firstName"
-          name="firstName"
-          value={userData.firstName}
+          id="name"
+          name="name"
+          value={userData.name}
           onChange={handleChange}
           required
         />
       </div>
       <div className="admin-form-group">
-        <label htmlFor="lastName">Apellido</label>
+        <label htmlFor="lastname">Apellido</label>
         <input
           type="text"
-          id="lastName"
-          name="lastName"
-          value={userData.lastName}
+          id="lastname"
+          name="lastname"
+          value={userData.lastname}
           onChange={handleChange}
           required
         />
@@ -101,21 +101,21 @@ const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
         />
       </div>
       <div className="admin-form-group">
-        <label htmlFor="phone">Teléfono</label>
+        <label htmlFor="telephone">Teléfono</label>
         <input
           type="tel"
-          id="phone"
-          name="phone"
-          value={userData.phone}
+          id="telephone"
+          name="telephone"
+          value={userData.telephone}
           onChange={handleChange}
         />
       </div>
       <div className="admin-form-group">
-        <label htmlFor="role">Rol</label>
+        <label htmlFor="userType">Rol</label>
         <select
-          id="role"
-          name="role"
-          value={userData.role}
+          id="userType"
+          name="userType"
+          value={userData.userType}
           onChange={handleChange}
         >
           <option value="client">Cliente</option>

@@ -2,13 +2,14 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
-import { mockBookings } from "../../data/mockBookings"
 import "../../styles/client.css"
 import SimpleModal from "../../components/SimpleModal"
+import { getBookings, cancelBooking } from '../../services/bookingService';
+import { updateUser } from '../../services/userService';
 
 const ClientDashboard = () => {
   const navigate = useNavigate()
-  const { currentUser, logout, isClient, updateUser } = useAuth()
+  const { currentUser, logout, isClient } = useAuth()
   const [activeTab, setActiveTab] = useState("bookings")
   const [bookings, setBookings] = useState([])
   const [showCancelModal, setShowCancelModal] = useState(false)
@@ -16,10 +17,10 @@ const ClientDashboard = () => {
   const [cancellationReason, setCancellationReason] = useState("")
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [profileData, setProfileData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    lastname: "",
     email: "",
-    phone: "",
+    telephone: "",
   })
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [selectedBookingDetails, setSelectedBookingDetails] = useState(null)
@@ -28,6 +29,8 @@ const ClientDashboard = () => {
   const [notificationsRead, setNotificationsRead] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
     if (!isClient) {
@@ -36,16 +39,16 @@ const ClientDashboard = () => {
   }, [isClient, navigate])
 
   useEffect(() => {
-    if (currentUser) {
-      const userBookings = mockBookings.filter((booking) => booking.userId === currentUser.id)
-      setBookings(userBookings)
-      setProfileData({
-        firstName: currentUser.firstName || "",
-        lastName: currentUser.lastName || "",
-        email: currentUser.email || "",
-        phone: currentUser.phone || "",
-      })
+    if (currentUser) {      
+      getUserBookings();
     }
+
+    setProfileData({
+      name: currentUser.name || "",
+      lastname: currentUser.lastname || "",
+      email: currentUser.email || "",
+      telephone: currentUser.telephone || "",
+    })
   }, [currentUser])
 
   useEffect(() => {
@@ -61,6 +64,7 @@ const ClientDashboard = () => {
     }
   }, [notificationsRef])
 
+    // TODO: cuando clickeas se quedan en la pantalla de localhost:5173/login pero en blanco, cuando refrescas si carga bien
   const handleLogout = () => {
     logout()
     navigate("/")
@@ -69,6 +73,12 @@ const ClientDashboard = () => {
   const openDetailsModal = (booking) => {
     setSelectedBookingDetails(booking)
     setShowDetailsModal(true)
+  }
+
+  const getUserBookings = async () =>{
+    const authToken = localStorage.getItem('authToken');
+    const userBookings =  await getBookings(authToken, currentUser.id);
+    setBookings(userBookings.length > 0 ? userBookings : [])
   }
 
   const canCancelBooking = (booking) => {
@@ -83,70 +93,89 @@ const ClientDashboard = () => {
     setShowCancelModal(true)
   }
 
-  const handleCancelBooking = () => {
+  const handleCancelBooking = async () => {
     if (!bookingToCancel) return
     const canCancel = canCancelBooking(bookingToCancel)
-    setBookings(
-      bookings.map((booking) =>
-        booking.id === bookingToCancel.id
-          ? {
-              ...booking,
-              status: "cancelled",
-              cancellationReason,
-              refundEligible: canCancel,
-            }
-          : booking,
-      ),
-    )
-    setShowCancelModal(false)
-    setBookingToCancel(null)
-    setCancellationReason("")
 
-    // Mostrar modal de éxito en lugar de alert
-    setSuccessMessage(
-      canCancel
-        ? bookingToCancel.paymentMethod === "transfer"
-          ? "Tu reserva ha sido cancelada. Recibirás un reembolso en los próximos días hábiles."
-          : "Tu reserva ha sido cancelada. El reembolso se procesará automáticamente."
-        : bookingToCancel.paymentMethod === "transfer"
-          ? "Tu reserva ha sido cancelada. Como la cancelación es con menos de 24 horas de anticipación, no se realizará reembolso."
-          : "Tu reserva ha sido cancelada. Como la cancelación es con menos de 24 horas de anticipación, se aplicará el cargo completo.",
-    )
-    setShowSuccessModal(true)
+    try {
+      const authToken = localStorage.getItem('authToken');   
+      await cancelBooking(authToken, bookingToCancel.id);
+  
+      setBookings(
+        bookings.map((booking) =>
+          booking.id === bookingToCancel.id
+            ? {
+                ...booking,
+                status: "cancelado",
+                cancellationReason,
+                refundEligible: canCancel,
+              }
+            : booking
+        )
+      );
+
+      setSuccessMessage(
+        canCancel
+          ? bookingToCancel.paymentMethod === "transfer"
+            ? "Tu reserva ha sido cancelada. Recibirás un reembolso en los próximos días hábiles."
+            : "Tu reserva ha sido cancelada. El reembolso se procesará automáticamente."
+          : bookingToCancel.paymentMethod === "transfer"
+            ? "Tu reserva ha sido cancelada. Como la cancelación es con menos de 24 horas de anticipación, no se realizará reembolso."
+            : "Tu reserva ha sido cancelada. Como la cancelación es con menos de 24 horas de anticipación, se aplicará el cargo completo.",
+      );
+      setShowSuccessModal(true);
+
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || "Error al cancelar el turno.";
+      setErrorMessage(errorMsg);
+    } finally {
+      setShowCancelModal(false)
+      setBookingToCancel(null)
+      setCancellationReason("")
+    }
   }
 
-  const handleProfileUpdate = () => {
-    const updatedUser = {
-      ...currentUser,
-      firstName: profileData.firstName,
-      lastName: profileData.lastName,
-      email: profileData.email,
-      phone: profileData.phone,
+  // TODO: Se actualizan los datos en la BD, pero no se refresca el perfil con los datos actualizados. 
+  // Si se actualiza al cerrar e iniciar sesion de nuevo
+  const handleProfileUpdate = async () => {
+    try {
+      const updatedUser = {
+        ...currentUser,
+        name: profileData.name,
+        lastname: profileData.lastname,
+        telephone: profileData.telephone,
+      };
+      delete updatedUser.id;
+ 
+      const token = localStorage.getItem("authToken");
+      await updateUser(token, updatedUser);
+      setSuccessMessage("Perfil actualizado correctamente")
+      setShowSuccessModal(true)
+
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+      const message = error.response?.data?.message || "Error al actualizar el usuario.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    } finally {
+      setShowProfileModal(false);
     }
-    updateUser(updatedUser)
-
-    // Close the modal
-    setShowProfileModal(false)
-
-    // Show success message
-    setSuccessMessage("Perfil actualizado correctamente")
-    setShowSuccessModal(true)
   }
 
   const today = new Date().toISOString().split("T")[0]
   const upcomingBookings = bookings.filter(
     (booking) =>
       (booking.date > today || (booking.date === today && booking.time > new Date().toTimeString().slice(0, 5))) &&
-      booking.status !== "cancelled",
+      booking.status !== "cancelado",
   )
   const pastBookings = bookings.filter(
     (booking) =>
       booking.date < today ||
       (booking.date === today && booking.time < new Date().toTimeString().slice(0, 5)) ||
-      booking.status === "cancelled",
+      booking.status === "cancelado",
   )
 
-  const confirmedBookings = bookings.filter((booking) => booking.status === "confirmed")
+  const confirmedBookings = bookings.filter((booking) => booking.status === "confirmado")
 
   return (
     <div className="client-dashboard">
@@ -156,7 +185,7 @@ const ClientDashboard = () => {
           <div className="client-user-info">
             <div className="client-user-details">
               <p className="client-user-name">
-                {currentUser?.firstName} {currentUser?.lastName}
+                {currentUser?.name} {currentUser?.lastname}
               </p>
               <p className="client-user-role">Cliente</p>
             </div>
@@ -292,17 +321,17 @@ const ClientDashboard = () => {
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>
-                            {booking.status === "pending" && "Pendiente"}
-                            {booking.status === "confirmed" && "Confirmada"}
-                            {booking.status === "completed" && "Completada"}
-                            {booking.status === "cancelled" && "Cancelada"}
+                            {booking.status === "pendiente" && "Pendiente"}
+                            {booking.status === "confirmado" && "Confirmada"}
+                            {booking.status === "completado" && "Completada"}
+                            {booking.status === "cancelado" && "Cancelada"}
                           </span>
                         </div>
                         <div className="client-booking-actions">
                           <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
-                          {(booking.status === "pending" || booking.status === "confirmed") && (
+                          {(booking.status === "pendiente" || booking.status === "confirmado") && (
                             <button
                               className="client-booking-action-btn cancel"
                               onClick={() => openCancelModal(booking)}
@@ -320,7 +349,7 @@ const ClientDashboard = () => {
               </div>
 
               <div className="client-section">
-                <h2 className="client-section-title">Reservas Pasadas</h2>
+                <h2 className="client-section-title">Reservas Canceladas y/o Pasadas</h2>
                 {pastBookings.length > 0 ? (
                   <div className="client-bookings-list">
                     {pastBookings.slice(0, 3).map((booking) => (
@@ -336,17 +365,17 @@ const ClientDashboard = () => {
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>
-                            {booking.status === "pending" && "Pendiente"}
-                            {booking.status === "confirmed" && "Confirmada"}
-                            {booking.status === "completed" && "Completada"}
-                            {booking.status === "cancelled" && "Cancelada"}
+                            {booking.status === "pendiente" && "Pendiente"}
+                            {booking.status === "confirmado" && "Confirmada"}
+                            {booking.status === "completado" && "Completada"}
+                            {booking.status === "cancelado" && "Cancelada"}
                           </span>
                         </div>
                         <div className="client-booking-actions">
                           <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
-                          {booking.status === "completed" && (
+                          {booking.status === "completado" && (
                             <button
                               className="client-booking-action-btn review"
                               onClick={() => alert(`Dejar reseña para ${booking.serviceName}`)}
@@ -389,17 +418,17 @@ const ClientDashboard = () => {
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>
-                            {booking.status === "pending" && "Pendiente"}
-                            {booking.status === "confirmed" && "Confirmada"}
-                            {booking.status === "completed" && "Completada"}
-                            {booking.status === "cancelled" && "Cancelada"}
+                            {booking.status === "pendiente" && "Pendiente"}
+                            {booking.status === "confirmado" && "Confirmada"}
+                            {booking.status === "completado" && "Completada"}
+                            {booking.status === "cancelado" && "Cancelada"}
                           </span>
                         </div>
                         <div className="client-booking-actions">
                           <button className="client-booking-action-btn view" onClick={() => openDetailsModal(booking)}>
                             Ver Detalles
                           </button>
-                          {booking.status === "completed" && (
+                          {booking.status === "completado" && (
                             <button
                               className="client-booking-action-btn review"
                               onClick={() => alert(`Dejar reseña para ${booking.serviceName}`)}
@@ -423,7 +452,7 @@ const ClientDashboard = () => {
               <div className="client-profile-header">
                 <div className="client-profile-info">
                   <h2 className="client-profile-name">
-                    {currentUser?.firstName} {currentUser?.lastName}
+                    {currentUser?.name} {currentUser?.lastname}
                   </h2>
                   <p className="client-profile-role">Cliente</p>
                   <p className="client-profile-email">{currentUser?.email}</p>
@@ -439,11 +468,11 @@ const ClientDashboard = () => {
                   <div className="client-profile-form">
                     <div className="client-form-group">
                       <label>Nombre</label>
-                      <input type="text" value={currentUser?.firstName} readOnly />
+                      <input type="text" value={currentUser?.name} readOnly />
                     </div>
                     <div className="client-form-group">
                       <label>Apellido</label>
-                      <input type="text" value={currentUser?.lastName} readOnly />
+                      <input type="text" value={currentUser?.lastname} readOnly />
                     </div>
                     <div className="client-form-group">
                       <label>Email</label>
@@ -451,7 +480,7 @@ const ClientDashboard = () => {
                     </div>
                     <div className="client-form-group">
                       <label>Teléfono</label>
-                      <input type="tel" value={currentUser?.phone || "+54 9 3624 123456"} readOnly />
+                      <input type="tel" value={currentUser?.telephone || "+54 9 3624 123456"} readOnly />
                     </div>
                   </div>
                 </div>
@@ -591,10 +620,10 @@ const ClientDashboard = () => {
               <p>
                 <strong>Estado:</strong>{" "}
                 <span className={`booking-status-text ${selectedBookingDetails.status}`}>
-                  {selectedBookingDetails.status === "pending" && "Pendiente"}
-                  {selectedBookingDetails.status === "confirmed" && "Confirmada"}
-                  {selectedBookingDetails.status === "completed" && "Completada"}
-                  {selectedBookingDetails.status === "cancelled" && "Cancelada"}
+                  {selectedBookingDetails.status === "pendiente" && "Pendiente"}
+                  {selectedBookingDetails.status === "confirmado" && "Confirmada"}
+                  {selectedBookingDetails.status === "completado" && "Completada"}
+                  {selectedBookingDetails.status === "cancelado" && "Cancelada"}
                 </span>
               </p>
               {selectedBookingDetails.paymentStatus && (
@@ -632,8 +661,8 @@ const ClientDashboard = () => {
               <label>Nombre</label>
               <input
                 type="text"
-                value={profileData.firstName}
-                onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
+                value={profileData.name}
+                onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                 required
               />
             </div>
@@ -641,8 +670,8 @@ const ClientDashboard = () => {
               <label>Apellido</label>
               <input
                 type="text"
-                value={profileData.lastName}
-                onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
+                value={profileData.lastname}
+                onChange={(e) => setProfileData({ ...profileData, lastname: e.target.value })}
                 required
               />
             </div>
@@ -675,6 +704,14 @@ const ClientDashboard = () => {
           <div className="success-modal-content">
             <div className="success-icon">✓</div>
             <p className="success-message">{successMessage}</p>
+          </div>
+        </SimpleModal>
+      )}
+      {showErrorModal && (
+        <SimpleModal isOpen={showErrorModal} onClose={() => setShowErrorModal(false)} title="Error">
+          <div className="error-modal-content">
+            <div className="error-icon">⚠️</div>
+            <p className="error-message">{errorMessage}</p>
           </div>
         </SimpleModal>
       )}

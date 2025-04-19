@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
@@ -9,16 +8,15 @@ const Register = () => {
   const navigate = useNavigate()
   const { register } = useAuth()
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    lastname: "",
     email: "",
     password: "",
     confirmPassword: "",
-    phone: "",
-    role: "client", 
+    telephone: "",
+    userType: "cliente", 
     professionalInfo: {
       specialties: [],
-      experience: "",
       certification: "",
       bio: "",
     },
@@ -32,8 +30,8 @@ const Register = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     
-    if (name === "role") {
-      setShowProfessionalFields(value === "professional")
+    if (name === "userType") {
+      setShowProfessionalFields(value === "profesional")
     }
 
     if (type === "checkbox") {
@@ -55,12 +53,12 @@ const Register = () => {
   const validateForm = () => {
     const newErrors = {}
     
-    if (!formData.firstName.trim()) newErrors.firstName = "El nombre es requerido"
-    if (!formData.lastName.trim()) newErrors.lastName = "El apellido es requerido"
+    if (!formData.name.trim()) newErrors.name = "El nombre es requerido"
+    if (!formData.lastname.trim()) newErrors.lastname = "El apellido es requerido"
     if (!formData.email.trim()) newErrors.email = "El email es requerido"
     if (!formData.password) newErrors.password = "La contraseña es requerida"
     if (!formData.confirmPassword) newErrors.confirmPassword = "Confirmá tu contraseña"
-    if (!formData.phone.trim()) newErrors.phone = "El teléfono es requerido"
+    if (!formData.telephone.trim()) newErrors.telephone = "El teléfono es requerido"
     if (!formData.agreeToTerms) newErrors.agreeToTerms = "Debés aceptar los términos y condiciones"
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -75,37 +73,55 @@ const Register = () => {
     if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Las contraseñas no coinciden"
     }
-    
-    if (formData.role === "professional") {
-      if (!formData.professionalInfo.specialties.length) {
+
+    if (formData.userType === "profesional") {
+      // TODO: agregar logica para escribir especialidades, porque al momento no aparece nada, por eso comente la validacion
+      /*if (!formData.professionalInfo.specialties.length) {
         newErrors["professionalInfo.specialties"] = "Selecciona al menos una especialidad"
-      }
-      if (!formData.professionalInfo.experience) {
-        newErrors["professionalInfo.experience"] = "La experiencia es requerida"
-      }
+      }*/
       if (!formData.professionalInfo.certification) {
         newErrors["professionalInfo.certification"] = "La certificación es requerida"
       }
     }
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
+
+  const transformFormData = () => {
+    const { name, lastname, email, password, telephone, userType } = formData;
+    const { specialties, certification, bio } = formData.professionalInfo;
+  
+    const baseData = {
+      name,
+      lastname,
+      email,
+      password,
+      telephone,
+      userType,
+    };
+  
+    if (userType === "profesional") {
+      const profesionalData = {
+        ...baseData, specialties, certification, bio
+      };    
+      return profesionalData;
+    }
+  
+    return baseData;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     
     if (validateForm()) {
-      if (formData.role === "professional") {
+      if (formData.userType === "profesional") {        
         setShowApprovalPopup(true)
         return
       }
       
       try {
-        await register({
-          ...formData
-        })
-        
+        await register(transformFormData())
         setRegistrationSuccess(true)
         
         setTimeout(() => {
@@ -118,11 +134,8 @@ const Register = () => {
   }
 
   const handleProfessionalConfirm = async () => {
-    try {
-      await register({
-        ...formData
-      })
-      
+    try {    
+      await register(transformFormData())
       setShowApprovalPopup(false)
       setRegistrationSuccess(true)
       
@@ -168,29 +181,29 @@ const Register = () => {
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="firstName">Nombre</label>
+                <label htmlFor="name">Nombre</label>
                 <input
                   type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                  className={errors.firstName ? "error" : ""}
+                  className={errors.name ? "error" : ""}
                 />
-                {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+                {errors.name && <span className="error-message">{errors.name}</span>}
               </div>
 
               <div className="form-group">
-                <label htmlFor="lastName">Apellido</label>
+                <label htmlFor="lastname">Apellido</label>
                 <input
                   type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
+                  id="lastname"
+                  name="lastname"
+                  value={formData.lastname}
                   onChange={handleChange}
-                  className={errors.lastName ? "error" : ""}
+                  className={errors.lastname ? "error" : ""}
                 />
-                {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+                {errors.lastname && <span className="error-message">{errors.lastname}</span>}
               </div>
             </div>
 
@@ -238,50 +251,35 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Teléfono</label>
+              <label htmlFor="telephone">Teléfono</label>
               <input
                 type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
+                id="telephone"
+                name="telephone"
+                value={formData.telephone}
                 onChange={handleChange}
                 placeholder="+54 9 3624 123456"
-                className={errors.phone ? "error" : ""}
+                className={errors.telephone ? "error" : ""}
               />
-              {errors.phone && <span className="error-message">{errors.phone}</span>}
+              {errors.telephone && <span className="error-message">{errors.telephone}</span>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="role">Tipo de Usuario</label>
+              <label htmlFor="userType">Tipo de Usuario</label>
               <select
-                id="role"
-                name="role"
-                value={formData.role}
+                id="userType"
+                name="userType"
+                value={formData.userType}
                 onChange={handleChange}
               >
-                <option value="client">Cliente</option>
-                <option value="professional">Profesional</option>
+                <option value="cliente">Cliente</option>
+                <option value="profesional">Profesional</option>
               </select>
             </div>
 
             {showProfessionalFields && (
               <div className="professional-fields">
                 <h3>Información Profesional</h3>
-
-                <div className="form-group">
-                  <label htmlFor="experience">Años de Experiencia</label>
-                  <input
-                    type="text"
-                    id="experience"
-                    name="professionalInfo.experience"
-                    value={formData.professionalInfo.experience}
-                    onChange={handleChange}
-                    className={errors["professionalInfo.experience"] ? "error" : ""}
-                  />
-                  {errors["professionalInfo.experience"] && (
-                    <span className="error-message">{errors["professionalInfo.experience"]}</span>
-                  )}
-                </div>
 
                 <div className="form-group">
                   <label htmlFor="certification">Certificaciones</label>

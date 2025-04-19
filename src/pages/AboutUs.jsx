@@ -1,15 +1,25 @@
 "use client"
-
-import { useState } from "react"
-import { teamMembers, spaInfo } from "../data/mockData"
+import { useEffect, useState } from "react"
+import { spaInfo } from "../data/mockData"
 import "../styles/about-us.css"
 import Video from "../components/Video";
 import ScrollArrow from "../assets/scrolldown-arrow.svg"
 import videoBg from "../assets/about-us-bg.mp4";
-import TeamPic from "../assets/sentirsebienteam.png"
+import TeamPic from "../assets/sentirsebienteam.png";
+import { getSpecificUser } from '../services/userService'
 
 const AboutUs = () => {
   const [activeTab, setActiveTab] = useState("history")
+  const [profUsers, setProfUsers] = useState([])
+  useEffect( () => {
+    loadProfessionals()
+  },[]) 
+
+  const loadProfessionals = async () =>{
+    const userType = "profesional";
+    const state = true;
+    setProfUsers(await getSpecificUser(userType, state));
+  }
 
   return (
      <div className="about-page">
@@ -98,13 +108,13 @@ const AboutUs = () => {
           </p>
 
           <div className="team-grid">
-            {teamMembers.map((member) => (
+            {profUsers.map((member) => (
               <div className="team-member" key={member.id}>
                 <div className="team-member-image">
                   <img src={member.image || "/placeholder.svg?height=300&width=300"} alt={member.name} />
                 </div>
-                <h3 className="team-member-name">{member.name}</h3>
-                <p className="team-member-position">{member.position}</p>
+                <h3 className="team-member-name">{member.lastname}, {member.name}</h3>
+                <p className="team-member-position">{member.certification}</p>
                 <p className="team-member-bio">{member.bio}</p>
                 <div className="team-member-specialties">
                   {member.specialties.map((specialty, index) => (

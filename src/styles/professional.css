@@ -546,6 +546,20 @@
   background-color: #d4edda;
 }
 
+.pagination-controls button {
+  padding: 6px 12px;
+  background-color: #50B0DA;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 /* Services */
 .professional-services-grid {
   display: grid;
@@ -704,6 +718,18 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+.professional-specialties-bio{
+  height:100%;
+
+}
+
+.professional-specialties-bio textarea{
+  resize: none;
+  height: 230px;
+  scrollbar-width: none;
+  border-width: 0;
+  text-align: center;
 }
 
 .professional-specialty-tag {
@@ -928,6 +954,122 @@
   margin-bottom: 5px;
 }
 
+/* Client history modal */
+.client-history {
+  padding: 15px;
+}
+
+.client-history-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.client-history-header p {
+  margin-bottom: 8px;
+}
+
+.client-history-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.client-history-section:last-child {
+  border-bottom: none;
+}
+
+.client-history-section h4 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+}
+
+.client-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.client-history-table thead {
+  background-color: #f0f0f0;
+}
+
+.client-history-table th,
+.client-history-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.client-history-table th {
+  color: var(--secondary-color);
+  font-weight: 600;
+}
+
+.notes-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  transition: color 0.2s ease;
+}
+
+.notes-btn:hover {
+  color: #3e97c9;
+}
+
+.client-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  gap: 1rem;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+}
+
+.pagination button {
+  background-color: var(--secondary-color);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #3e97c9;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: default;
+}
+
 /* Appointment details */
 .appointment-details {
   padding: 15px;
@@ -1034,6 +1176,63 @@
 .professional-agenda .appointment-status.cancelled {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+/* Estilos para tabla de disponibilidades horarias */
+.schedule-table-container {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.schedule-header {
+  font-weight: bold;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  color: var(--secondary-color);
+}
+
+.schedule-hour {
+  font-weight: 500;
+  text-align: right;
+  padding-right: 10px;
+  color: #444;
+}
+
+.schedule-cell {
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Montserrat", sans-serif;
+  transition: background-color 0.3s;
+}
+
+.schedule-cell.disabled {
+  background-color: #f7a1a1;
+  pointer-events: "not-allowed";
+  user-select: none;
+}
+
+.schedule-cell.selected {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.auth-submit-btn {
+  margin-top: 20px;
 }
 
 /* Mejorar estilos para los botones de acción en la tabla */

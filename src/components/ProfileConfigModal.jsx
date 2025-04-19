@@ -3,10 +3,10 @@ import SimpleModal from "./SimpleModal";
 
 const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
   const [profileData, setProfileData] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
+    name: user?.name || "",
+    lastname: user?.lastname || "",
     email: user?.email || "",
-    phone: user?.phone || "",
+    telephone: user?.telephone || "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""
@@ -14,7 +14,7 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfileData({ ...profileData, [name]: value });
+    setProfileData({ ...profileData, [name]: value });    
   };
 
   const handleSubmit = () => {
@@ -28,16 +28,14 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
         return;
       }
     }
-
     
     const updatedUser = {
       ...user,
-      firstName: profileData.firstName,
-      lastName: profileData.lastName,
+      name: profileData.name,
+      lastname: profileData.lastname,
       email: profileData.email,
-      phone: profileData.phone
+      telephone: profileData.telephone
     };
-
    
     if (profileData.newPassword) {
       updatedUser.password = profileData.newPassword;
@@ -59,9 +57,9 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
         <label htmlFor="firstName">Nombre</label>
         <input
           type="text"
-          id="firstName"
-          name="firstName"
-          value={profileData.firstName}
+          id="name"
+          name="name"
+          value={profileData.name}
           onChange={handleChange}
           required
         />
@@ -70,9 +68,9 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
         <label htmlFor="lastName">Apellido</label>
         <input
           type="text"
-          id="lastName"
-          name="lastName"
-          value={profileData.lastName}
+          id="lastname"
+          name="lastname"
+          value={profileData.lastname}
           onChange={handleChange}
           required
         />
@@ -92,9 +90,9 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
         <label htmlFor="phone">Teléfono</label>
         <input
           type="tel"
-          id="phone"
-          name="phone"
-          value={profileData.phone}
+          id="telephone"
+          name="telephone"
+          value={profileData.telephone}
           onChange={handleChange}
         />
       </div>

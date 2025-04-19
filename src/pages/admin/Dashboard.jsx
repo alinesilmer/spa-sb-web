@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
-import { mockBookings, mockContactMessages } from "../../data/mockBookings"
+import { mockContactMessages } from "../../data/mockBookings"
 import { services } from "../../data/mockData"
 import "../../styles/admin.css"
 import "../../index.css"
@@ -13,19 +13,26 @@ import ProfileConfigModal from "../../components/ProfileConfigModal"
 import NotificationsDropdown from "../../components/NotificationsDropdown"
 import SimpleModal from "../../components/SimpleModal"
 import ServiceDetailsModal from "../../components/ServiceDetailsModal"
+import { getBookings, cancelBooking, confirmBooking } from '../../services/bookingService';
+import { getUsers, getSpecificUser, updateUser, updateUserById, approveUser, deleteUser, realDeleteUser } from '../../services/userService';
+import { registerUser } from "../../services/authService"
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
-  const { currentUser, logout, isAdmin } = useAuth()
+  const { currentUser, logout, isAdmin, setCurrentUser } = useAuth()
   const [activeTab, setActiveTab] = useState("overview")
-  const [bookings, setBookings] = useState(mockBookings)
+  const [users, setUsers] = useState([])
+  const [bookings, setBookings] = useState([])
   const [messages, setMessages] = useState(mockContactMessages)
   const [servicesList, setServicesList] = useState(services)
+  const [pendingProfessionals, setPendingProfessionals] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [dateFilter, setDateFilter] = useState("")
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [itemToDelete, setItemToDelete] = useState(null)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [itemToOperate, setItem] = useState(null)
   const [deleteType, setDeleteType] = useState("")
   const [currentService, setCurrentService] = useState(null)
   const [showResponseModal, setShowResponseModal] = useState(false)
@@ -34,6 +41,8 @@ const AdminDashboard = () => {
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false)
   const [currentUser2, setCurrentUser2] = useState(null)
   const [showProfileModal, setShowProfileModal] = useState(false)
+  const [selectedUserToEdit, setSelectedUserToEdit] = useState(null);
+  const [editingOwnProfile, setEditingOwnProfile] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false)
   const [userRoleFilter, setUserRoleFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
@@ -41,83 +50,23 @@ const AdminDashboard = () => {
   const [showServiceEditModal, setShowServiceEditModal] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
-  
-  // Add state for pending professionals
-  const [pendingProfessionals, setPendingProfessionals] = useState([
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  /*ESTRUCTURA DEL PROFESIONAL
     {
-      id: "101",
-      firstName: "María",
-      lastName: "González",
+      id: string generado por firestore,
+      name: "María",
+      lastname: "González",
       email: "maria@example.com",
-      phone: "+54 9 3624 567890",
-      role: "professional",
-      status: "pending",
-      requestDate: "2025-04-10",
-      professionalInfo: {
-        specialties: ["Masajes", "Tratamientos Faciales"],
-        experience: "5 años",
-        certification: "Certificado en Terapias Corporales",
-        bio: "Especialista en masajes terapéuticos y tratamientos faciales rejuvenecedores."
-      }
-    },
-    {
-      id: "102",
-      firstName: "Carlos",
-      lastName: "Rodríguez",
-      email: "carlos@example.com",
-      phone: "+54 9 3624 123789",
-      role: "professional",
-      status: "pending",
-      requestDate: "2025-04-12",
-      professionalInfo: {
-        specialties: ["Fisioterapia", "Rehabilitación"],
-        experience: "8 años",
-        certification: "Licenciado en Kinesiología",
-        bio: "Especializado en rehabilitación física y tratamientos para deportistas."
-      }
-    },
-    {
-      id: "103",
-      firstName: "Laura",
-      lastName: "Martínez",
-      email: "laura@example.com",
-      phone: "+54 9 3624 456123",
-      role: "professional",
-      status: "pending",
-      requestDate: "2025-04-15",
-      professionalInfo: {
-        specialties: ["Estética", "Depilación"],
-        experience: "3 años",
-        certification: "Técnica en Estética Profesional",
-        bio: "Especialista en tratamientos estéticos y cuidado de la piel."
-      }
-    }
-  ])
-  
-  const [users, setUsers] = useState([
-    {
-      id: "1",
-      firstName: "Admin",
-      lastName: "User",
-      email: "admin@example.com",
-      role: "admin",
-    },
-    {
-      id: "2",
-      firstName: "Professional",
-      lastName: "User",
-      email: "pro@example.com",
-      role: "professional",
-      specialties: ["Masajes", "Tratamientos Corporales"],
-    },
-    {
-      id: "3",
-      firstName: "Regular",
-      lastName: "User",
-      email: "user@example.com",
-      role: "client",
-    },
-  ])
+      telephone: "+54 9 3624 567890",
+      userType: "profesional",
+      status: false,
+      specialties: ["Masajes", "Tratamientos Faciales"],
+      certification: "Certificado en Terapias Corporales",
+      bio: "Especialista en masajes terapéuticos y tratamientos faciales rejuvenecedores.",
+      availability: [{ 0: ["9:00",true], ["10:00",false]}, { 1: ["9:00",true]}]
+    },*/
 
   useEffect(() => {
     if (!isAdmin) {
@@ -125,13 +74,39 @@ const AdminDashboard = () => {
     }
   }, [isAdmin, navigate])
 
+  useEffect(() => {
+    if (currentUser) {      
+      getUserBookings();
+      loadUsers();
+      fetchPendingProfessionals();
+    }
+  }, [currentUser])
+
+  const getUserBookings = async () =>{
+    const authToken = localStorage.getItem('authToken');
+    const userBookings =  await getBookings(authToken, currentUser.id);
+    setBookings(userBookings.length > 0 ? userBookings : [])
+  }
+
+  const loadUsers = async () => {
+    const allUsers = await getUsers();
+    setUsers(allUsers.length > 0 ? allUsers : []);
+  }
+
+  const fetchPendingProfessionals = async () => {
+    const userType = "profesional";
+    const state = false;
+    const data = await getSpecificUser(userType, state);
+    setPendingProfessionals(data);
+  }
+
   const recentBookings = [...bookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5)
   const unreadMessages = messages.filter((msg) => msg.status === "unread")
   const bookingStats = {
-    pending: bookings.filter((b) => b.status === "pending").length,
-    confirmed: bookings.filter((b) => b.status === "confirmed").length,
-    completed: bookings.filter((b) => b.status === "completed").length,
-    cancelled: bookings.filter((b) => b.status === "cancelled").length,
+    pending: bookings.filter((b) => b.status === "pendiente").length,
+    confirmed: bookings.filter((b) => b.status === "confirmado").length,
+    completed: bookings.filter((b) => b.status === "completado").length,
+    cancelled: bookings.filter((b) => b.status === "cancelado").length,
     total: bookings.length,
   }
 
@@ -140,38 +115,81 @@ const AdminDashboard = () => {
     navigate("/")
   }
 
-  const handleBookingStatusChange = (bookingId, newStatus) => {
-    setBookings(bookings.map((booking) => (booking.id === bookingId ? { ...booking, status: newStatus } : booking)))
-  }
-
   const handleMessageStatusChange = (messageId, newStatus) => {
     setMessages(messages.map((message) => (message.id === messageId ? { ...message, status: newStatus } : message)))
   }
 
+  const confirmConfirm = (id, type) => {
+    setItem(id)
+    setDeleteType(type)
+    setShowConfirmModal(true)
+  }
+
+  const confirmCancel = (id, type) => {
+    setItem(id)
+    setDeleteType(type)
+    setShowCancelModal(true)
+  }
+
   const confirmDelete = (id, type) => {
-    setItemToDelete(id)
+    setItem(id)
     setDeleteType(type)
     setShowDeleteModal(true)
   }
 
-  const handleDelete = () => {
-    if (deleteType === "booking") {
-      setBookings(bookings.filter((booking) => booking.id !== itemToDelete))
-    } else if (deleteType === "service") {
-      setServicesList(servicesList.filter((service) => service.id !== itemToDelete))
-    } else if (deleteType === "message") {
-      setMessages(messages.filter((message) => message.id !== itemToDelete))
-    } else if (deleteType === "user") {
-      setUsers(users.filter((user) => user.id !== itemToDelete))
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem('authToken');    
+      
+      if (deleteType === "service") {
+        setServicesList(servicesList.filter((service) => service.id !== itemToOperate))
+      } else if (deleteType === "message") {
+        setMessages(messages.filter((message) => message.id !== itemToOperate))
+      } else if (deleteType === "user") {
+        await deleteUser(token, itemToOperate)
+      }
+      setSuccessMessage("Elemento eliminado correctamente");
+      setShowSuccessModal(true);
+      loadUsers()
+      
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Error al eliminar el turno.";
+      setErrorMessage(errorMessage);
+    } finally {
+      setShowDeleteModal(false)
     }
-    setShowDeleteModal(false)
-    
-    // Show success message
-    setSuccessMessage("Elemento eliminado correctamente");
-    setShowSuccessModal(true);
   }
 
-  // Service handlers - now separated for view and edit
+  const handleCancelBooking = async () => {
+    try {      
+      const token = localStorage.getItem('authToken');   
+      await cancelBooking(token, itemToOperate);
+      setSuccessMessage("Reserva cancelada correctamente");
+      setShowSuccessModal(true);
+      getUserBookings()
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Error al cancelar el turno.";
+      setErrorMessage(errorMessage);
+    } finally {
+      setShowCancelModal(false)
+    }
+  }
+
+  const handleConfirmBooking = async () => {
+    try {      
+      const token = localStorage.getItem('authToken');   
+      await confirmBooking(token, itemToOperate);
+      setSuccessMessage("Reserva confirmada correctamente");
+      setShowSuccessModal(true);
+      getUserBookings()
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Error al confirmar el turno.";
+      setErrorMessage(errorMessage);
+    } finally {
+      setShowConfirmModal(false)
+    }
+  }
+
   const handleViewServiceDetails = (service) => {
     setCurrentService(service)
     setShowServiceDetailsModal(true)
@@ -213,12 +231,17 @@ const AdminDashboard = () => {
     handleMessageStatusChange(messageId, "responded")
   }
 
-  const handleAddUser = (userData) => {
-    setUsers([...users, userData])
-    
-    // Show success message
-    setSuccessMessage("Usuario agregado correctamente");
-    setShowSuccessModal(true);
+  const handleAddUser = async (userData) => {
+    try {
+      await registerUser(userData);
+      setUsers([...users, userData])
+      setSuccessMessage("Usuario agregado correctamente");
+      setShowSuccessModal(true);
+    } catch (error) {
+      const message = error.response?.data?.message || "Error al actualizar el usuario.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    }
   }
 
   const handleViewUserDetails = (user) => {
@@ -226,51 +249,73 @@ const AdminDashboard = () => {
     setShowUserDetailsModal(true)
   }
 
-  const handleEditUser = (user) => {
-    setCurrentUser2(user)
-    setShowUserFormModal(true)
-  }
+  const handleOpenOwnProfile = () => {
+    setSelectedUserToEdit(currentUser);
+    setEditingOwnProfile(true);
+    setShowProfileModal(true);
+  };
 
-  const handleSaveProfile = (updatedProfile) => {
-    console.log("Saving profile:", updatedProfile)
-    
-    // Show success message
-    setSuccessMessage("Perfil actualizado correctamente");
-    setShowSuccessModal(true);
+  const handleEditUser = (user) => {   
+    setSelectedUserToEdit(user);
+    setEditingOwnProfile(false);
+    setShowProfileModal(true);
+  };
+
+  // TODO: Se actualizan los datos en la BD, pero no se refresca el perfil con los datos actualizados. 
+  // Si se actualiza al cerrar e iniciar sesion de nuevo
+  const handleSaveProfile = async (updatedUser) => {
+    try {       
+      const token = localStorage.getItem('authToken');
+      
+      if (editingOwnProfile) {     
+        await updateUser(token, updatedUser);
+        setCurrentUser((prev) => ({ ...prev, ...updatedUser }));
+      } else {
+        await updateUserById(token, updatedUser.id, updatedUser);
+        setCurrentUser2((prev) => ({ ...prev, ...updatedUser }));
+      }
+
+      setSuccessMessage("Perfil actualizado correctamente")
+      setShowSuccessModal(true)
+    } catch (error) {      
+      const message = error.response?.data?.message || "Error al actualizar el usuario.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    } finally {
+      setShowProfileModal(false);
+    }
   }
   
-  // Add functions to handle professional approvals
-  const handleApproveRequest = (professionalId) => {
-    // Update the professional status
-    const professionalToApprove = pendingProfessionals.find(
-      (professional) => professional.id === professionalId
-    );
-    
-    if (professionalToApprove) {
-      // Add the professional to users list
-      const updatedProfessional = { ...professionalToApprove, status: "approved" };
-      setUsers([...users, updatedProfessional]);
-      
-      // Remove from pending list
-      setPendingProfessionals(pendingProfessionals.filter(
-        (professional) => professional.id !== professionalId
-      ));
-      
-      // Show success message
-      setSuccessMessage("Profesional aprobado correctamente");
-      setShowSuccessModal(true);
+  const handleApproveRequest = async (professionalId) => {
+    try {     
+      const token = localStorage.getItem('authToken');
+      await approveUser(token, professionalId)
+
+      setSuccessMessage("Solicitud de profesional aprobada")
+      setShowSuccessModal(true)
+      fetchPendingProfessionals()
+
+    } catch (error) {
+      const message = error.response?.data?.message || "Error al aprobar la solicitud.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
     }
   };
 
-  const handleRejectRequest = (professionalId) => {
-    // Remove the professional from pending list
-    setPendingProfessionals(pendingProfessionals.filter(
-      (professional) => professional.id !== professionalId
-    ));
-    
-    // Show success message
-    setSuccessMessage("Solicitud rechazada correctamente");
-    setShowSuccessModal(true);
+  const handleRejectRequest = async (professionalId) => {
+    try {          
+      const token = localStorage.getItem('authToken');
+      await realDeleteUser(token, professionalId)
+
+      setSuccessMessage("Solicitud de profesional rechazada")
+      setShowSuccessModal(true)
+      fetchPendingProfessionals()
+
+    } catch (error) {
+      const message = error.response?.data?.message || "Error al rechazar la solicitud.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    }
   };
 
   const filteredBookings = bookings.filter((booking) => {
@@ -286,7 +331,7 @@ const AdminDashboard = () => {
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       searchTerm === "" ||
-      `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `${user.name} ${user.lastname}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesRole = userRoleFilter === "all" || user.role === userRoleFilter
     return matchesSearch && matchesRole
@@ -306,7 +351,7 @@ const AdminDashboard = () => {
           <div className="admin-user-info">
             <div className="admin-user-details">
               <p className="admin-user-name">
-                {currentUser?.firstName} {currentUser?.lastName}
+                {currentUser?.name} {currentUser?.lastname}
               </p>
               <p className="admin-user-role">Administrador</p>
             </div>
@@ -397,7 +442,7 @@ const AdminDashboard = () => {
               <span className="admin-action-icon">🔔</span>
               {unreadMessages.length > 0 && <span className="notification-badge">{unreadMessages.length}</span>}
             </button>
-            <button className="admin-action-btn" title="Configuración" onClick={() => setShowProfileModal(true)}>
+            <button className="admin-action-btn" title="Configuración" onClick={handleOpenOwnProfile}>
               <span className="admin-action-icon">⚙️</span>
             </button>
           </div>
@@ -484,36 +529,25 @@ const AdminDashboard = () => {
                           <th>Servicio</th>
                           <th>Fecha</th>
                           <th>Estado</th>
-                          <th>Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {recentBookings.map((booking) => (
                           <tr key={booking.id}>
-                            <td>#{booking.id}</td>
+                            <td>{booking.id}</td>
                             <td>{booking.serviceName}</td>
                             <td>
                               {booking.date} {booking.time}
                             </td>
                             <td>
                               <span className={`booking-status ${booking.status}`}>
-                                {booking.status === "pending" && "Pendiente"}
-                                {booking.status === "confirmed" && "Confirmada"}
-                                {booking.status === "completed" && "Completada"}
-                                {booking.status === "cancelled" && "Cancelada"}
+                                {booking.status === "pendiente" && "Pendiente"}
+                                {booking.status === "confirmado" && "Confirmada"}
+                                {booking.status === "completado" && "Completada"}
+                                {booking.status === "cancelado" && "Cancelada"}
                               </span>
                             </td>
-                            <td>
-                              <div className="admin-table-actions">
-                                <button
-                                  className="admin-table-action-btn delete"
-                                  title="Eliminar reserva"
-                                  onClick={() => confirmDelete(booking.id, "booking")}
-                                >
-                                  🗑️
-                                </button>
-                              </div>
-                            </td>
+
                           </tr>
                         ))}
                       </tbody>
@@ -580,10 +614,10 @@ const AdminDashboard = () => {
                     onChange={(e) => setStatusFilter(e.target.value)}
                   >
                     <option value="all">Todos los estados</option>
-                    <option value="pending">Pendientes</option>
-                    <option value="confirmed">Confirmadas</option>
-                    <option value="completed">Completadas</option>
-                    <option value="cancelled">Canceladas</option>
+                    <option value="pendiente">Pendientes</option>
+                    <option value="confirmado">Confirmadas</option>
+                    <option value="completado">Completadas</option>
+                    <option value="cancelado">Canceladas</option>
                   </select>
                   <input
                     type="date"
@@ -611,24 +645,17 @@ const AdminDashboard = () => {
                   <tbody>
                     {filteredBookings.map((booking) => (
                       <tr key={booking.id}>
-                        <td>#{booking.id}</td>
-                        <td>Cliente #{booking.userId}</td>
+                        <td>{booking.id}</td>
+                        <td>{booking.clientName}</td>
                         <td>{booking.serviceName}</td>
                         <td>{booking.professionalName}</td>
                         <td>
                           {booking.date} {booking.time}
                         </td>
                         <td>
-                          <select
-                            className={`booking-status-select ${booking.status}`}
-                            value={booking.status}
-                            onChange={(e) => handleBookingStatusChange(booking.id, e.target.value)}
-                          >
-                            <option value="pending">Pendiente</option>
-                            <option value="confirmed">Confirmada</option>
-                            <option value="completed">Completada</option>
-                            <option value="cancelled">Cancelada</option>
-                          </select>
+                          <span className={`booking-status ${booking.status}`}>
+                            {booking.status}
+                          </span>    
                         </td>
                         <td>
                           <span className={`payment-status ${booking.paymentStatus}`}>
@@ -640,11 +667,22 @@ const AdminDashboard = () => {
                         <td>
                           <div className="admin-table-actions">
                             <button
-                              className="admin-table-action-btn delete"
-                              title="Eliminar reserva"
-                              onClick={() => confirmDelete(booking.id, "booking")}
+                                className="admin-table-action-btn confirm"
+                                title="Confirmar reserva"
+                                onClick={() => confirmConfirm(booking.id, "booking")}
+                                disabled={booking.status === "confirmado"}
+                                style={booking.status === "confirmado" ? { opacity: 0.3 } : {}}
+                              >
+                                ✅ 
+                            </button>
+                            <button
+                              className="admin-table-action-btn cancel"
+                              title="Cancelar reserva"
+                              onClick={() => confirmCancel(booking.id, "booking")}
+                              disabled={booking.status === "cancelado"}
+                              style={booking.status === "cancelado" ? { opacity: 0.3 } : {}}
                             >
-                              🗑️
+                              ❌
                             </button>
                           </div>
                         </td>
@@ -776,7 +814,8 @@ const AdminDashboard = () => {
                   <thead>
                     <tr>
                       <th>ID</th>
-                      <th>Nombre</th>
+                      <th>Estado</th>
+                      <th>Nombre y Apellido</th>
                       <th>Email</th>
                       <th>Rol</th>
                       <th>Acciones</th>
@@ -785,16 +824,22 @@ const AdminDashboard = () => {
                   <tbody>
                     {filteredUsers.map((user) => (
                       <tr key={user.id}>
-                        <td>#{user.id}</td>
+                        <td>{user.id}</td>
                         <td>
-                          {user.firstName} {user.lastName}
+                          <span className={`user-state ${user.state}`}>
+                            {user.state === true && "Activo"}
+                            {user.state === false && "Inactivo"}
+                          </span>
+                        </td>
+                        <td>
+                          {user.name} {user.lastname}
                         </td>
                         <td>{user.email}</td>
                         <td>
-                          <span className={`user-role ${user.role}`}>
-                            {user.role === "admin" && "Administrador"}
-                            {user.role === "professional" && "Profesional"}
-                            {user.role === "client" && "Cliente"}
+                          <span className={`user-role ${user.userType}`}>
+                            {user.userType === "admin" && "Administrador"}
+                            {user.userType === "profesional" && "Profesional"}
+                            {user.userType === "cliente" && "Cliente"}
                           </span>
                         </td>
                         <td>
@@ -817,8 +862,8 @@ const AdminDashboard = () => {
                               className="admin-table-action-btn delete"
                               onClick={() => confirmDelete(user.id, "user")}
                               title="Eliminar usuario"
-                              disabled={user.id === "1"} // Prevent deleting the main admin
-                              style={user.id === "1" ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+                              disabled={user.userType === "admin"} // Prevent deleting the main admin
+                              style={user.userType === "admin" ? { opacity: 0.5, cursor: "not-allowed" } : {}}
                             >
                               🗑️
                             </button>
@@ -854,7 +899,7 @@ const AdminDashboard = () => {
                     .filter(
                       (professional) =>
                         searchTerm === "" ||
-                        `${professional.firstName} ${professional.lastName}`
+                        `${professional.name} ${professional.lastname}`
                           .toLowerCase()
                           .includes(searchTerm.toLowerCase()) ||
                         professional.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -864,14 +909,13 @@ const AdminDashboard = () => {
                         <div className="admin-approval-header">
                           <div className="admin-approval-user-info">
                             <div className="admin-approval-avatar">
-                              {professional.firstName.charAt(0)}
-                              {professional.lastName.charAt(0)}
+                              {professional.name.charAt(0)}
+                              {professional.lastname.charAt(0)}
                             </div>
                             <div>
                               <h3 className="admin-approval-name">
-                                {professional.firstName} {professional.lastName}
+                                {professional.name} {professional.lastname}
                               </h3>
-                              <p className="admin-approval-date">Solicitud: {professional.requestDate}</p>
                             </div>
                           </div>
                           <div className="admin-approval-status">Pendiente</div>
@@ -884,25 +928,21 @@ const AdminDashboard = () => {
                           </div>
                           <div className="admin-approval-detail">
                             <span className="admin-approval-label">Teléfono:</span>
-                            <span className="admin-approval-value">{professional.phone}</span>
+                            <span className="admin-approval-value">{professional.telephone || "No especificado"}</span>
                           </div>
                           <div className="admin-approval-detail">
                             <span className="admin-approval-label">Especialidades:</span>
                             <span className="admin-approval-value">
-                              {professional.professionalInfo.specialties.join(", ")}
+                            <span className="admin-approval-value">{professional.specialties.join(", ") || "No especificado"}</span>
                             </span>
                           </div>
                           <div className="admin-approval-detail">
-                            <span className="admin-approval-label">Experiencia:</span>
-                            <span className="admin-approval-value">{professional.professionalInfo.experience}</span>
-                          </div>
-                          <div className="admin-approval-detail">
                             <span className="admin-approval-label">Certificación:</span>
-                            <span className="admin-approval-value">{professional.professionalInfo.certification}</span>
+                            <span className="admin-approval-value">{professional.certification || "No especificado"}</span>
                           </div>
                           <div className="admin-approval-detail">
                             <span className="admin-approval-label">Biografía:</span>
-                            <p className="admin-approval-bio">{professional.professionalInfo.bio}</p>
+                            <p className="admin-approval-bio">{professional.bio || "No especificado"}</p>
                           </div>
                         </div>
 
@@ -976,7 +1016,7 @@ const AdminDashboard = () => {
                           <strong>Email:</strong> {message.email}
                         </p>
                         <p>
-                          <strong>Teléfono:</strong> {message.phone}
+                          <strong>Teléfono:</strong> {message.telephone}
                         </p>
                       </div>
                       <p className="admin-message-subject">
@@ -1019,16 +1059,40 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Appointments Modals */}
       {showDeleteModal && (
         <SimpleModal
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
-          title="Confirmar Eliminación"
+          title="Confirmar Eliminacion"
           onConfirm={handleDelete}
           confirmText="Eliminar"
         >
           <p>¿Estás seguro de que deseás eliminar este elemento? Esta acción no se puede deshacer.</p>
+        </SimpleModal>
+      )}
+
+      {showCancelModal && (
+        <SimpleModal
+          isOpen={showCancelModal}
+          onClose={() => setShowCancelModal(false)}
+          title="Cancelar Reserva"
+          onConfirm={handleCancelBooking}
+          confirmText="Cancelar"
+        >
+          <p>¿Estás seguro de que deseás cancelar esta reserva?</p>
+        </SimpleModal>
+      )}
+
+      {showConfirmModal && (
+        <SimpleModal
+          isOpen={showConfirmModal}
+          onClose={() => setShowConfirmModal(false)}
+          title="Confirmar Reserva"
+          onConfirm={handleConfirmBooking}
+          confirmText="Confirmar"
+        >
+          <p>¿Estás seguro de que deseás confirmar esta reserva?</p>
         </SimpleModal>
       )}
 
@@ -1164,14 +1228,14 @@ const AdminDashboard = () => {
       <ProfileConfigModal
         isOpen={showProfileModal}
         onClose={() => setShowProfileModal(false)}
-        user={currentUser}
+        user={selectedUserToEdit}
         onSaveProfile={handleSaveProfile}
       />
       
       {/* Success Modal */}
       <SimpleModal
         isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
+        onClose={() => {setShowSuccessModal(false)}}
         title="Operación Exitosa"
       >
         <div className="success-modal-content">
@@ -1179,6 +1243,15 @@ const AdminDashboard = () => {
           <p className="success-message">{successMessage}</p>
         </div>
       </SimpleModal>
+
+      {showErrorModal && (
+        <SimpleModal isOpen={showErrorModal} onClose={() => setShowErrorModal(false)} title="Error">
+          <div className="error-modal-content">
+            <div className="error-icon">⚠️</div>
+            <p className="error-message">{errorMessage}</p>
+          </div>
+        </SimpleModal>
+      )}
     </div>
   )
 }
