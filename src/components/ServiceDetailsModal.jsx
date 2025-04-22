@@ -1,8 +1,15 @@
 "use client"
 import SimpleModal from "./SimpleModal"
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+
   if (!service) return null
+
+
 
   return (
     <SimpleModal isOpen={isOpen} onClose={onClose} title="Detalles del Servicio">
@@ -55,6 +62,21 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
             </div>
           )}
         </div>
+      </div>
+      <div className="service-details-actions">
+        {isLoggedIn ? (
+       <button
+            className="service-details-book-btn"
+            onClick={() => navigate(`/booking/${service.id}`)}
+          >
+            Reservar
+          </button>
+        ) : (
+          <p style={{ textAlign: "center", marginTop: "1rem" }}>
+            <a href="/login" className="login-link">Iniciar sesión</a> o{" "}
+            <a href="/register" className="register-link">registrate</a> para reservar
+          </p>
+        )}
       </div>
     </SimpleModal>
   )

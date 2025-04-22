@@ -252,6 +252,25 @@
   margin-bottom: 5px;
 }
 
+.service-details-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+.service-details-book-btn {
+  padding: 0.8rem 2rem;
+  border-radius: 40px;
+  background: #e2a3a3;
+  color: #fff;
+  font-weight: 500;
+  border: none;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.service-details-book-btn:hover {
+  background: #d88c8c;
+  transform: translateY(-2px);
+}
+
 @media (min-width: 768px) {
   .service-details {
     max-width: 700px;

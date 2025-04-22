@@ -17,7 +17,7 @@ import ScrollArrow from "../assets/scrolldown-arrow.svg";
 import "../styles/home.css";
 
 const Home = () => {
-  const { isLoggedIn } = useAuth(); // 👉 bandera real del usuario
+  const { isLoggedIn } = useAuth(); 
 
   return (
     <div lang="en">
@@ -33,7 +33,7 @@ const Home = () => {
             <h2 className="subtitle">Spa&nbsp;&amp;&nbsp;Bienestar</h2>
           </div>
 
-          {/* Acceso: sólo para visitantes */}
+          
           {!isLoggedIn && (
             <div className="btn-container">
               <Link to="/login" className="login-btn">

@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useAuth } from "../contexts/AuthContext"
 import { useNavigate, useLocation } from "react-router-dom"
-import { services } from "../data/mockData" // Import from mockData.js
+import { services } from "../data/mockData" 
 import ServiceCard from "../components/ServiceCard"
 import ServiceModal from "../components/ServiceModal"
 import CategoryIcons from "../components/CategoryIcons"
@@ -18,7 +19,7 @@ const Services = () => {
   const [filteredServices, setFilteredServices] = useState([])
   const [selectedService, setSelectedService] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
-  const [isLoggedIn] = useState(false) 
+  const { isLoggedIn } = useAuth();
 
   
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SimpleModal from "./SimpleModal";
 import NotePopup from "./NotePopup";
 import "../styles/professional.css";
