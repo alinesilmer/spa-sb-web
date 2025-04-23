@@ -1,0 +1,1357 @@
+.professional-dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  margin-top: 100px; /* To account for fixed header */
+}
+
+/* Sidebar */
+.professional-sidebar {
+  width: 280px;
+  background-color: white;
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: calc(100vh - 100px);
+}
+
+.professional-sidebar-header {
+  padding: 25px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.professional-sidebar-header h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+}
+
+.professional-user-info {
+  display: flex;
+  align-items: center;
+}
+
+.professional-user-details {
+  flex: 1;
+}
+
+.professional-user-name {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.professional-user-role {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.professional-nav {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.professional-nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.professional-nav-item:hover {
+  background-color: #f5f5f5;
+  color: var(--accent-color);
+}
+
+.professional-nav-item.active {
+  background-color: #f0f0f0;
+  color: var(--accent-color);
+  font-weight: 600;
+  border-left: 3px solid var(--accent-color);
+}
+
+.professional-nav-icon {
+  margin-right: 15px;
+  font-size: 1.2rem;
+}
+
+.professional-sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+.professional-logout-btn {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.professional-logout-btn:hover {
+  color: #e74c3c;
+}
+
+/* Content */
+.professional-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 20px;
+}
+
+.professional-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.professional-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  color: var(--secondary-color);
+}
+
+.professional-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.professional-action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.professional-action-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.professional-action-icon {
+  font-size: 1.2rem;
+}
+
+.professional-notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e74c3c;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Schedule */
+.professional-schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.professional-date-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.professional-date-input {
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+}
+
+.professional-date-nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.professional-date-nav-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.professional-add-btn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: none;
+  background-color: var(--accent-color);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.professional-add-btn:hover {
+  background-color: #8a9b88;
+}
+
+.professional-schedule-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+}
+
+.professional-section-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.3rem;
+  color: var(--secondary-color);
+  margin-bottom: 20px;
+}
+
+.professional-time-slots {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.professional-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 15px;
+}
+
+.professional-time-slot {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f0f8f0;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.professional-time-slot:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.professional-time-slot.booked {
+  background-color: #f5e9e9;
+  cursor: not-allowed;
+}
+
+.professional-slot-time {
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.professional-slot-status {
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.professional-appointments {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.professional-today-appointments,
+.professional-upcoming-appointments {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.professional-appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.professional-appointment-card {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  border-left: 3px solid var(--accent-color);
+  transition: all 0.3s ease;
+}
+
+.professional-appointment-card:hover {
+  background-color: #f5f5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.professional-appointment-time {
+  width: 80px;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.professional-appointment-date {
+  width: 100px;
+  text-align: center;
+}
+
+.appointment-date {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.appointment-time {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.professional-appointment-details {
+  flex: 1;
+  padding: 0 15px;
+}
+
+.professional-appointment-service {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin: 0 0 5px;
+}
+
+.professional-appointment-client,
+.professional-appointment-duration {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0 0 5px;
+}
+
+.professional-appointment-status {
+  margin-right: 15px;
+}
+
+.appointment-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.appointment-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.appointment-status.confirmed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.appointment-status.completed {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.appointment-status.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.professional-appointment-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.professional-appointment-action-btn {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  background-color: #f0f0f0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.professional-appointment-action-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.professional-appointment-action-btn.complete {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.professional-appointment-action-btn.complete:hover {
+  background-color: #c3e6cb;
+}
+
+.professional-no-data {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Clients */
+.professional-section-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.professional-search {
+  display: flex;
+  align-items: center;
+}
+
+.professional-search-input {
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  width: 250px;
+}
+
+.professional-search-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: -40px;
+  transition: all 0.3s ease;
+}
+
+.professional-table-container {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.professional-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.professional-table th {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  text-align: left;
+  padding: 15px 10px;
+  border-bottom: 2px solid #eee;
+}
+
+.professional-table td {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+  padding: 15px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.professional-table-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.professional-table-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.professional-table-action-btn.view:hover {
+  background-color: #cce5ff;
+}
+
+.professional-table-action-btn.history:hover {
+  background-color: #d4edda;
+}
+
+.pagination-controls button {
+  padding: 6px 12px;
+  background-color: #50B0DA;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Services */
+.professional-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.professional-service-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.professional-service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.professional-service-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.2rem;
+  color: var(--secondary-color);
+  margin: 0 0 10px;
+}
+
+.professional-service-category,
+.professional-service-duration,
+.professional-service-price {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+  margin: 5px 0;
+}
+
+/* Estilos para el botón Ver Detalles en la sección de servicios */
+.view-details-btn {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  width: 100%;
+  margin-top: 15px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.view-details-btn:hover {
+  background-color: #8a9b88;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Profile */
+.professional-profile-header {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.professional-profile-info {
+  flex: 1;
+}
+
+.professional-profile-name {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  color: var(--secondary-color);
+  margin: 0 0 5px;
+}
+
+.professional-profile-role {
+  font-family: "Montser rat", sans-serif;
+  font-size: 1rem;
+  color: var(--accent-color);
+  margin: 0 0 10px;
+}
+
+.professional-profile-email {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0;
+}
+
+.professional-edit-profile-btn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: none;
+  background-color: var(--accent-color);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.professional-edit-profile-btn:hover {
+  background-color: #8a9b88;
+}
+
+.professional-profile-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.professional-profile-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.professional-profile-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.professional-form-group {
+  margin-bottom: 15px;
+}
+
+.professional-form-group label {
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.professional-form-group input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+  background-color: #f9f9f9;
+}
+
+.professional-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.professional-specialties-bio{
+  height:100%;
+
+}
+
+.professional-specialties-bio textarea{
+  resize: none;
+  height: 230px;
+  scrollbar-width: none;
+  border-width: 0;
+  text-align: center;
+}
+
+.professional-specialty-tag {
+  display: inline-block;
+  padding: 8px 15px;
+  border-radius: 20px;
+  background-color: #f0f8f0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+}
+
+.professional-work-hours {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.professional-work-day {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.day-name {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.day-hours {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Notifications dropdown */
+.professional-notification-container {
+  position: relative;
+}
+
+.professional-notifications-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 320px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.professional-notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.professional-notifications-header h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.2rem;
+  color: var(--secondary-color);
+  margin: 0;
+}
+
+.professional-notifications-count {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.professional-notifications-content {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.professional-notifications-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.professional-notification-item {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.professional-notification-item:hover {
+  background-color: #f9f9f9;
+}
+
+.professional-notification-icon {
+  margin-right: 15px;
+  font-size: 1.2rem;
+}
+
+.professional-notification-details {
+  flex: 1;
+}
+
+.professional-notification-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.professional-notification-subject {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.professional-notification-time {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.professional-notifications-empty {
+  padding: 30px 15px;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.professional-notifications-footer {
+  padding: 15px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.professional-notifications-view-all {
+  background: none;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: var(--accent-color);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.professional-notifications-view-all:hover {
+  text-decoration: underline;
+}
+
+/* Service details */
+.service-details {
+  padding: 15px;
+}
+
+.service-details h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+  margin-bottom: 15px;
+}
+
+.service-details-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.service-details-section:last-child {
+  border-bottom: none;
+}
+
+.service-details-section h4 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+}
+
+.service-details-section p {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.service-details-section ul {
+  padding-left: 20px;
+}
+
+.service-details-section li {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* Client history modal */
+.client-history {
+  padding: 15px;
+}
+
+.client-history-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.client-history-header p {
+  margin-bottom: 8px;
+}
+
+.client-history-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.client-history-section:last-child {
+  border-bottom: none;
+}
+
+.client-history-section h4 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+}
+
+.client-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.client-history-table thead {
+  background-color: #f0f0f0;
+}
+
+.client-history-table th,
+.client-history-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.client-history-table th {
+  color: var(--secondary-color);
+  font-weight: 600;
+}
+
+.notes-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  transition: color 0.2s ease;
+}
+
+.notes-btn:hover {
+  color: #3e97c9;
+}
+
+.client-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  gap: 1rem;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+}
+
+.pagination button {
+  background-color: var(--secondary-color);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #3e97c9;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: default;
+}
+
+/* Appointment details */
+.appointment-details {
+  padding: 15px;
+}
+
+.appointment-details-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.appointment-details-section:last-child {
+  border-bottom: none;
+}
+
+.appointment-details-section h3 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+}
+
+.appointment-details-section p {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.appointment-status-text {
+  font-weight: 600;
+}
+
+.appointment-status-text.pending {
+  color: #856404;
+}
+
+.appointment-status-text.confirmed {
+  color: #155724;
+}
+
+.appointment-status-text.completed {
+  color: #004085;
+}
+
+.appointment-status-text.cancelled {
+  color: #721c24;
+}
+
+.payment-status-text {
+  font-weight: 600;
+}
+
+.payment-status-text.paid {
+  color: #155724;
+}
+
+.payment-status-text.pending {
+  color: #856404;
+}
+
+.payment-status-text.refunded {
+  color: #004085;
+}
+
+.appointment-details-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Estilos para la sección Mi Agenda */
+.professional-agenda {
+  margin-bottom: 30px;
+}
+
+.professional-agenda .professional-table-container {
+  margin-top: 20px;
+}
+
+.professional-agenda .appointment-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.professional-agenda .appointment-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.professional-agenda .appointment-status.confirmed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.professional-agenda .appointment-status.completed {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.professional-agenda .appointment-status.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Estilos para tabla de disponibilidades horarias */
+.schedule-table-container {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.schedule-header {
+  font-weight: bold;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  color: var(--secondary-color);
+}
+
+.schedule-hour {
+  font-weight: 500;
+  text-align: right;
+  padding-right: 10px;
+  color: #444;
+}
+
+.schedule-cell {
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Montserrat", sans-serif;
+  transition: background-color 0.3s;
+}
+
+.schedule-cell.disabled {
+  background-color: #f7a1a1;
+  pointer-events: "not-allowed";
+  user-select: none;
+}
+
+.schedule-cell.selected {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.auth-submit-btn {
+  margin-top: 20px;
+}
+
+/* Mejorar estilos para los botones de acción en la tabla */
+.professional-table-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  margin-right: 5px;
+}
+
+.professional-table-action-btn.view:hover {
+  background-color: #cce5ff;
+  transform: translateY(-2px);
+}
+
+.professional-table-action-btn.delete:hover {
+  background-color: #f8d7da;
+  transform: translateY(-2px);
+}
+
+/* Estilos para el modal de éxito */
+.success-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background-color: #2ecc71;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.success-message {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.1rem;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .professional-sidebar {
+    width: 80px;
+  }
+
+  .professional-sidebar-header h2,
+  .professional-user-details,
+  .professional-nav-item span:not(.professional-nav-icon),
+  .professional-logout-btn span:not(.professional-nav-icon) {
+    display: none;
+  }
+
+  .professional-nav-icon {
+    margin-right: 0;
+  }
+
+  .professional-content {
+    margin-left: 80px;
+  }
+
+  .professional-schedule-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .professional-profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .professional-edit-profile-btn {
+    margin-top: 20px;
+  }
+
+  .professional-profile-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .professional-title {
+    font-size: 1.5rem;
+  }
+
+  .professional-schedule-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .professional-date-selector {
+    width: 100%;
+  }
+
+  .professional-date-input {
+    flex: 1;
+  }
+
+  .professional-add-btn {
+    width: 100%;
+  }
+}

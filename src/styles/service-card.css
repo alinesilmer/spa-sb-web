@@ -1,0 +1,131 @@
+.service-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.service-card-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.service-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.service-card:hover .service-card-image img {
+  transform: scale(1.05);
+}
+
+.service-card-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.service-card-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.3rem;
+  color: #4e5d4e;
+  margin-bottom: 10px;
+}
+
+.service-card-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  flex-grow: 1;
+  line-height: 1.5;
+}
+
+.service-card-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.service-card-price {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #4e5d4e;
+}
+
+.service-card-duration {
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.service-card-duration::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12 6 12 12 16 14'%3E%3C/polyline%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.service-card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.service-card-view-more,
+.service-card-book-now {
+  flex: 1;
+  padding: 10px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.service-card-view-more {
+  background-color: transparent;
+  border: 1px solid #4e5d4e;
+  color: #4e5d4e;
+}
+
+.service-card-view-more:hover {
+  background-color: #4e5d4e;
+  color: white;
+}
+
+.service-card-book-now {
+  background-color: #e2a3a3;
+  color: white;
+  border: none;
+}
+
+.service-card-book-now:hover {
+  background-color: #d88c8c;
+}
+
+@media (max-width: 768px) {
+  .service-card-title {
+    font-size: 1.2rem;
+  }
+
+  .service-card-price {
+    font-size: 1.1rem;
+  }
+}

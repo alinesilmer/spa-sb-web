@@ -1,5 +1,6 @@
-import { useState } from "react";
-import '../styles/faqsection.css';
+import React, { useState } from "react";
+import { Link } from "react-router-dom"; 
+import "../styles/faqsection.css"; 
 
 const FAQSection = () => {
   const [activeIndex, setActiveIndex] = useState(null);
@@ -7,6 +8,7 @@ const FAQSection = () => {
   const toggleQuestion = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
+
 
   const faqItems = [
     {
@@ -27,43 +29,66 @@ const FAQSection = () => {
     },
     {
       question: "¿Aceptan tarjetas de crédito?",
-      answer: "Sí, aceptamos todas las tarjetas de crédito principales, tarjetas de débito, transferencias bancarias y efectivo."
+      answer: "No, actualmente sólo trabajamos con transferencias bancarias y efectivo."
     }
   ];
 
   return (
-    <div className="qa-list-container">
-      <ul className="qa-list">
-        {faqItems.map((item, index) => (
-          <li key={index} className="qa-item-container">
-            <button
-              className="qa-item"
-              onClick={() => toggleQuestion(index)}
-              aria-expanded={activeIndex === index}
-            >
-              {item.question}
-              <svg 
-                className={`qa-icon ${activeIndex === index ? 'qa-icon-active' : ''}`}
-                xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              >
-                <path d="m6 9 6 6 6-6"/>
-              </svg>
-            </button>
-            <div className={`qa-answer ${activeIndex === index ? 'qa-answer-active' : ''}`}>
-              <p>{item.answer}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <section className="faq-section">
+      <div className="faq-container">
+        {/* LEFT COLUMN: FAQ Title and Questions */}
+        <div className="faq-left">
+          <h1 className="faq-title">Preguntas Frecuentes</h1>
+          <p className="faq-subtitle">
+            Conocé las respuestas a las consultas más comunes.
+            <br />
+            ¡Estamos para ayudarte!
+          </p>
+
+          <ul className="faq-list">
+            {faqItems.map((item, index) => (
+              <li key={index} className="faq-item">
+                <button
+                  className="faq-question"
+                  onClick={() => toggleQuestion(index)}
+                  aria-expanded={activeIndex === index}
+                >
+                  {item.question}
+                  <svg
+                    className={`faq-icon ${activeIndex === index ? "active" : ""}`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div className={`faq-answer ${activeIndex === index ? "open" : ""}`}>
+                  <p>{item.answer}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* RIGHT COLUMN: CTA to Contact Form */}
+        <div className="faq-right">
+          <h2 className="contact-title">¿Necesitás más ayuda?</h2>
+          <p className="contact-description">
+            Si tu duda no está en la lista o querés más detalles, ¡estaremos encantados de atenderte personalmente!
+          </p>
+          <Link to="/contact" className="contact-button">
+            Ir al Formulario de Contacto
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 };
 
