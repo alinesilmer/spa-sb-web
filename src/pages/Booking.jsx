@@ -1,10 +1,10 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
-import { mockTimeSlots } from "../data/mockBookings"
-import { services } from "../data/mockData"
+import { getActiveServices } from "../services/serviceService"
+import { getAvailable } from "../services/userService"
+import { createBooking } from "../services/bookingService"
 import "../styles/booking.css"
 
 const Booking = () => {
@@ -36,26 +36,55 @@ const Booking = () => {
     }
   }, [isLoggedIn, navigate, serviceId])
 
- 
   useEffect(() => {
-    if (serviceId) {
-      const foundService = services.find((s) => s.id === serviceId)
-      if (foundService) {
-        setService(foundService)
-      } else {
-        setError("Servicio no encontrado")
-      }
-      setLoading(false)
-    }
-  }, [serviceId])
-
+    const fetchService = async () => {
+      try {
+        const serviceList = await getActiveServices();
+        const foundService = serviceList.find((s) => s.id === serviceId);
   
-  useEffect(() => {
-    if (selectedDate) {
-      setAvailableTimeSlots(mockTimeSlots.filter((slot) => slot.available))
+        if (foundService) {
+          setService(foundService);
+        } else {
+          setError("Servicio no encontrado");
+        }
+      } catch (error) {
+        console.error("Error al obtener servicios:", error);
+        setError("Error al cargar servicios");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    if (serviceId) {
+      fetchService();
     }
-  }, [selectedDate])
+  }, [serviceId]);  
 
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (!currentUser || !serviceId || !selectedDate) return;
+
+      try {
+        const token = localStorage.getItem("authToken")
+
+        const response = await getAvailable(token, serviceId, selectedDate);
+        const weekday = new Date(selectedDate + "T00:00:00").toLocaleDateString("es-AR", { weekday: "long" }).toLowerCase();
+        
+        const dayAvailability = response.message.availability.find((d) => d.day.toLowerCase() === weekday);
+        if (dayAvailability && dayAvailability.schedule) {
+          setAvailableTimeSlots(dayAvailability.schedule.filter((s) => s.available));
+        } else {
+          setAvailableTimeSlots([]);
+        }
+
+      } catch (error) {
+        console.error("Error al obtener disponibilidad:", error);
+        setAvailableTimeSlots([]);
+      }
+    };
+  
+    fetchAvailability();
+  }, [selectedDate, serviceId, currentUser]);
 
   useEffect(() => {
     if (selectedPaymentMethod === "MercadoPago" && !finalConfirmation) {
@@ -72,44 +101,49 @@ const Booking = () => {
     }
   }, [selectedPaymentMethod, timeLeft, finalConfirmation, navigate])
 
-  
-  const handleDateChange = (date) => {
-    setSelectedDate(date.toISOString().split("T")[0])
-    setSelectedTimeSlot(null)
-  }
+  const handleDateChange = (value) => {
+    setSelectedDate(value);
+    setSelectedTimeSlot(null);
+  };
 
   const handleTimeSlotSelect = (timeSlot) => {
     setSelectedTimeSlot(timeSlot)
   }
 
  
-  const handleConfirmBooking = () => {
-    if (!selectedTimeSlot) {
-      setError("Por favor seleccioná un horario")
-      return
-    }
+  const handleConfirmBooking = async () => {
+  try {
+      const token = localStorage.getItem("authToken")
 
-    const newBooking = {
-      id: Math.floor(Math.random() * 1000).toString(),
-      userId: currentUser.id,
-      serviceId: service.id,
-      serviceName: service.name,
-      professionalId: "2", // Hardcoded to test
-      professionalName: "Professional User",
-      date: selectedDate,
-      time: selectedTimeSlot.time,
-      duration: `${service.duration} minutos`,
-      price: service.price,
-      status: "pending",
-      paymentStatus: "pending",
-      paymentMethod: null,
-      createdAt: new Date().toISOString(),
-    }
+      if (!selectedTimeSlot) {
+        setError("Por favor seleccioná un horario")
+        return
+      }
 
-    setBookingData(newBooking)
-    setBookingConfirmed(true)
+      const newBooking = {
+        serviceName: service.name,
+        professionalName: service.professional.name,
+        date: selectedDate,
+        time: selectedTimeSlot.hour,
+        duration: `${service.duration} minutos`,
+        price: service.price,
+      }
+
+      const bookingData = {
+        serviceId: service.id,
+        date: selectedDate,
+        hour: selectedTimeSlot.hour
+      }
+
+      await createBooking(token, bookingData);   
+
+      setBookingData(newBooking)
+      setBookingConfirmed(true)
+
+    } catch {
+
+    }
   }
-
   
   const handleReceiptUpload = (e) => {
     const file = e.target.files[0]
@@ -193,7 +227,7 @@ const Booking = () => {
               </div>
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Precio:</span>
-                <span className="booking-detail-value">${bookingData.price.toLocaleString()}</span>
+                <span className="booking-detail-value">${typeof bookingData.price === "number" ? bookingData.price.toLocaleString() : "N/A"}</span>
               </div>
             </div>
           </div>
@@ -236,7 +270,7 @@ const Booking = () => {
               </div>
               <div className="booking-detail-item">
                 <span className="booking-detail-label">Precio:</span>
-                <span className="booking-detail-value">${bookingData.price.toLocaleString()}</span>
+                <span className="booking-detail-value">${typeof bookingData.price === "number" ? bookingData.price.toLocaleString() : "N/A"}</span>
               </div>
             </div>
 
@@ -316,7 +350,8 @@ const Booking = () => {
           <>
             <div className="booking-header">
               <h1>Reservar {service.name}</h1>
-              <p className="booking-service-price">Precio: ${service.price.toLocaleString()}</p>
+              <p className="booking-service-price">Profesional: {service.professional.name}</p>
+              <p className="booking-service-price">Precio: ${typeof service.price === "number" ? service.price.toLocaleString() : "N/A"}</p>
               <p className="booking-service-duration">Duración: {service.duration} minutos</p>
             </div>
 
@@ -326,7 +361,7 @@ const Booking = () => {
                 <input
                   type="date"
                   value={selectedDate}
-                  onChange={(e) => handleDateChange(new Date(e.target.value))}
+                  onChange={(e) => handleDateChange(e.target.value)}
                   min={new Date().toISOString().split("T")[0]}
                   className="booking-calendar"
                 />
@@ -344,7 +379,7 @@ const Booking = () => {
                         }`}
                         onClick={() => handleTimeSlotSelect(slot)}
                       >
-                        {slot.time}
+                        {slot.hour}
                       </button>
                     ))}
                   </div>
@@ -364,7 +399,7 @@ const Booking = () => {
                 <div className="booking-summary-item">
                   <span className="booking-summary-label">Fecha:</span>
                   <span className="booking-summary-value">
-                    {new Date(selectedDate).toLocaleDateString("es-AR", {
+                    {new Date(selectedDate + "T00:00:00").toLocaleDateString("es-AR", {
                       weekday: "long",
                       year: "numeric",
                       month: "long",
@@ -375,12 +410,12 @@ const Booking = () => {
                 <div className="booking-summary-item">
                   <span className="booking-summary-label">Hora:</span>
                   <span className="booking-summary-value">
-                    {selectedTimeSlot ? selectedTimeSlot.time : "No seleccionada"}
+                    {selectedTimeSlot ? selectedTimeSlot.hour : "No seleccionada"}
                   </span>
                 </div>
                 <div className="booking-summary-item">
                   <span className="booking-summary-label">Precio:</span>
-                  <span className="booking-summary-value">${service.price.toLocaleString()}</span>
+                  <span className="booking-summary-value">${typeof service.price === "number" ? service.price.toLocaleString() : "N/A"}</span>
                 </div>
               </div>
 

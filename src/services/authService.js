@@ -1,4 +1,3 @@
-// This file would handle authentication-related functions
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 

@@ -50,6 +50,10 @@ const ServiceModal = ({ service, onClose, isLoggedIn }) => {
               </div>
             </div>
             <div className="service-modal-description">
+              <h3>Profesional a cargo</h3>
+              <p> 👤 {service.professional?.name}</p>
+            </div>
+            <div className="service-modal-description">
               <h3>Descripción</h3>
               <p>{service.description}</p>
             </div>
@@ -58,7 +62,7 @@ const ServiceModal = ({ service, onClose, isLoggedIn }) => {
                 <h3>Beneficios</h3>
                 <ul>
                   {service.benefits.map((benefit, index) => (
-                    <li key={index}>{benefit}</li>
+                    <li key={index}> 💎 {benefit}</li>
                   ))}
                 </ul>
               </div>
@@ -68,7 +72,7 @@ const ServiceModal = ({ service, onClose, isLoggedIn }) => {
                 <h3>Incluye</h3>
                 <ul>
                   {service.includes.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index}> 🔹 {item}</li>
                   ))}
                 </ul>
               </div>

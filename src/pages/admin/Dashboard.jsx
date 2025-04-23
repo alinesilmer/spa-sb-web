@@ -3,7 +3,6 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
 import { mockContactMessages } from "../../data/mockBookings"
-import { services } from "../../data/mockData"
 import "../../styles/admin.css"
 import "../../index.css"
 import MessageResponseModal from "../../components/MessageResponseModal"
@@ -16,6 +15,7 @@ import ServiceDetailsModal from "../../components/ServiceDetailsModal"
 import { getBookings, cancelBooking, confirmBooking } from '../../services/bookingService';
 import { getUsers, getSpecificUser, updateUser, updateUserById, approveUser, deleteUser, realDeleteUser } from '../../services/userService';
 import { registerUser } from "../../services/authService"
+import { getAllServices, updateService, deleteService, newService } from "../../services/serviceService"
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
@@ -24,7 +24,8 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([])
   const [bookings, setBookings] = useState([])
   const [messages, setMessages] = useState(mockContactMessages)
-  const [servicesList, setServicesList] = useState(services)
+  const [servicesList, setServicesList] = useState([])
+  const [professionals, setProfessionals] = useState([]);
   const [pendingProfessionals, setPendingProfessionals] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -53,21 +54,6 @@ const AdminDashboard = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
 
-  /*ESTRUCTURA DEL PROFESIONAL
-    {
-      id: string generado por firestore,
-      name: "María",
-      lastname: "González",
-      email: "maria@example.com",
-      telephone: "+54 9 3624 567890",
-      userType: "profesional",
-      status: false,
-      specialties: ["Masajes", "Tratamientos Faciales"],
-      certification: "Certificado en Terapias Corporales",
-      bio: "Especialista en masajes terapéuticos y tratamientos faciales rejuvenecedores.",
-      availability: [{ 0: ["9:00",true], ["10:00",false]}, { 1: ["9:00",true]}]
-    },*/
-
   useEffect(() => {
     if (!isAdmin) {
       navigate("/login")
@@ -78,11 +64,13 @@ const AdminDashboard = () => {
     if (currentUser) {      
       getUserBookings();
       loadUsers();
+      fetchActiveProfessionals();
       fetchPendingProfessionals();
+      fetchServices();
     }
   }, [currentUser])
 
-  const getUserBookings = async () =>{
+  const getUserBookings = async () => {
     const authToken = localStorage.getItem('authToken');
     const userBookings =  await getBookings(authToken, currentUser.id);
     setBookings(userBookings.length > 0 ? userBookings : [])
@@ -91,6 +79,18 @@ const AdminDashboard = () => {
   const loadUsers = async () => {
     const allUsers = await getUsers();
     setUsers(allUsers.length > 0 ? allUsers : []);
+  }
+
+  const fetchServices = async () => {
+    const servicesList = await getAllServices();
+    setServicesList(servicesList.length > 0 ? servicesList : []);
+  };
+
+  const fetchActiveProfessionals = async () => {
+    const userType = "profesional";
+    const state = true;
+    const data = await getSpecificUser(userType, state);
+    setProfessionals(data);
   }
 
   const fetchPendingProfessionals = async () => {
@@ -142,7 +142,7 @@ const AdminDashboard = () => {
       const token = localStorage.getItem('authToken');    
       
       if (deleteType === "service") {
-        setServicesList(servicesList.filter((service) => service.id !== itemToOperate))
+        await deleteService(token, itemToOperate)
       } else if (deleteType === "message") {
         setMessages(messages.filter((message) => message.id !== itemToOperate))
       } else if (deleteType === "user") {
@@ -200,24 +200,51 @@ const AdminDashboard = () => {
     setShowServiceEditModal(true)
   }
 
-  const handleServiceSave = (serviceData) => {
-    if (serviceData.id) {
-      setServicesList(servicesList.map((service) => (service.id === serviceData.id ? { ...serviceData } : service)))
-    } else {
-      const newService = {
-        ...serviceData,
-        id: (Math.max(...servicesList.map((s) => Number.parseInt(s.id))) + 1).toString(),
+  const handleServiceSave = async (serviceData) => {
+    try {
+      const token = localStorage.getItem("authToken")
+
+      const { name, shortDescription, description, category, price, duration, benefits, includes, professional, image } = serviceData;
+      const payload = { name, shortDescription, description, category, price, duration, 
+        image: image || null, 
+        benefits: benefits || [],
+        includes: includes || [],
+        professional: professional?.id ? `/users/${professional.id}` : "", 
+      };
+
+      let savedService;
+
+      if (serviceData.id) {
+        savedService = await updateService(token, serviceData.id, payload);
+        setSuccessMessage("Servicio actualizado correctamente");
+      } else {
+        savedService = await newService(token, payload);
+        setSuccessMessage("Servicio creado correctamente");
       }
-      setServicesList([...servicesList, newService])
+
+      savedService.price = Number(savedService.price);
+      savedService.duration = Number(savedService.duration);
+
+      setServicesList((prevList) => {
+        if (serviceData.id) {
+          return prevList.map((s) => (s.id === savedService.id ? savedService : s));
+        } else {
+          return [...prevList, savedService];
+        }
+      });
+      
+      setShowSuccessModal(true);
+      fetchServices();
+
+    } catch (error) {      
+      const message = error.response?.data?.message || "Ocurrió un error al guardar el servicio.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    } finally {
+      setShowServiceEditModal(false);
     }
-    setShowServiceEditModal(false)
-    
-    // Show success message
-    setSuccessMessage(serviceData.id ? "Servicio actualizado correctamente" : "Servicio creado correctamente");
-    setShowSuccessModal(true);
   }
 
-  // Other handlers
   const handleOpenResponseModal = (message) => {
     setCurrentMessage(message)
     setShowResponseModal(true)
@@ -237,6 +264,8 @@ const AdminDashboard = () => {
       setUsers([...users, userData])
       setSuccessMessage("Usuario agregado correctamente");
       setShowSuccessModal(true);
+      loadUsers();
+      
     } catch (error) {
       const message = error.response?.data?.message || "Error al actualizar el usuario.";
       setErrorMessage(message);
@@ -261,8 +290,6 @@ const AdminDashboard = () => {
     setShowProfileModal(true);
   };
 
-  // TODO: Se actualizan los datos en la BD, pero no se refresca el perfil con los datos actualizados. 
-  // Si se actualiza al cerrar e iniciar sesion de nuevo
   const handleSaveProfile = async (updatedUser) => {
     try {       
       const token = localStorage.getItem('authToken');
@@ -277,6 +304,8 @@ const AdminDashboard = () => {
 
       setSuccessMessage("Perfil actualizado correctamente")
       setShowSuccessModal(true)
+      loadUsers();
+
     } catch (error) {      
       const message = error.response?.data?.message || "Error al actualizar el usuario.";
       setErrorMessage(message);
@@ -339,7 +368,7 @@ const AdminDashboard = () => {
 
   const filteredServices = servicesList.filter((service) => {
     const matchesSearch = searchTerm === "" || service.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = categoryFilter === "all" || service.category === categoryFilter
+    const matchesCategory = categoryFilter === "all" || service.category.toLowerCase() === categoryFilter
     return matchesSearch && matchesCategory
   })
 
@@ -701,7 +730,6 @@ const AdminDashboard = () => {
                   className="admin-add-btn"
                   onClick={() =>
                     handleServiceEdit({
-                      id: "",
                       name: "",
                       shortDescription: "",
                       description: "",
@@ -711,6 +739,7 @@ const AdminDashboard = () => {
                       image: "",
                       benefits: [],
                       includes: [],
+                      professional: "",
                     })
                   }
                 >
@@ -752,7 +781,7 @@ const AdminDashboard = () => {
                       <p className="admin-service-description">{service.shortDescription}</p>
                       <div className="admin-service-details">
                         <span className="admin-service-category">Categoría: {service.category}</span>
-                        <span className="admin-service-price">Precio: ${service.price.toLocaleString()}</span>
+                        <span className="admin-service-price">Precio: ${typeof service.price === "number" ? service.price.toLocaleString() : "N/A"}</span>
                         <span className="admin-service-duration">Duración: {service.duration} min</span>
                       </div>
                       <div className="admin-service-actions">
@@ -1169,6 +1198,86 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 <div className="admin-form-group">
+                  <label>Beneficios</label>
+                  {currentService.benefits.map((benefit, index) => (
+                    <div key={index} className="admin-form-inline">
+                      <input
+                        type="text"
+                        value={benefit}
+                        onChange={(e) => {
+                          const updated = [...currentService.benefits];
+                          updated[index] = e.target.value;
+                          setCurrentService({ ...currentService, benefits: updated });
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = currentService.benefits.filter((_, i) => i !== index);
+                          setCurrentService({ ...currentService, benefits: updated });
+                        }}
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setCurrentService({ ...currentService, benefits: [...currentService.benefits, ""] })}
+                  >
+                    + Agregar Beneficio
+                  </button>
+                </div>
+                <div className="admin-form-group">
+                  <label>Incluye</label>
+                  {currentService.includes.map((include, index) => (
+                    <div key={index} className="admin-form-inline">
+                      <input
+                        type="text"
+                        value={include}
+                        onChange={(e) => {
+                          const updated = [...currentService.includes];
+                          updated[index] = e.target.value;
+                          setCurrentService({ ...currentService, includes: updated });
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = currentService.includes.filter((_, i) => i !== index);
+                          setCurrentService({ ...currentService, includes: updated });
+                        }}
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setCurrentService({ ...currentService, includes: [...currentService.includes, ""] })}
+                  >
+                    + Agregar Elemento
+                  </button>
+                </div>
+                <div className="admin-form-group">
+                  <label>Profesional</label>
+                  <select
+                    value={currentService.professional?.id || ""}
+                    onChange={(e) => {
+                      const selectedPro = professionals.find((p) => p.id === e.target.value);
+                      setCurrentService({ ...currentService, professional: selectedPro || "" });
+                    }}
+                    required
+                  >
+                    <option value="">Seleccionar profesional</option>
+                    {professionals.map((pro) => (
+                      <option key={pro.id} value={pro.id}>
+                        {pro.lastname}, {pro.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="admin-form-group">
                   <label>URL de Imagen</label>
                   <input
                     type="text"
@@ -1200,6 +1309,7 @@ const AdminDashboard = () => {
         isOpen={showServiceDetailsModal}
         onClose={() => setShowServiceDetailsModal(false)}
         service={currentService}
+        showButton={false}
       />
 
       {/* Message Response Modal */}

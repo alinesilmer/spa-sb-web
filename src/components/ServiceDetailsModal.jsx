@@ -3,14 +3,11 @@ import SimpleModal from "./SimpleModal"
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
+const ServiceDetailsModal = ({ isOpen, onClose, service, showButton }) => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
   if (!service) return null
-
-
-
   return (
     <SimpleModal isOpen={isOpen} onClose={onClose} title="Detalles del Servicio">
       <div className="service-details">
@@ -25,7 +22,9 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
               <strong>Categoría:</strong> {service.category}
             </div>
             <div className="service-meta-item">
-              <strong>Precio:</strong> ${service.price.toLocaleString()}
+            <strong>Precio:</strong> {service.price !== undefined && service.price !== null
+              ? `$${service.price.toLocaleString()}`
+              : "No disponible"}
             </div>
             <div className="service-meta-item">
               <strong>Duración:</strong> {service.duration} minutos
@@ -33,6 +32,9 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
           </div>
 
           <div className="service-description">
+            <h4>Profesional a cargo</h4>
+            <p> 👤 {service.professional?.name}</p>
+
             <h4>Descripción Corta</h4>
             <p>{service.shortDescription}</p>
 
@@ -45,7 +47,7 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
               <h4>Beneficios</h4>
               <ul>
                 {service.benefits.map((benefit, index) => (
-                  <li key={index}>{benefit}</li>
+                  <li key={index}> 💎 {benefit}</li>
                 ))}
               </ul>
             </div>
@@ -56,7 +58,7 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
               <h4>Incluye</h4>
               <ul>
                 {service.includes.map((item, index) => (
-                  <li key={index}>{item}</li>
+                  <li key={index}> 🔹 {item}</li>
                 ))}
               </ul>
             </div>
@@ -66,10 +68,11 @@ const ServiceDetailsModal = ({ isOpen, onClose, service }) => {
       <div className="service-details-actions">
         {isLoggedIn ? (
        <button
+            style={{display:!showButton?'none':'block'}}
             className="service-details-book-btn"
             onClick={() => navigate(`/booking/${service.id}`)}
           >
-            Reservar
+            Reservar  
           </button>
         ) : (
           <p style={{ textAlign: "center", marginTop: "1rem" }}>

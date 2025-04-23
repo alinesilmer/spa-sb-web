@@ -1,82 +1,64 @@
-// This file would handle service-related functions
+import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
-/*
-import { 
-  collection, 
-  getDocs, 
-  getDoc, 
-  doc, 
-  query, 
-  where, 
-  orderBy 
-} from 'firebase/firestore';
-import { db } from './firebase';
-
-// Get all services
-export const getAllServices = async () => {
-  try {
-    const querySnapshot = await getDocs(collection(db, 'services'));
-    
-    const services = [];
-    querySnapshot.forEach((doc) => {
-      services.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    
-    return { success: true, services };
-  } catch (error) {
-    console.error('Error getting services:', error);
-    return { success: false, error: error.message };
-  }
+export async function getAllServices() {
+  const response = await axios.get(
+    `${API_BASE_URL}/services`, 
+  );
+  //console.log("getAllServices. RESPONSE: " + JSON.stringify(response.data));
+  
+  return response.data;
 };
 
-// Get services by category
-export const getServicesByCategory = async (category) => {
-  try {
-    const q = query(
-      collection(db, 'services'), 
-      where('category', '==', category),
-      orderBy('title')
-    );
-    
-    const querySnapshot = await getDocs(q);
-    
-    const services = [];
-    querySnapshot.forEach((doc) => {
-      services.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    
-    return { success: true, services };
-  } catch (error) {
-    console.error('Error getting services by category:', error);
-    return { success: false, error: error.message };
-  }
+export async function getProfessionalServices(authToken) {
+  const response = await axios.get(
+    `${API_BASE_URL}/services/getBy`, 
+    { headers: { Authorization: `Bearer ${authToken}` } }
+  );
+  //console.log("getAllServices. RESPONSE: " + JSON.stringify(response.data));
+  
+  return response.data;
 };
 
-// Get service by ID
-export const getServiceById = async (serviceId) => {
-  try {
-    const serviceDoc = await getDoc(doc(db, 'services', serviceId));
-    
-    if (!serviceDoc.exists()) {
-      return { success: false, error: 'Service not found' };
-    }
-    
-    return { 
-      success: true, 
-      service: {
-        id: serviceDoc.id,
-        ...serviceDoc.data()
-      } 
-    };
-  } catch (error) {
-    console.error('Error getting service by ID:', error);
-    return { success: false, error: error.message };
-  }
+export async function getActiveServices() {
+  const response = await axios.get(
+    `${API_BASE_URL}/services?state=true`, 
+  );
+  //console.log("getActiveServices. RESPONSE: " + JSON.stringify(response.data));
+  
+  return response.data;
 };
-*/
+
+export const updateService = async (authToken, serviceId, serviceData) => {
+  const response = await axios.put(
+    `${API_BASE_URL}/services/${serviceId}`, 
+    serviceData, 
+    { headers: { Authorization: `Bearer ${authToken}` } }
+  );
+  //console.log("updateService: " + JSON.stringify(serviceData) + ". RESPONSE: " + JSON.stringify(response.data));
+
+  return response.data;
+};
+
+export const newService = async (authToken, serviceData) => {
+  const response = await axios.post(
+    `${API_BASE_URL}/services/`, 
+    serviceData,
+    { headers: { Authorization: `Bearer ${authToken}` } }
+  );
+  //console.log("newService: " + JSON.stringify(serviceData) + ". RESPONSE: " + JSON.stringify(response.data));
+
+  return response.data;
+};
+
+
+export const deleteService = async (authToken, serviceId) => {
+  const response = await axios.put(
+    `${API_BASE_URL}/services/deleted/${serviceId}`, 
+    {}, 
+    { headers: { Authorization: `Bearer ${authToken}` } }
+  );
+  //console.log("deleteService: " + serviceId + ". RESPONSE: " + JSON.stringify(response.data));
+
+  return response.data;
+};

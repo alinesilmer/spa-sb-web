@@ -1,9 +1,7 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { useNavigate, useLocation } from "react-router-dom"
-import { services } from "../data/mockData" 
 import ServiceCard from "../components/ServiceCard"
 import ServiceModal from "../components/ServiceModal"
 import CategoryIcons from "../components/CategoryIcons"
@@ -11,16 +9,26 @@ import Video from "../components/Video";
 import ScrollArrow from "../assets/scrolldown-arrow.svg"
 import videoBg from "../assets/service-video-bg.mp4";
 import "../styles/services.css"
+import { getActiveServices } from "../services/serviceService"
 
 const Services = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const [services, setServices] = useState([])
   const [activeCategory, setActiveCategory] = useState("todo")
   const [filteredServices, setFilteredServices] = useState([])
   const [selectedService, setSelectedService] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const { isLoggedIn } = useAuth();
 
+  useEffect(() => {
+    const fetchServices = async () => {
+      const result = await getActiveServices();
+      setServices(result.length > 0 ? result : []);
+    };
+  
+    fetchServices();
+  }, []);
   
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -40,10 +48,14 @@ const Services = () => {
   }, [location.search])
 
   useEffect(() => {
-    let filtered = services
+    if (services.length === 0) return;
+  
+    let filtered = [...services];
+
     if (activeCategory !== "todo") {
-      filtered = filtered.filter((service) => service.category === activeCategory)
+      filtered = filtered.filter((service) => service.category.toLowerCase() === activeCategory)
     }
+
     if (searchTerm) {
       filtered = filtered.filter(
         (service) =>
@@ -51,8 +63,9 @@ const Services = () => {
           service.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     }
+
     setFilteredServices(filtered)
-  }, [activeCategory, searchTerm])
+  }, [services, activeCategory, searchTerm])
 
   const handleViewMore = (service) => {
     setSelectedService(service)

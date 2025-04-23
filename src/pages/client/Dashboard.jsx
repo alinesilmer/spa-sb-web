@@ -135,8 +135,6 @@ const ClientDashboard = () => {
     }
   }
 
-  // TODO: Se actualizan los datos en la BD, pero no se refresca el perfil con los datos actualizados. 
-  // Si se actualiza al cerrar e iniciar sesion de nuevo
   const handleProfileUpdate = async () => {
     try {
       const updatedUser = {
@@ -317,7 +315,7 @@ const ClientDashboard = () => {
                         <div className="client-booking-details">
                           <h3 className="client-booking-service">{booking.serviceName}</h3>
                           <p className="client-booking-professional">Profesional: {booking.professionalName}</p>
-                          <p className="client-booking-duration">Duración: {booking.duration}</p>
+                          <p className="client-booking-duration">Duración: {booking.duration} minutos</p>
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>
@@ -361,7 +359,7 @@ const ClientDashboard = () => {
                         <div className="client-booking-details">
                           <h3 className="client-booking-service">{booking.serviceName}</h3>
                           <p className="client-booking-professional">Profesional: {booking.professionalName}</p>
-                          <p className="client-booking-duration">Duración: {booking.duration}</p>
+                          <p className="client-booking-duration">Duración: {booking.duration} minutos</p>
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>
@@ -414,7 +412,7 @@ const ClientDashboard = () => {
                         <div className="client-booking-details">
                           <h3 className="client-booking-service">{booking.serviceName}</h3>
                           <p className="client-booking-professional">Profesional: {booking.professionalName}</p>
-                          <p className="client-booking-duration">Duración: {booking.duration}</p>
+                          <p className="client-booking-duration">Duración: {booking.duration} minutos</p>
                         </div>
                         <div className="client-booking-status">
                           <span className={`booking-status ${booking.status}`}>

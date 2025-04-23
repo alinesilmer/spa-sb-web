@@ -30,7 +30,7 @@ export const updateUser = async (authToken, userData) => {
     userData,
     { headers: { Authorization: `Bearer ${authToken}` }, }
   );
-  console.log("updateUser: " + JSON.stringify(userData) + ". RESPONSE: " + JSON. stringify(response));
+  //console.log("updateUser: " + JSON.stringify(userData) + ". RESPONSE: " + JSON. stringify(response));
   
   return response.data;
 };
@@ -41,7 +41,7 @@ export const updateUserById = async (authToken, userId, userData) => {
     userData,
     { headers: { Authorization: `Bearer ${authToken}` }, }
   );
-  console.log("updateUserBYID: " + JSON.stringify(userData) + ". RESPONSE: " + JSON. stringify(response));
+  //console.log("updateUserBYID: " + JSON.stringify(userData) + ". RESPONSE: " + JSON. stringify(response));
   
   return response.data;
 };
@@ -80,10 +80,11 @@ export const realDeleteUser = async (authToken, userId) => {
 
 export async function getAvailable (authToken, serviceId, date) {
   const response = await axios.get(
-    `${API_BASE_URL}/${serviceId}/available`, 
-    date,
+    `${API_BASE_URL}/appointments/${serviceId}/available?date=${date}`, 
     { headers: { Authorization: `Bearer ${authToken}` }}
   );
+  //console.log("getAvailable: " + serviceId + ". RESPONSE: " + JSON. stringify(response.data));
+
   return response.data;
 };
 
