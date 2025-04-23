@@ -53,19 +53,19 @@ export const globalSearch = (query, data) => {
     const serviceResults = data.services
       .filter(
         (service) =>
-          service.name.toLowerCase().includes(normalizedQuery) ||
-          service.shortDescription.toLowerCase().includes(normalizedQuery) ||
-          service.description.toLowerCase().includes(normalizedQuery) ||
-          service.category.toLowerCase().includes(normalizedQuery),
+          service?.name?.toLowerCase().includes(normalizedQuery) ||
+          service?.shortDescription?.toLowerCase().includes(normalizedQuery) ||
+          service?.description?.toLowerCase().includes(normalizedQuery) ||
+          service?.category?.toLowerCase().includes(normalizedQuery),
       )
       .map((service) => ({
-        id: service.id,
+        id: service?.id,
         type: CONTENT_TYPES.SERVICE,
-        title: service.name,
-        description: service.shortDescription,
-        path: `/services?highlight=${service.id}`,
-        image: service.image,
-        category: service.category,
+        title: service?.name,
+        description: service?.shortDescription,
+        path: `/services?highlight=${service?.id}`,
+        image: service?.image,
+        category: service?.category,
       }))
 
     results.push(...serviceResults)
@@ -76,18 +76,18 @@ export const globalSearch = (query, data) => {
     const teamResults = data.teamMembers
       .filter(
         (member) =>
-          member.name.toLowerCase().includes(normalizedQuery) ||
-          member.position.toLowerCase().includes(normalizedQuery) ||
-          member.bio.toLowerCase().includes(normalizedQuery) ||
-          (member.specialties && member.specialties.some((s) => s.toLowerCase().includes(normalizedQuery))),
+          member?.name?.toLowerCase().includes(normalizedQuery) ||
+          member?.certification?.toLowerCase().includes(normalizedQuery) ||
+          member?.bio?.toLowerCase().includes(normalizedQuery) ||
+          (member?.specialties && member?.specialties?.some((s) => s.toLowerCase().includes(normalizedQuery))),
       )
       .map((member) => ({
-        id: member.id,
+        id: member?.id,
         type: CONTENT_TYPES.TEAM,
-        title: member.name,
-        description: member.position,
-        path: `/about-us?highlight=${member.id}`,
-        image: member.image,
+        title: member?.name,
+        description: member?.certification,
+        path: `/about-us?highlight=${member?.id}`,
+        image: member?.image,
       }))
 
     results.push(...teamResults)
@@ -97,15 +97,15 @@ export const globalSearch = (query, data) => {
   const pageResults = pages
     .filter(
       (page) =>
-        page.title.toLowerCase().includes(normalizedQuery) ||
-        page.keywords.some((keyword) => keyword.toLowerCase().includes(normalizedQuery)),
+        page?.title?.toLowerCase().includes(normalizedQuery) ||
+        page?.keywords?.some((keyword) => keyword.toLowerCase().includes(normalizedQuery)),
     )
     .map((page) => ({
-      id: page.id,
+      id: page?.id,
       type: CONTENT_TYPES.PAGE,
-      title: page.title,
-      description: `Página de ${page.title}`,
-      path: page.path,
+      title: page?.title,
+      description: `Página de ${page?.title}`,
+      path: page?.path,
     }))
 
   results.push(...pageResults)

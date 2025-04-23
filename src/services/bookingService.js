@@ -1,4 +1,3 @@
-// This file would handle booking-related functions
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 
@@ -27,7 +26,7 @@ export async function getBookings(authToken, userid) {
         clientTelephone: item.serviceId.clientTelephone,
         date: item.date,
         time: item.hour,
-        duration: item.serviceId.durationMin,
+        duration: item.serviceId.duration,
         price: item.serviceId.price,
         status: item.state,
         paymentStatus: item.serviceId.paymentStatus,
@@ -67,7 +66,7 @@ export async function getProfBookings(authToken, userid) {
         clientTelephone: item.serviceId.clientTelephone,
         date: item.date,
         time: item.hour,
-        duration: item.serviceId.durationMin,
+        duration: item.serviceId.duration,
         price: item.serviceId.price,
         status: item.state,
         paymentStatus: item.serviceId.paymentStatus,
@@ -88,6 +87,8 @@ export const createBooking = async (authToken, apptData) => {
     apptData, 
     { headers: { Authorization: `Bearer ${authToken}` } }
   );
+  console.log("createBooking " + JSON.stringify(apptData) + ". RESPONSE: " + JSON.stringify(response.data));
+
   return response.data;
 };
 

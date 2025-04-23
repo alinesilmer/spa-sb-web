@@ -7,7 +7,7 @@ import "../styles/header.css"
 import MenuDropdown from "./MenuDropdown"
 import SearchResults from "./SearchResults"
 import { globalSearch } from "../utils/searchUtils"
-import { services } from "../data/mockData"
+import { getActiveServices } from "../services/serviceService"
 import { getSpecificUser } from '../services/userService'
 
 const Header = () => {
@@ -17,6 +17,7 @@ const Header = () => {
   const [searchResults, setSearchResults] = useState([])
   const [showResults, setShowResults] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [services, setServices] = useState([])
   const [profUsers, setProfUsers] = useState([])
   const searchRef = useRef(null)
   const location = useLocation()
@@ -49,6 +50,12 @@ const Header = () => {
       setProfUsers(data)
     }
     loadProfessionals()
+
+    const loadServices = async () => {
+      const data = await getActiveServices()
+      setServices(data)
+    }
+    loadServices()
   }, [])
 
 
@@ -58,7 +65,6 @@ const Header = () => {
   } else {
     headerClass += " opaque"
   }
-
 
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen)
@@ -77,7 +83,7 @@ const Header = () => {
     setSearchQuery(query)
     if (query.trim().length > 2) {
       // Search across all content
-      const results = globalSearch(query, { services, teamMembers: profUsers } )
+      const results = globalSearch(query, { services:services, teamMembers: profUsers } )
       setSearchResults(results)
       setShowResults(true)
     } else {

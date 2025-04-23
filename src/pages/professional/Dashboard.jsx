@@ -7,6 +7,7 @@ import SimpleModal from "../../components/SimpleModal"
 import ScheduleSelector from "../../components/ScheduleSelector"
 import { getProfBookings, cancelBooking, confirmBooking } from '../../services/bookingService';
 import { updateUser, setSchedule, getClients } from '../../services/userService';
+import { getProfessionalServices } from "../../services/serviceService"
 import ClientHistoryModal from "../../components/ClientHistoryModal"
 import UserDetailsModal from "../../components/UserDetailsModal"
 
@@ -17,6 +18,7 @@ const ProfessionalDashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
   const [bookings, setBookings] = useState([])
   const [clients, setClients] = useState([])
+  const [services, setServices] = useState([])
   const [showAppointmentDetailsModal, setShowAppointmentDetailsModal] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
   const [selectedClient, setSelectedClient] = useState(null);
@@ -39,43 +41,6 @@ const ProfessionalDashboard = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
 
-  const services = [
-    {
-      id: "1",
-      name: "Masaje Anti-stress",
-      category: "Corporales",
-      duration: "60 minutos",
-      price: 5500,
-      description:
-        "Un masaje relajante diseñado para aliviar la tensión y el estrés acumulado. Utiliza técnicas suaves y aceites esenciales para promover la relajación profunda.",
-      benefits: ["Reduce el estrés y la ansiedad", "Mejora la calidad del sueño", "Alivia dolores musculares leves"],
-    },
-    {
-      id: "2",
-      name: "Masaje Descontracturante",
-      category: "Corporales",
-      duration: "50 minutos",
-      price: 6000,
-      description:
-        "Masaje terapéutico enfocado en liberar contracturas y nudos musculares. Utiliza técnicas de presión profunda para aliviar la tensión muscular crónica.",
-      benefits: ["Alivia contracturas musculares", "Mejora la movilidad", "Reduce el dolor crónico"],
-    },
-    {
-      id: "3",
-      name: "VelaSlim",
-      category: "Corporales",
-      duration: "45 minutos",
-      price: 8500,
-      description:
-        "Tratamiento corporal que combina radiofrecuencia, luz infrarroja y masaje de vacío para reducir la apariencia de celulitis y mejorar el contorno corporal.",
-      benefits: [
-        "Reduce la apariencia de celulitis",
-        "Mejora la firmeza de la piel",
-        "Ayuda a moldear el contorno corporal",
-      ],
-    },
-  ]
-
   const [searchTerm, setSearchTerm] = useState("")
   const [profileData, setProfileData] = useState({
     name: "",
@@ -96,7 +61,8 @@ const ProfessionalDashboard = () => {
   useEffect(() => {
     if (currentUser) {      
       getUserBookings();
-      getMyClients();      
+      getMyClients(); 
+      fetchServices();     
     } 
 
     setProfileData({
@@ -129,6 +95,12 @@ const ProfessionalDashboard = () => {
     setBookings(userBookings.length > 0 ? userBookings : [])
   }
 
+  const fetchServices = async () => {
+    const authToken = localStorage.getItem('authToken');
+    const services = await getProfessionalServices(authToken);
+    setServices(services.length > 0 ? services : []);
+  };
+
   const professionalBookings = bookings.filter((booking) => booking.professionalId === currentUser?.id)
   const todayDate = new Date().toISOString().split("T")[0]
   const todayAppointments = professionalBookings
@@ -139,7 +111,6 @@ const ProfessionalDashboard = () => {
     .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
     .slice(0, 5)
 
-  // Get pending bookings for notifications
   const pendingBookings = professionalBookings.filter((booking) => booking.status === "pendiente")
 
     // TODO: cuando clickeas se quedan en la pantalla de localhost:5173/login pero en blanco, cuando refrescas si carga bien
@@ -241,8 +212,6 @@ const ProfessionalDashboard = () => {
     setShowClientHistoryModal(true);
   };
 
-  // TODO: Se actualizan los datos en la BD, pero no se refresca el perfil con los datos actualizados. 
-  // Si se actualiza al cerrar e iniciar sesion de nuevo
   const handleProfileUpdate = async () => {
     try {
       const updatedUser = {
@@ -257,16 +226,16 @@ const ProfessionalDashboard = () => {
       const token = localStorage.getItem("authToken");
       await updateUser(token, updatedUser);
 
-      setShowProfileModal(false)
       setSuccessMessage("Perfil actualizado correctamente")
       setSuccessAction("profile-update")
       setShowSuccessModal(true)
 
     } catch (error) {
-      console.error("Error al actualizar perfil:", error);
       const message = error.response?.data?.message || "Error al actualizar el usuario.";
       setErrorMessage(message);
       setShowErrorModal(true);
+    } finally {
+      setShowProfileModal(false)
     }
   }
 
@@ -472,8 +441,8 @@ const ProfessionalDashboard = () => {
                           <div className="professional-appointment-time">{appointment.time}</div>
                           <div className="professional-appointment-details">
                             <h4 className="professional-appointment-service">{appointment.serviceName}</h4>
-                            <p className="professional-appointment-client">Cliente #{appointment.clientName}</p>
-                            <p className="professional-appointment-duration">{appointment.duration}</p>
+                            <p className="professional-appointment-client">Cliente: {appointment.clientName}</p>
+                            <p className="professional-appointment-duration">Duración: {appointment.duration} minutos</p>
                           </div>
                           <div className="professional-appointment-status">
                             <span className={`appointment-status ${appointment.status}`}>
@@ -727,8 +696,8 @@ const ProfessionalDashboard = () => {
                   <div className="professional-service-card" key={service.id}>
                     <h4 className="professional-service-title">{service.name}</h4>
                     <p className="professional-service-category">Categoría: {service.category}</p>
-                    <p className="professional-service-duration">Duración: {service.duration}</p>
-                    <p className="professional-service-price">Precio: ${service.price.toLocaleString()}</p>
+                    <p className="professional-service-duration">Duración: {service.duration} minutos</p>
+                    <p className="professional-service-price">Precio: ${typeof service.price === "number" ? service.price.toLocaleString() : "N/A"}</p>
                     <button
                       className="professional-service-btn view-details-btn"
                       onClick={() => handleViewServiceDetails(service)}
@@ -867,7 +836,7 @@ const ProfessionalDashboard = () => {
                 <strong>Servicio:</strong> {selectedAppointment.serviceName}
               </p>
               <p>
-                <strong>Duración:</strong> {selectedAppointment.duration}
+                <strong>Duración:</strong> {selectedAppointment.duration} minutos
               </p>
               <p>
                 <strong>Precio:</strong> ${selectedAppointment.price?.toLocaleString() || "N/A"}
@@ -1020,7 +989,7 @@ const ProfessionalDashboard = () => {
                 <strong>Categoría:</strong> {selectedService.category}
               </p>
               <p>
-                <strong>Duración:</strong> {selectedService.duration}
+                <strong>Duración:</strong> {selectedService.duration} minutos
               </p>
               <p>
                 <strong>Precio:</strong> ${selectedService.price.toLocaleString()}
@@ -1037,7 +1006,18 @@ const ProfessionalDashboard = () => {
                 <h4>Beneficios</h4>
                 <ul>
                   {selectedService.benefits.map((benefit, index) => (
-                    <li key={index}>{benefit}</li>
+                    <li key={index}> 💎 {benefit}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {selectedService.includes && selectedService.includes.length > 0 && (
+              <div className="service-details-section">
+                <h4>Incluye</h4>
+                <ul>
+                  {selectedService.includes.map((item, index) => (
+                    <li key={index}> 🔹 {item}</li>
                   ))}
                 </ul>
               </div>
