@@ -40,8 +40,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-
-  // TODO: A pesar de presentar un error en el registro (ej mail ya registrado), siempre te dirige al login despues.
   const register = async (userData) => {
     try {      
       const response = await registerUser (userData);
@@ -53,12 +51,10 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  
-  const logout = () => {
-    setCurrentUser(null);
-
+  const logout = async () => {
     localStorage.removeItem("user");
     localStorage.removeItem("authToken");
+    setCurrentUser(null);
     
     return { success: true }
   }

@@ -110,9 +110,9 @@ const AdminDashboard = () => {
     total: bookings.length,
   }
 
-  const handleLogout = () => {
-    logout()
-    navigate("/")
+  const handleLogout = async () => {
+    await logout()
+    window.location.href = "/";
   }
 
   const handleMessageStatusChange = (messageId, newStatus) => {

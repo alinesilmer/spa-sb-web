@@ -113,10 +113,9 @@ const ProfessionalDashboard = () => {
 
   const pendingBookings = professionalBookings.filter((booking) => booking.status === "pendiente")
 
-    // TODO: cuando clickeas se quedan en la pantalla de localhost:5173/login pero en blanco, cuando refrescas si carga bien
-  const handleLogout = () => {
-    logout()
-    navigate("/")
+  const handleLogout = async () => {
+    await logout()
+    window.location.href = "/";
   }
 
   const handleDateChange = (e) => {
