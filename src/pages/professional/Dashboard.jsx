@@ -13,7 +13,7 @@ import UserDetailsModal from "../../components/UserDetailsModal"
 
 const ProfessionalDashboard = () => {
   const navigate = useNavigate()
-  const { currentUser, logout, isProfessional } = useAuth()
+  const { currentUser, logout, isProfessional, updateCurrentUser } = useAuth()
   const [activeTab, setActiveTab] = useState("schedule")
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
   const [bookings, setBookings] = useState([])
@@ -53,10 +53,10 @@ const ProfessionalDashboard = () => {
   })
 
   useEffect(() => {
-    if (!isProfessional) {
+    if (!currentUser) {
       navigate("/login")
     }
-  }, [isProfessional, navigate])
+  }, [currentUser, navigate])
 
   useEffect(() => {
     if (currentUser) {      
@@ -224,6 +224,7 @@ const ProfessionalDashboard = () => {
  
       const token = localStorage.getItem("authToken");
       await updateUser(token, updatedUser);
+      updateCurrentUser(updatedUser);
 
       setSuccessMessage("Perfil actualizado correctamente")
       setSuccessAction("profile-update")

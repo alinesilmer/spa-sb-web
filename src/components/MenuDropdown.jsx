@@ -53,7 +53,7 @@ const MenuDropdown = ({ isMenuOpen, setIsMenuOpen }) => {
       {currentUser ? (
         <div className="menu-section">
           <div className="profile-info">
-            <h3 className="menu-title">Bienvenido, {currentUser.firstName}</h3>
+            <h3 className="menu-title">Bienvenido, {currentUser.name}</h3>
           </div>
           <ul className="menu-list">
             <li className="menu-item">

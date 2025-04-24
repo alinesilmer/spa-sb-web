@@ -9,7 +9,7 @@ import { updateUser } from '../../services/userService';
 
 const ClientDashboard = () => {
   const navigate = useNavigate()
-  const { currentUser, logout, isClient } = useAuth()
+  const { currentUser, logout, isClient, updateCurrentUser } = useAuth()
   const [activeTab, setActiveTab] = useState("bookings")
   const [bookings, setBookings] = useState([])
   const [showCancelModal, setShowCancelModal] = useState(false)
@@ -33,10 +33,10 @@ const ClientDashboard = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
-    if (!isClient) {
+    if (!currentUser) {
       navigate("/login")
     }
-  }, [isClient, navigate])
+  }, [currentUser, navigate])
 
   useEffect(() => {
     if (currentUser) {      
@@ -146,6 +146,8 @@ const ClientDashboard = () => {
  
       const token = localStorage.getItem("authToken");
       await updateUser(token, updatedUser);
+      updateCurrentUser(updatedUser);
+
       setSuccessMessage("Perfil actualizado correctamente")
       setShowSuccessModal(true)
 
@@ -688,7 +690,7 @@ const ClientDashboard = () => {
             <label>Teléfono</label>
             <input
               type="tel"
-              value={profileData.phone}
+              value={profileData.telephone}
               onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
             />
           </div>

@@ -59,9 +59,17 @@ export const AuthProvider = ({ children }) => {
     return { success: true }
   }
 
+  const updateCurrentUser = (updatedUserData) => {
+    setCurrentUser((prev) => ({
+      ...prev,
+      ...updatedUserData,
+    }));
+  };
+
   const value = {
     currentUser,
     setCurrentUser,
+    updateCurrentUser,
     isLoggedIn: !!currentUser,
     isAdmin: currentUser?.userType === "admin",
     isProfessional: currentUser?.userType === "profesional",

@@ -55,10 +55,10 @@ const AdminDashboard = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
-    if (!isAdmin) {
+    if (!currentUser) {
       navigate("/login")
     }
-  }, [isAdmin, navigate])
+  }, [currentUser, navigate])
 
   useEffect(() => {
     if (currentUser) {      
