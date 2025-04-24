@@ -6,7 +6,7 @@ import SearchIcon from "../assets/search.svg"
 import "../styles/header.css"
 import MenuDropdown from "./MenuDropdown"
 import SearchResults from "./SearchResults"
-import { globalSearch } from "../utils/searchUtils"
+import { globalSearch } from "../utils/SearchUtils"
 import { getActiveServices } from "../services/serviceService"
 import { getSpecificUser } from '../services/userService'
 

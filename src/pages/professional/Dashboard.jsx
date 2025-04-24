@@ -813,7 +813,6 @@ const ProfessionalDashboard = () => {
               <h3 className="professional-section-title">Seleccioná tus horarios disponibles</h3>
               <ScheduleSelector
                 onSubmit={(data) => {
-                  console.log("DATA RECIBIDA EN onSubmit:", data);
                   setShowConfirmDatesModal(true);
                   setPendingAction(() => () => handleScheduleSubmit(data));
               }}/>
@@ -942,7 +941,6 @@ const ProfessionalDashboard = () => {
           onClose={() => setShowConfirmDatesModal(false)}
           title="Confirmar envío de horarios"
           onConfirm={() => {
-            console.log("CONFIRMADO");
             if (pendingAction) pendingAction();
           }}
           confirmText="Confirmar"

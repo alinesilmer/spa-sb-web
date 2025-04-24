@@ -113,15 +113,6 @@ const Login = () => {
               Regístrate
             </Link>
           </div>
-
-          <div className="auth-demo-accounts">
-            <p className="demo-title">Cuentas de demostración:</p>
-            <ul className="demo-list">
-              <li>Admin: admin@spa.com / admin123</li>
-              <li>Profesional: martinez@spa.com / prof123</li>
-              <li>Cliente: flor@spa.com / 123</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>

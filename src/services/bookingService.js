@@ -87,7 +87,7 @@ export const createBooking = async (authToken, apptData) => {
     apptData, 
     { headers: { Authorization: `Bearer ${authToken}` } }
   );
-  console.log("createBooking " + JSON.stringify(apptData) + ". RESPONSE: " + JSON.stringify(response.data));
+  //console.log("createBooking " + JSON.stringify(apptData) + ". RESPONSE: " + JSON.stringify(response.data));
 
   return response.data;
 };
@@ -107,20 +107,18 @@ export const cancelBooking = async (authToken, apptId) => {
     {},
     { headers: { Authorization: `Bearer ${authToken}` }, }
   );
-  console.log("cancelBooking: " + apptId + ". RESPONSE: " + JSON.stringify(response.data));
+  //console.log("cancelBooking: " + apptId + ". RESPONSE: " + JSON.stringify(response.data));
   
   return response.data;
 };
 
-export const confirmBooking = async (authToken, apptId) => {
-  console.log("CONFIRMAR TURNO");
-  
+export const confirmBooking = async (authToken, apptId) => { 
   const response = await axios.put(
     `${API_BASE_URL}/appointments/confirm/${apptId}`, 
     {},
     { headers: { Authorization: `Bearer ${authToken}` }, }
   );
-  console.log("confirmBooking: " + apptId + ". RESPONSE: " + JSON.stringify(response.data));
+  //console.log("confirmBooking: " + apptId + ". RESPONSE: " + JSON.stringify(response.data));
 
   return response.data;
 };

@@ -75,10 +75,6 @@ const Register = () => {
     }
 
     if (formData.userType === "profesional") {
-      // TODO: agregar logica para escribir especialidades, porque al momento no aparece nada, por eso comente la validacion
-      /*if (!formData.professionalInfo.specialties.length) {
-        newErrors["professionalInfo.specialties"] = "Selecciona al menos una especialidad"
-      }*/
       if (!formData.professionalInfo.certification) {
         newErrors["professionalInfo.certification"] = "La certificación es requerida"
       }
@@ -120,30 +116,28 @@ const Register = () => {
         return
       }
       
-      try {
-        await register(transformFormData())
+      const result = await register(transformFormData())
+      if (result.success) {
         setRegistrationSuccess(true)
-        
         setTimeout(() => {
           navigate("/login")
         }, 3000)
-      } catch (error) {
-        setErrors({ submit: error.message })
+      } else {
+        setErrors({ submit: result.error })
       }
     }
   }
 
   const handleProfessionalConfirm = async () => {
-    try {    
-      await register(transformFormData())
+    const result = await register(transformFormData())
+    if (result.success) {
       setShowApprovalPopup(false)
       setRegistrationSuccess(true)
-      
       setTimeout(() => {
         navigate("/login")
       }, 3000)
-    } catch (error) {
-      setErrors({ submit: error.message })
+    } else {
+      setErrors({ submit: result.error })
       setShowApprovalPopup(false)
     }
   }

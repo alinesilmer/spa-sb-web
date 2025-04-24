@@ -1,7 +1,7 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import { getContentTypeLabel, CONTENT_TYPES } from "../utils/searchUtils"
+import { getContentTypeLabel, CONTENT_TYPES } from "../utils/SearchUtils"
 import "../styles/search-results.css"
 
 const SearchResults = ({ results, onResultClick, query }) => {
