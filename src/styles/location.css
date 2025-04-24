@@ -1,4 +1,4 @@
-/* Modern Location Styles */
+/* Styles */
 .location-container {
   padding: 5rem 1.5rem;
   background-color: var(--highlight-color);
@@ -179,5 +179,10 @@
 
   .location-description {
     font-size: calc(var(--fs-s) - 0.1rem);
+  }
+
+  .location-details {
+    display: flex;
+    flex-direction: column;
   }
 }

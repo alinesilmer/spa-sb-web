@@ -7,28 +7,22 @@
 .faq-section {
   display: flex;
   width: 100%;
-  height: 150vh;
+  min-height: 100vh;
   background-color: var(--bg-color);
   padding: 80px 20px;
   align-items: center;
 }
 
-/* Container grid for FAQ and Contact CTA */
 .faq-container {
   max-width: var(--container-max-width);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.5fr 1fr; /* Left for FAQ, right for contact */
+  grid-template-columns: 1.5fr 1fr;
   gap: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-@media (max-width: 900px) {
-  .faq-container {
-    grid-template-columns: 1fr; /* Stack columns on small screens */
-  }
-}
-
-/* LEFT COLUMN: FAQ */
 .faq-left {
   display: flex;
   flex-direction: column;
@@ -56,7 +50,7 @@
 
 .faq-item {
   border-bottom: 1px solid var(--card-color);
-  padding: 1rem 0;
+  padding: 1.2rem 0;
 }
 
 .faq-question {
@@ -100,11 +94,10 @@
 }
 
 .faq-answer.open {
-  max-height: 200px; /* Increase if needed */
+  max-height: 200px;
   margin-top: 0.5rem;
 }
 
-/* RIGHT COLUMN: Contact Link */
 .faq-right {
   background-color: var(--card-color);
   border-radius: var(--radius-m);
@@ -113,7 +106,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-title {
@@ -147,9 +142,69 @@
   background-color: var(--highlight-color);
 }
 
-/* Responsive adjustments */
+/* ─── MOBILE RESPONSIVE OVERRIDES ─── */
 @media (max-width: 900px) {
+  .faq-section {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px 16px;
+  }
+
+  .faq-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 2rem;
+  }
+
+  .faq-left,
+  .faq-right {
+    width: 100%;
+  }
+
   .faq-right {
     margin-top: 2rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .contact-button {
+    width: 100%;
+    max-width: 280px;
+    align-self: center;
+  }
+
+  .faq-title,
+  .faq-subtitle,
+  .contact-title,
+  .contact-description {
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .faq-title {
+    font-size: 1.8rem;
+  }
+
+  .faq-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .faq-subtitle,
+  .contact-description {
+    font-size: 0.95rem;
+  }
+
+  .contact-title {
+    font-size: 1.2rem;
+  }
+
+  .faq-question {
+    font-size: 1rem;
+  }
+
+  .contact-button {
+    text-align: center;
   }
 }
