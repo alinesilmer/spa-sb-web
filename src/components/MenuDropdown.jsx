@@ -8,6 +8,16 @@ const MenuDropdown = ({ isMenuOpen, setIsMenuOpen }) => {
   const menuRef = useRef(null)
   const { currentUser, logout } = useAuth()
 
+  const handleLogout = async () => {
+    try {
+      await logout()
+      setIsMenuOpen(false)
+      window.location.href = "/"
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error)
+    }
+  }
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -66,7 +76,7 @@ const MenuDropdown = ({ isMenuOpen, setIsMenuOpen }) => {
               </Link>
             </li>
             <li className="menu-item">
-              <button className="menu-link" onClick={() => { logout(); setIsMenuOpen(false) }}>
+              <button className="menu-link" onClick={ handleLogout }>
                 Cerrar Sesión
               </button>
             </li>
