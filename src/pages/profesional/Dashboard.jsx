@@ -53,10 +53,10 @@ const ProfessionalDashboard = () => {
   })
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!isProfessional) {
       navigate("/login")
     }
-  }, [currentUser, navigate])
+  }, [isProfessional, navigate])
 
   useEffect(() => {
     if (currentUser) {      
@@ -461,7 +461,7 @@ const ProfessionalDashboard = () => {
                             {appointment.status === "confirmado" && (
                               <button
                                 className="professional-appointment-action-btn complete"
-                                onClick={() => handleAppointmentStatusChange(appointment.id, "completado")}
+                                onClick={() => confirmConfirm(appointment.id)}
                               >
                                 Completar
                               </button>
@@ -469,7 +469,7 @@ const ProfessionalDashboard = () => {
                             {appointment.status === "pendiente" && (
                               <button
                                 className="professional-appointment-action-btn complete"
-                                onClick={() => handleAppointmentStatusChange(appointment.id, "confirmado")}
+                                onClick={() => confirmConfirm(appointment.id)}
                               >
                                 Confirmar
                               </button>
@@ -1039,8 +1039,8 @@ const ProfessionalDashboard = () => {
               <label>Nombre</label>
               <input
                 type="text"
-                value={ProfileData.name}
-                onChange={(e) => setProfileData({ ...ProfileData, name: e.target.value })}
+                value={profileData.name}
+                onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                 required
               />
             </div>
@@ -1048,8 +1048,8 @@ const ProfessionalDashboard = () => {
               <label>Apellido</label>
               <input
                 type="text"
-                value={ProfileData.lastname}
-                onChange={(e) => setProfileData({ ...ProfileData, lastname: e.target.value })}
+                value={profileData.lastname}
+                onChange={(e) => setProfileData({ ...profileData, lastname: e.target.value })}
                 required
               />
             </div>
@@ -1057,8 +1057,8 @@ const ProfessionalDashboard = () => {
               <label>Email</label>
               <input
                 type="email"
-                value={ProfileData.email}
-                onChange={(e) => setProfileData({ ...ProfileData, email: e.target.value })}
+                value={profileData.email}
+                onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
                 required
               />
             </div>
@@ -1066,8 +1066,8 @@ const ProfessionalDashboard = () => {
               <label>Teléfono</label>
               <input
                 type="tel"
-                value={ProfileData.telephone}
-                onChange={(e) => setProfileData({ ...ProfileData, telephone: e.target.value })}
+                value={profileData.telephone}
+                onChange={(e) => setProfileData({ ...profileData, telephone: e.target.value })}
               />
             </div>
           </form>

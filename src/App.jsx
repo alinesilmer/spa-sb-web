@@ -14,8 +14,8 @@ import Register from "./pages/Register"
 import ForgotPassword from "./pages/ForgotPassword"
 import Booking from "./pages/Booking"
 import AdminDashboard from "./pages/admin/Dashboard"
-import ProfessionalDashboard from "./pages/professional/Dashboard"
-import ClientDashboard from "./pages/client/Dashboard"
+import ProfessionalDashboard from "./pages/profesional/Dashboard"
+import ClientDashboard from "./pages/cliente/Dashboard"
 
 // ScrollToTop component to ensure page scrolls to top on route change
 function ScrollToTop() {
@@ -44,8 +44,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/booking/:serviceId" element={<Booking />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/professional/dashboard" element={<ProfessionalDashboard />} />
-          <Route path="/client/dashboard" element={<ClientDashboard />} />
+          <Route path="/profesional/dashboard" element={<ProfessionalDashboard />} />
+          <Route path="/cliente/dashboard" element={<ClientDashboard />} />
         </Routes>
         <Footer />
       </BrowserRouter>

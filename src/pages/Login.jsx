@@ -42,9 +42,9 @@ const Login = () => {
       if (user.userType == "admin") {
         navigate("/admin/dashboard")
       } else if (user.userType == "profesional") {
-        navigate("/professional/dashboard")
+        navigate("/profesional/dashboard")
       } else if (user.userType == "cliente") {
-        navigate("/client/dashboard")
+        navigate("/cliente/dashboard")
       } else {        
         navigate(from)
       }

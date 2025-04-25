@@ -33,10 +33,10 @@ const ClientDashboard = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!isClient) {
       navigate("/login")
     }
-  }, [currentUser, navigate])
+  }, [isClient, navigate])
 
   useEffect(() => {
     if (currentUser) {      

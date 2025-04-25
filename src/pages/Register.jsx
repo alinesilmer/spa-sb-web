@@ -313,14 +313,7 @@ const Register = () => {
                   onChange={handleChange}
                 />
                 <label className="checkbox-label">
-                  Acepto los{" "}
-                  <Link to="/terms" className="terms-link">
-                    Términos y Condiciones
-                  </Link>{" "}
-                  y la{" "}
-                  <Link to="/privacy" className="terms-link">
-                    Política de Privacidad
-                  </Link>
+                  Acepto los Términos y Condiciones y la Política de Privacidad
                 </label>
               </div>
               {errors.agreeToTerms && <span className="error-message">{errors.agreeToTerms}</span>}
