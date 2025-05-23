@@ -123,11 +123,11 @@ const Contact = () => {
               </div>
             ) : (
                 <form className="contact-form" onSubmit={handleSubmit}>
-                  <div className="first-row-form">
-                <div className="form-group">
+                  <div className="form-row">
+                  <div className="form-group">
                   <label htmlFor="name">Nombre completo *</label>
                   <input
-                    type="text"
+                    type="textForm"
                     id="name"
                     name="name"
                     value={formData.name}
@@ -137,10 +137,10 @@ const Contact = () => {
                   {formErrors.name && <span className="error-message">{formErrors.name}</span>}
                   </div>
                   
-                   <div className="form-group">
+                  <div className="form-group">
                   <label htmlFor="subject">Asunto *</label>
                   <input
-                    type="text"
+                    type="textForm"
                     id="subject"
                     name="subject"
                     value={formData.subject}

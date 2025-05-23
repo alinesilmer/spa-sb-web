@@ -15,7 +15,7 @@ import ServiceDetailsModal from "../../components/ServiceDetailsModal"
 import { getBookings, cancelBooking, confirmBooking } from '../../services/bookingService';
 import { getUsers, getSpecificUser, updateUser, updateUserById, approveUser, deleteUser, realDeleteUser } from '../../services/userService';
 import { registerUser } from "../../services/authService"
-import { getAllServices, updateService, deleteService, newService } from "../../services/serviceService"
+import { getActiveServices, updateService, deleteService, newService } from "../../services/serviceService"
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
   }
 
   const fetchServices = async () => {
-    const servicesList = await getAllServices();
+    const servicesList = await getActiveServices();
     setServicesList(servicesList.length > 0 ? servicesList : []);
   };
 
@@ -143,6 +143,7 @@ const AdminDashboard = () => {
       
       if (deleteType === "service") {
         await deleteService(token, itemToOperate)
+        fetchServices();
       } else if (deleteType === "message") {
         setMessages(messages.filter((message) => message.id !== itemToOperate))
       } else if (deleteType === "user") {

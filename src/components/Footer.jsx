@@ -54,6 +54,12 @@ const Footer = () => {
         
         <div className="footer-bottom">
           <p className="copyright">&copy; 2025 Sentirse Bien Spa. Todos los derechos reservados.</p>
+          <div className="credits-wrapper">
+            <p className="credits">Desarrollado por Florencia Luque, Matías Velozo y Aliné Silva</p>
+            <p className="credits">Cátedra de Metodología de Sistemas I - Prof. Ing. Carolina Vargas</p>
+            <p className="credits">Tecnicatura Universitaria en Programación</p>
+            <p className="credits">Universidad Tecnológica Nacional. Facultad Regional de Resistencia</p>
+          </div>
         </div>
       </div>
     </footer>

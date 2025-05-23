@@ -19,6 +19,7 @@ const Booking = () => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
   const [bookingConfirmed, setBookingConfirmed] = useState(false)
   const [bookingData, setBookingData] = useState(null)
+  const [bookingInProgress, setBookingInProgress] = useState(false);
   const [error, setError] = useState("")
 
   
@@ -110,9 +111,9 @@ const Booking = () => {
     setSelectedTimeSlot(timeSlot)
   }
 
- 
   const handleConfirmBooking = async () => {
   try {
+      setBookingInProgress(true);
       const token = localStorage.getItem("authToken")
 
       if (!selectedTimeSlot) {
@@ -135,13 +136,19 @@ const Booking = () => {
         hour: selectedTimeSlot.hour
       }
 
-      await createBooking(token, bookingData);   
+      const response = await createBooking(token, bookingData);   
+      if (response.status !== 200) {
+        setError(response.message)
+        return
+      }
 
       setBookingData(newBooking)
       setBookingConfirmed(true)
 
-    } catch {
-
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setBookingInProgress(false);
     }
   }
   
@@ -151,7 +158,6 @@ const Booking = () => {
       setPaymentReceipt(file)
     }
   }
-
 
   const handleConfirmMercadoPago = () => {
     if (!paymentReceipt) {
@@ -192,7 +198,6 @@ const Booking = () => {
       </div>
     )
   }
-
 
   if (bookingConfirmed && bookingData && finalConfirmation) {
     return (
@@ -345,7 +350,16 @@ const Booking = () => {
 
   return (
     <div className="booking-page">
-      <div className="booking-container">
+      <div className="booking-container"style={{ position: 'relative' }}>
+        {bookingInProgress && (
+          <div className="loader-overlay">
+            <div className="loader-box">
+              <div className="loader-spinner"></div>
+              <p>Procesando reserva...</p>
+            </div>
+          </div>
+        )}
+        
         {service && (
           <>
             <div className="booking-header">

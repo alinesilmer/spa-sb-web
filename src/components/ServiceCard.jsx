@@ -1,21 +1,7 @@
 "use client";
 import "../styles/service-card.css";
-import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 
-const ServiceCard = ({ service, onViewMore }) => {
-  const { isLoggedIn } = useAuth();
-  const navigate = useNavigate();
-
-  const handleBookingClick = () => {
-    if (isLoggedIn) {
-      navigate(`/booking/${service.id}`);
-    } else {
-      const ev = new CustomEvent("login-required");
-      window.dispatchEvent(ev);
-    }
-  };
-
+const ServiceCard = ({ service, onViewMore, onBooking }) => {
   return ( 
     <div className="service-card">
       <div className="service-card-image">
@@ -47,7 +33,7 @@ const ServiceCard = ({ service, onViewMore }) => {
 
           <button
             className="service-card-book-now"
-            onClick={handleBookingClick}
+            onClick={() => onBooking(service)}
           >
             Reservar
           </button>
