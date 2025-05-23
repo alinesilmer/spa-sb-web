@@ -1,51 +1,112 @@
-"use client"
 import { useState, useEffect } from "react"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import "../styles/statistics.css"
 
-const PaymentStatistics = ({ bookings, userRole, currentUserId }) => {
+const PaymentStatistics = ({ bookings = [], userRole = "client", currentUserId }) => {
   const [timeFilter, setTimeFilter] = useState("month")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
   const [serviceStats, setServiceStats] = useState([])
   const [professionalStats, setProfessionalStats] = useState([])
   const [totalRevenue, setTotalRevenue] = useState(0)
+  const [totalBookings, setTotalBookings] = useState(0)
+  const [averageBookingValue, setAverageBookingValue] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [activeTab, setActiveTab] = useState("overview")
 
-  useEffect(() => {
-    const calculateStatistics = () => {
-      if (!bookings || bookings.length === 0) return
+  const COLORS = ['#ff6b6b', '#48dbfb', '#1dd1a1', '#feca57', '#5f27cd', '#ff9ff3', '#54a0ff']
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount)
+  }
+
+  const calculateStatistics = () => {
+    console.log("Calculating statistics with:", { 
+      bookingsCount: bookings?.length || 0,
+      timeFilter, 
+      startDate, 
+      endDate, 
+      userRole, 
+      currentUserId 
+    })
+    
+    setLoading(true)
+    setError(null)
+    
+    try {
+      if (!bookings || bookings.length === 0) {
+        console.log("No bookings data available")
+        setServiceStats([])
+        setProfessionalStats([])
+        setTotalRevenue(0)
+        setTotalBookings(0)
+        setAverageBookingValue(0)
+        setLoading(false)
+        return
+      }
 
       let filteredBookings = bookings.filter(booking => {
-        if (booking.paymentStatus !== "paid") return false
-
-        if (userRole === "client" && booking.clientId !== currentUserId) return false
-
+        if (booking.status !== "completado") {
+          return false
+        }
         
+        if (userRole === "client" && currentUserId) {
+          const bookingUserId = booking.userId || booking.clientId || booking.user?.id
+          if (bookingUserId !== currentUserId) {
+            return false
+          }
+        }
+
         const bookingDate = new Date(booking.date)
-        const now = new Date()
         
-        if (timeFilter === "week") {
-          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-          return bookingDate >= weekAgo
-        } else if (timeFilter === "month") {
-          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-          return bookingDate >= monthAgo
-        } else if (timeFilter === "year") {
-          const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
-          return bookingDate >= yearAgo
-        } else if (timeFilter === "custom" && startDate && endDate) {
+        if (timeFilter === "custom" && startDate && endDate) {
           const start = new Date(startDate)
+          start.setHours(0, 0, 0, 0)
+          
           const end = new Date(endDate)
+          end.setHours(23, 59, 59, 999)
+          
           return bookingDate >= start && bookingDate <= end
+        } else {
+          const now = new Date()
+          now.setHours(23, 59, 59, 999)
+          
+          if (timeFilter === "week") {
+            const weekAgo = new Date()
+            weekAgo.setDate(now.getDate() - 7)
+            weekAgo.setHours(0, 0, 0, 0)
+            return bookingDate >= weekAgo && bookingDate <= now
+          } else if (timeFilter === "month") {
+            const monthAgo = new Date()
+            monthAgo.setMonth(now.getMonth() - 1)
+            monthAgo.setHours(0, 0, 0, 0)
+            return bookingDate >= monthAgo && bookingDate <= now
+          } else if (timeFilter === "year") {
+            const yearAgo = new Date()
+            yearAgo.setFullYear(now.getFullYear() - 1)
+            yearAgo.setHours(0, 0, 0, 0)
+            return bookingDate >= yearAgo && bookingDate <= now
+          }
         }
         
         return true
       })
 
-      
+      console.log(`Filtered ${filteredBookings.length} bookings out of ${bookings.length}`)
+
       const serviceMap = new Map()
+      
       filteredBookings.forEach(booking => {
-        const serviceName = booking.serviceName
-        const price = parseFloat(booking.price) || 0
+        const serviceName = booking.serviceName || booking.service?.name || "Servicio Desconocido"
+        const price = typeof booking.price === 'string' 
+          ? parseFloat(booking.price.replace(/[^\d.-]/g, '')) 
+          : booking.price || 0
         
         if (serviceMap.has(serviceName)) {
           const existing = serviceMap.get(serviceName)
@@ -56,7 +117,7 @@ const PaymentStatistics = ({ bookings, userRole, currentUserId }) => {
           })
         } else {
           serviceMap.set(serviceName, {
-            serviceName,
+            name: serviceName,
             totalAmount: price,
             bookingCount: 1,
             averagePrice: price
@@ -64,11 +125,17 @@ const PaymentStatistics = ({ bookings, userRole, currentUserId }) => {
         }
       })
 
-      
       const professionalMap = new Map()
+      
       filteredBookings.forEach(booking => {
-        const professionalName = booking.professionalName
-        const price = parseFloat(booking.price) || 0
+        const professionalName = booking.professionalName || 
+          (booking.professional ? 
+            `${booking.professional.name} ${booking.professional.lastname || ''}`.trim() : 
+            "Profesional Desconocido")
+            
+        const price = typeof booking.price === 'string' 
+          ? parseFloat(booking.price.replace(/[^\d.-]/g, '')) 
+          : booking.price || 0
         
         if (professionalMap.has(professionalName)) {
           const existing = professionalMap.get(professionalName)
@@ -79,7 +146,7 @@ const PaymentStatistics = ({ bookings, userRole, currentUserId }) => {
           })
         } else {
           professionalMap.set(professionalName, {
-            professionalName,
+            name: professionalName,
             totalAmount: price,
             bookingCount: 1,
             averagePrice: price
@@ -87,7 +154,6 @@ const PaymentStatistics = ({ bookings, userRole, currentUserId }) => {
         }
       })
 
-      
       serviceMap.forEach((value) => {
         value.averagePrice = value.totalAmount / value.bookingCount
       })
@@ -96,180 +162,511 @@ const PaymentStatistics = ({ bookings, userRole, currentUserId }) => {
         value.averagePrice = value.totalAmount / value.bookingCount
       })
 
-     
       const serviceStatsArray = Array.from(serviceMap.values())
         .sort((a, b) => b.totalAmount - a.totalAmount)
       
       const professionalStatsArray = Array.from(professionalMap.values())
         .sort((a, b) => b.totalAmount - a.totalAmount)
 
-      
       const total = filteredBookings.reduce((sum, booking) => {
-        return sum + (parseFloat(booking.price) || 0)
+        const price = typeof booking.price === 'string' 
+          ? parseFloat(booking.price.replace(/[^\d.-]/g, '')) 
+          : booking.price || 0
+        return sum + price
       }, 0)
+
+      const avgBookingValue = filteredBookings.length > 0 
+        ? total / filteredBookings.length 
+        : 0
+
+      console.log("Statistics calculated:", {
+        serviceStats: serviceStatsArray.length,
+        professionalStats: professionalStatsArray.length,
+        totalRevenue: total,
+        totalBookings: filteredBookings.length,
+        averageBookingValue: avgBookingValue
+      })
 
       setServiceStats(serviceStatsArray)
       setProfessionalStats(professionalStatsArray)
       setTotalRevenue(total)
-    }
-
-    calculateStatistics()
-  }, [bookings, timeFilter, startDate, endDate, userRole, currentUserId])
-
-  const getTimeFilterLabel = () => {
-    switch (timeFilter) {
-      case "week": return "Última Semana"
-      case "month": return "Último Mes"
-      case "year": return "Último Año"
-      case "custom": return "Período Personalizado"
-      default: return "Último Mes"
+      setTotalBookings(filteredBookings.length)
+      setAverageBookingValue(avgBookingValue)
+    } catch (err) {
+      console.error("Error calculating statistics:", err)
+      setError("Error al calcular estadísticas. Por favor, intente nuevamente.")
+    } finally {
+      setLoading(false)
     }
   }
 
+  useEffect(() => {
+    calculateStatistics()
+  }, [bookings, timeFilter, startDate, endDate, userRole, currentUserId])
+
+  const handleTimeFilterChange = (value) => {
+    setTimeFilter(value)
+    if (value !== "custom") {
+      setStartDate("")
+      setEndDate("")
+    }
+  }
+
+  const exportToCSV = () => {
+    try {
+      let data = []
+      let filename = ""
+      
+      if (activeTab === "services") {
+        data = serviceStats.map(item => ({
+          Servicio: item.name,
+          "Total Facturado": item.totalAmount,
+          "Cantidad de Reservas": item.bookingCount,
+          "Precio Promedio": item.averagePrice
+        }))
+        filename = "estadisticas-servicios.csv"
+      } else if (activeTab === "professionals") {
+        data = professionalStats.map(item => ({
+          Profesional: item.name,
+          "Total Facturado": item.totalAmount,
+          "Cantidad de Reservas": item.bookingCount,
+          "Precio Promedio": item.averagePrice
+        }))
+        filename = "estadisticas-profesionales.csv"
+      } else {
+        data = [
+          { Tipo: "Resumen", Valor: "" },
+          { Tipo: "Total Facturado", Valor: totalRevenue },
+          { Tipo: "Total Reservas", Valor: totalBookings },
+          { Tipo: "Valor Promedio", Valor: averageBookingValue },
+          { Tipo: "", Valor: "" },
+          { Tipo: "Servicios", Valor: "" },
+          ...serviceStats.map(item => ({
+            Tipo: item.name,
+            Valor: item.totalAmount
+          })),
+          { Tipo: "", Valor: "" },
+          { Tipo: "Profesionales", Valor: "" },
+          ...professionalStats.map(item => ({
+            Tipo: item.name,
+            Valor: item.totalAmount
+          }))
+        ]
+        filename = "estadisticas-completas.csv"
+      }
+      
+      const headers = Object.keys(data[0])
+      const csvContent = [
+        headers.join(","),
+        ...data.map(row => 
+          headers.map(header => 
+            typeof row[header] === 'number' 
+              ? row[header].toString() 
+              : `"${row[header]}"`
+          ).join(",")
+        )
+      ].join("\n")
+      
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.setAttribute("href", url)
+      link.setAttribute("download", filename)
+      link.style.visibility = "hidden"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (err) {
+      console.error("Error exporting to CSV:", err)
+      setError("Error al exportar datos. Por favor, intente nuevamente.")
+    }
+  }
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p className="tooltip-label">{label}</p>
+          <p className="tooltip-value">
+            {formatCurrency(payload[0].value)}
+          </p>
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
-    <div className="payment-statistics">
-      <div className="statistics-header">
-        <h2 className="statistics-title">
-          {userRole === "admin" ? "Estadísticas" : "Mis Pagos"}
-        </h2>
-        
-        <div className="statistics-filters">
-          <select 
-            value={timeFilter} 
-            onChange={(e) => setTimeFilter(e.target.value)}
-            className="time-filter-select"
-          >
-            <option value="week">Última Semana</option>
-            <option value="month">Último Mes</option>
-            <option value="year">Último Año</option>
-            <option value="custom">Período Personalizado</option>
-          </select>
-
-          {timeFilter === "custom" && (
-            <div className="custom-date-range">
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="date-input"
-              />
-              <span>hasta</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="date-input"
-              />
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="statistics-summary">
-        <div className="summary-card">
-          <div className="summary-icon">💰</div>
-          <div className="summary-content">
-            <h3>Total {getTimeFilterLabel()}</h3>
-            <p className="summary-amount">${totalRevenue.toLocaleString()}</p>
+    <div className="statistics-container">
+      <div className="statistics-card">
+        <div className="statistics-header">
+          <div>
+            <h2>Estadísticas de Pagos</h2>
+            <p className="statistics-description">
+              {userRole === "admin" 
+                ? "Análisis de ingresos por servicios y profesionales" 
+                : "Resumen de tus pagos por servicios"}
+            </p>
           </div>
-        </div>
-      </div>
-
-      <div className="statistics-grid">
-        
-        <div className="statistics-section">
-          <h3 className="section-title">📊 Totales por Servicio</h3>
-          {serviceStats.length > 0 ? (
-            <div className="statistics-table">
-              <div className="table-header">
-                <span>Servicio</span>
-                <span>Reservas</span>
-                <span>Total Pagado</span>
-                <span>Promedio</span>
-              </div>
-              {serviceStats.map((service, index) => (
-                <div key={index} className="table-row">
-                  <span className="service-name">{service.serviceName}</span>
-                  <span className="booking-count">{service.bookingCount}</span>
-                  <span className="total-amount">${service.totalAmount.toLocaleString()}</span>
-                  <span className="average-price">${service.averagePrice.toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="no-data">No hay datos de servicios para el período seleccionado</p>
-          )}
-        </div>
-
-        <div className="statistics-section">
-          <h3 className="section-title">👨‍⚕️ Totales por Profesional</h3>
-          {professionalStats.length > 0 ? (
-            <div className="statistics-table">
-              <div className="table-header">
-                <span>Profesional</span>
-                <span>Reservas</span>
-                <span>Total Generado</span>
-                <span>Promedio</span>
-              </div>
-              {professionalStats.map((professional, index) => (
-                <div key={index} className="table-row">
-                  <span className="professional-name">{professional.professionalName}</span>
-                  <span className="booking-count">{professional.bookingCount}</span>
-                  <span className="total-amount">${professional.totalAmount.toLocaleString()}</span>
-                  <span className="average-price">${professional.averagePrice.toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="no-data">No hay datos de profesionales para el período seleccionado</p>
-          )}
-        </div>
-      </div>
-
-      <div className="statistics-charts">
-        <div className="chart-section">
-          <h3 className="section-title">📈 Distribución por Servicios</h3>
-          <div className="bar-chart">
-            {serviceStats.slice(0, 5).map((service, index) => {
-              const maxAmount = Math.max(...serviceStats.map(s => s.totalAmount))
-              const percentage = (service.totalAmount / maxAmount) * 100
-              
-              return (
-                <div key={index} className="bar-item">
-                  <div className="bar-label">{service.serviceName}</div>
-                  <div className="bar-container">
-                    <div 
-                      className="bar-fill" 
-                      style={{ width: `${percentage}%` }}
-                    ></div>
-                  </div>
-                  <div className="bar-value">${service.totalAmount.toLocaleString()}</div>
-                </div>
-              )
-            })}
+          <div className="statistics-actions">
+            <button 
+              className="statistics-button secondary"
+              onClick={calculateStatistics}
+              disabled={loading}
+            >
+              🔄 Actualizar
+            </button>
+            <button 
+              className="statistics-button secondary"
+              onClick={exportToCSV}
+              disabled={loading || serviceStats.length === 0}
+            >
+              📥 Exportar
+            </button>
           </div>
         </div>
 
-        <div className="chart-section">
-          <h3 className="section-title">👥 Distribución por Profesionales</h3>
-          <div className="bar-chart">
-            {professionalStats.slice(0, 5).map((professional, index) => {
-              const maxAmount = Math.max(...professionalStats.map(p => p.totalAmount))
-              const percentage = (professional.totalAmount / maxAmount) * 100
-              
-              return (
-                <div key={index} className="bar-item">
-                  <div className="bar-label">{professional.professionalName}</div>
-                  <div className="bar-container">
-                    <div 
-                      className="bar-fill professional" 
-                      style={{ width: `${percentage}%` }}
-                    ></div>
+        {error && (
+          <div className="statistics-error">
+            <span className="error-icon">⚠️</span>
+            <div>
+              <h4>Error</h4>
+              <p>{error}</p>
+            </div>
+          </div>
+        )}
+        
+        <div className="statistics-content">
+          <div className="statistics-filters">
+            <div className="filter-group">
+              <select 
+                value={timeFilter} 
+                onChange={(e) => handleTimeFilterChange(e.target.value)}
+                className="statistics-select"
+              >
+                <option value="week">Última semana</option>
+                <option value="month">Último mes</option>
+                <option value="year">Último año</option>
+                <option value="custom">Período personalizado</option>
+              </select>
+            </div>
+            
+            {timeFilter === "custom" && (
+              <div className="date-filters">
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="statistics-date-input"
+                  placeholder="Fecha inicial"
+                />
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="statistics-date-input"
+                  placeholder="Fecha final"
+                  disabled={!startDate}
+                  min={startDate}
+                />
+              </div>
+            )}
+          </div>
+          
+          <div className="statistics-tabs">
+            <div className="tab-buttons">
+              <button 
+                className={`tab-button ${activeTab === "overview" ? "active" : ""}`}
+                onClick={() => setActiveTab("overview")}
+              >
+                Resumen
+              </button>
+              <button 
+                className={`tab-button ${activeTab === "services" ? "active" : ""}`}
+                onClick={() => setActiveTab("services")}
+              >
+                Servicios
+              </button>
+              <button 
+                className={`tab-button ${activeTab === "professionals" ? "active" : ""}`}
+                onClick={() => setActiveTab("professionals")}
+              >
+                Profesionales
+              </button>
+            </div>
+            
+            {activeTab === "overview" && (
+              <div className="tab-content">
+                <div className="summary-cards">
+                  <div className="summary-card">
+                    <h3>Total Facturado</h3>
+                    {loading ? (
+                      <div className="skeleton-text large"></div>
+                    ) : (
+                      <div className="summary-value">{formatCurrency(totalRevenue)}</div>
+                    )}
                   </div>
-                  <div className="bar-value">${professional.totalAmount.toLocaleString()}</div>
+                  
+                  <div className="summary-card">
+                    <h3>Total Reservas</h3>
+                    {loading ? (
+                      <div className="skeleton-text large"></div>
+                    ) : (
+                      <div className="summary-value">{totalBookings}</div>
+                    )}
+                  </div>
+                  
+                  <div className="summary-card">
+                    <h3>Valor Promedio</h3>
+                    {loading ? (
+                      <div className="skeleton-text large"></div>
+                    ) : (
+                      <div className="summary-value">{formatCurrency(averageBookingValue)}</div>
+                    )}
+                  </div>
                 </div>
-              )
-            })}
+                
+                <div className="charts-grid">
+                  <div className="chart-card">
+                    <h3>Top Servicios por Ingresos</h3>
+                    {loading ? (
+                      <div className="skeleton-chart"></div>
+                    ) : serviceStats.length === 0 ? (
+                      <div className="empty-state">No hay datos disponibles</div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart data={serviceStats.slice(0, 5)}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis 
+                            dataKey="name" 
+                            tick={{ fontSize: 12 }}
+                            interval={0}
+                            angle={-45}
+                            textAnchor="end"
+                            height={80}
+                          />
+                          <YAxis 
+                            tickFormatter={(value) => 
+                              value >= 1000 
+                                ? `${Math.round(value / 1000)}k` 
+                                : value.toString()
+                            } 
+                          />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Bar dataKey="totalAmount" fill="#ff6b6b" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
+                  </div>
+                  
+                  <div className="chart-card">
+                    <h3>Top Profesionales por Ingresos</h3>
+                    {loading ? (
+                      <div className="skeleton-chart"></div>
+                    ) : professionalStats.length === 0 ? (
+                      <div className="empty-state">No hay datos disponibles</div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart data={professionalStats.slice(0, 5)}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis 
+                            dataKey="name" 
+                            tick={{ fontSize: 12 }}
+                            interval={0}
+                            angle={-45}
+                            textAnchor="end"
+                            height={80}
+                          />
+                          <YAxis 
+                            tickFormatter={(value) => 
+                              value >= 1000 
+                                ? `${Math.round(value / 1000)}k` 
+                                : value.toString()
+                            } 
+                          />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Bar dataKey="totalAmount" fill="#48dbfb" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {activeTab === "services" && (
+              <div className="tab-content">
+                <div className="statistics-table-container">
+                  <h3>Estadísticas por Servicio</h3>
+                  {loading ? (
+                    <div className="skeleton-table">
+                      {Array(5).fill(0).map((_, i) => (
+                        <div key={i} className="skeleton-row"></div>
+                      ))}
+                    </div>
+                  ) : serviceStats.length === 0 ? (
+                    <div className="empty-state">No hay datos disponibles</div>
+                  ) : (
+                    <div className="table-wrapper">
+                      <table className="statistics-table">
+                        <thead>
+                          <tr>
+                            <th>Servicio</th>
+                            <th>Reservas</th>
+                            <th>Promedio</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {serviceStats.map((service) => (
+                            <tr key={service.name}>
+                              <td className="service-name">{service.name}</td>
+                              <td className="text-center">{service.bookingCount}</td>
+                              <td className="text-right">{formatCurrency(service.averagePrice)}</td>
+                              <td className="text-right font-bold">{formatCurrency(service.totalAmount)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot>
+                          <tr className="total-row">
+                            <td>Total</td>
+                            <td className="text-center">
+                              {serviceStats.reduce((sum, item) => sum + item.bookingCount, 0)}
+                            </td>
+                            <td className="text-right">
+                              {formatCurrency(
+                                serviceStats.reduce((sum, item) => sum + item.totalAmount, 0) / 
+                                serviceStats.reduce((sum, item) => sum + item.bookingCount, 0)
+                              )}
+                            </td>
+                            <td className="text-right font-bold">
+                              {formatCurrency(
+                                serviceStats.reduce((sum, item) => sum + item.totalAmount, 0)
+                              )}
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  )}
+                </div>
+                
+                {!loading && serviceStats.length > 0 && (
+                  <div className="chart-card">
+                    <h3>Gráfico de Ingresos por Servicio</h3>
+                    <ResponsiveContainer width="100%" height={350}>
+                      <BarChart data={serviceStats}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fontSize: 12 }}
+                          interval={0}
+                          angle={-45}
+                          textAnchor="end"
+                          height={100}
+                        />
+                        <YAxis 
+                          tickFormatter={(value) => 
+                            value >= 1000 
+                              ? `${Math.round(value / 1000)}k` 
+                              : value.toString()
+                          } 
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar dataKey="totalAmount" fill="#1dd1a1" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {activeTab === "professionals" && (
+              <div className="tab-content">
+                <div className="statistics-table-container">
+                  <h3>Estadísticas por Profesional</h3>
+                  {loading ? (
+                    <div className="skeleton-table">
+                      {Array(5).fill(0).map((_, i) => (
+                        <div key={i} className="skeleton-row"></div>
+                      ))}
+                    </div>
+                  ) : professionalStats.length === 0 ? (
+                    <div className="empty-state">No hay datos disponibles</div>
+                  ) : (
+                    <div className="table-wrapper">
+                      <table className="statistics-table">
+                        <thead>
+                          <tr>
+                            <th>Profesional</th>
+                            <th>Reservas</th>
+                            <th>Promedio</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {professionalStats.map((professional) => (
+                            <tr key={professional.name}>
+                              <td className="service-name">{professional.name}</td>
+                              <td className="text-center">{professional.bookingCount}</td>
+                              <td className="text-right">{formatCurrency(professional.averagePrice)}</td>
+                              <td className="text-right font-bold">{formatCurrency(professional.totalAmount)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot>
+                          <tr className="total-row">
+                            <td>Total</td>
+                            <td className="text-center">
+                              {professionalStats.reduce((sum, item) => sum + item.bookingCount, 0)}
+                            </td>
+                            <td className="text-right">
+                              {formatCurrency(
+                                professionalStats.reduce((sum, item) => sum + item.totalAmount, 0) / 
+                                professionalStats.reduce((sum, item) => sum + item.bookingCount, 0)
+                              )}
+                            </td>
+                            <td className="text-right font-bold">
+                              {formatCurrency(
+                                professionalStats.reduce((sum, item) => sum + item.totalAmount, 0)
+                              )}
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  )}
+                </div>
+                
+                {!loading && professionalStats.length > 0 && (
+                  <div className="chart-card">
+                    <h3>Gráfico de Ingresos por Profesional</h3>
+                    <ResponsiveContainer width="100%" height={350}>
+                      <BarChart data={professionalStats}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fontSize: 12 }}
+                          interval={0}
+                          angle={-45}
+                          textAnchor="end"
+                          height={100}
+                        />
+                        <YAxis 
+                          tickFormatter={(value) => 
+                            value >= 1000 
+                              ? `${Math.round(value / 1000)}k` 
+                              : value.toString()
+                          } 
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar dataKey="totalAmount" fill="#feca57" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

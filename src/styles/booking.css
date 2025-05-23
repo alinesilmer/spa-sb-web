@@ -285,7 +285,7 @@
 .booking-payment-button {
   padding: 15px 30px;
   border-radius: 30px;
-  background-color: #009ee3; /* Primary payment color */
+  background-color: var(--highlight-color); /* Primary payment color */
   color: #fff;
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
@@ -297,7 +297,7 @@
 }
 
 .booking-payment-button:hover {
-  background-color: #33b8f1;
+  background-color: var(--accent-color);
   transform: translateY(-2px);
 }
 
@@ -306,13 +306,12 @@
   font-family: "Montserrat", sans-serif;
 }
 
-/* Secondary style for cash payments */
 .booking-cash-button {
-  background-color: #68e685; /* Cash green */
+  background-color: var(--highlight-color);
 }
 
 .booking-cash-button:hover {
-  background-color: #3fd663;
+  background-color: var(--accent-color);
 }
 
 .loader-overlay {
@@ -348,8 +347,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive Styles */
