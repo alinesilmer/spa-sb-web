@@ -153,8 +153,8 @@
 }
 
 .tab-button.active {
-  color: #3b82f6;
-  border-bottom-color: #3b82f6;
+  color: var(--highlight-color);
+  border-bottom-color: var(--highlight-color);
 }
 
 .tab-button:hover {
