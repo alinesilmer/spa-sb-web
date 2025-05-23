@@ -8,6 +8,7 @@ import "../../index.css"
 import MessageResponseModal from "../../components/MessageResponseModal"
 import UserFormModal from "../../components/UserFormModal"
 import UserDetailsModal from "../../components/UserDetailsModal"
+import PaymentStatistics from "../../components/PaymentStatistics"
 import ProfileConfigModal from "../../components/ProfileConfigModal"
 import NotificationsDropdown from "../../components/NotificationsDropdown"
 import SimpleModal from "../../components/SimpleModal"
@@ -394,8 +395,16 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab("overview")}
             data-tab="overview"
           >
-            <span className="admin-nav-icon">📊</span>
+            <span className="admin-nav-icon">📋</span>
             <span>Resumen</span>
+          </button>
+
+          <button
+            className={`admin-nav-item ${activeTab === "statistics" ? "active" : ""}`}
+            onClick={() => setActiveTab("statistics")}
+            data-tab="statistics">
+            <span className="admin-nav-icon">📊</span>
+            <span>Estadísticas</span>
           </button>
 
           <button
@@ -457,6 +466,7 @@ const AdminDashboard = () => {
         <div className="admin-header">
           <h1 className="admin-title">
             {activeTab === "overview" && "Resumen del Panel"}
+            {activeTab === "statistics" && "Estadísticas de Pagos"}
             {activeTab === "bookings" && "Gestión de Reservas"}
             {activeTab === "services" && "Gestión de Servicios"}
             {activeTab === "users" && "Gestión de Usuarios"}
@@ -723,7 +733,17 @@ const AdminDashboard = () => {
               </div>
             </div>
           )}
-
+          
+          {activeTab === "statistics" && (
+                    <div className="admin-statistics">
+                      <PaymentStatistics
+                        bookings={bookings}
+                        userRole="admin"
+                        currentUserId={currentUser?.id}
+                        />
+                    </div>
+          )}
+          
           {activeTab === "services" && (
             <div className="admin-services">
               <div className="admin-section-actions">

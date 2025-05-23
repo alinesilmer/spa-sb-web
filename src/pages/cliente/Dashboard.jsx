@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext"
 import "../../styles/client.css"
 import SimpleModal from "../../components/SimpleModal"
 import { getBookings, cancelBooking } from '../../services/bookingService';
+import PaymentStatistics from "../../components/PaymentStatistics"
 import { updateUser } from '../../services/userService';
 
 const ClientDashboard = () => {
@@ -209,6 +210,14 @@ const ClientDashboard = () => {
           </button>
 
           <button
+            className={`client-nav-item ${activeTab === "statistics" ? "active" : ""}`}
+            onClick={() => setActiveTab("statistics")}
+          >
+            <span className="client-nav-icon">📊</span>
+            <span>Mis Estadísticas</span>
+          </button>
+          
+          <button
             className={`client-nav-item ${activeTab === "profile" ? "active" : ""}`}
             onClick={() => setActiveTab("profile")}
           >
@@ -230,6 +239,7 @@ const ClientDashboard = () => {
           <h1 className="client-title">
             {activeTab === "bookings" && "Mis Reservas"}
             {activeTab === "history" && "Mi Historial"}
+            {activeTab === "statistics" && "Estadísticas de Pago"}
             {activeTab === "profile" && "Mi Perfil"}
           </h1>
           <div className="client-header-actions">
@@ -446,6 +456,16 @@ const ClientDashboard = () => {
             </div>
           )}
 
+          {activeTab === "statistics" && (
+            <div className="client-statistics">
+              <PaymentStatistics
+                bookings={bookings}
+                userRole="client"
+                currentUserId={currentUser?.id}
+              />
+            </div>
+          )}
+          
           {activeTab === "profile" && (
             <div className="client-profile">
               <div className="client-profile-header">
