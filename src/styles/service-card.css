@@ -17,6 +17,7 @@
 .service-card-image {
   height: 200px;
   overflow: hidden;
+  position: relative;
 }
 
 .service-card-image img {
@@ -28,6 +29,47 @@
 
 .service-card:hover .service-card-image img {
   transform: scale(1.05);
+}
+
+.service-card-image .service-card-add-cart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--highlight-color);
+  color: var(--highlight-color);
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  backdrop-filter: blur(5px);
+  z-index: 2;
+}
+
+.service-card-image .service-card-add-cart:hover:not(:disabled) {
+  background-color: var(--highlight-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.service-card-image .service-card-add-cart.in-cart {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+  cursor: not-allowed;
+}
+
+.service-card-image .service-card-add-cart:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .service-card-content {
@@ -85,21 +127,18 @@
 
 .service-card-actions {
   display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.service-card-view-more,
-.service-card-book-now {
-  flex: 1;
+.service-card-view-more {
+  width: 100%;
   padding: 10px;
   border-radius: 30px;
   font-size: 0.9rem;
   cursor: pointer;
   text-align: center;
   transition: all 0.3s ease;
-}
-
-.service-card-view-more {
   background-color: transparent;
   border: 1px solid #4e5d4e;
   color: #4e5d4e;
@@ -110,7 +149,54 @@
   color: white;
 }
 
+.service-card-booking-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.service-card-add-cart {
+  background-color: transparent;
+  border: 1px solid var(--highlight-color);
+  color: var(--highlight-color);
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.service-card-add-cart:hover:not(:disabled) {
+  background-color: var(--highlight-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.service-card-add-cart.in-cart {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+  cursor: not-allowed;
+}
+
+.service-card-add-cart:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .service-card-book-now {
+  flex: 1;
+  padding: 10px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
   background-color: #e2a3a3;
   color: white;
   border: none;
@@ -127,5 +213,16 @@
 
   .service-card-price {
     font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-card-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .service-card-booking-actions {
+    width: 100%;
   }
 }

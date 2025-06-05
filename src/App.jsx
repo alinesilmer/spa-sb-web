@@ -16,8 +16,8 @@ import Booking from "./pages/Booking"
 import AdminDashboard from "./pages/admin/Dashboard"
 import ProfessionalDashboard from "./pages/profesional/Dashboard"
 import ClientDashboard from "./pages/cliente/Dashboard"
+import ChatBot from "./components/ChatBot"
 
-// ScrollToTop component to ensure page scrolls to top on route change
 function ScrollToTop() {
   const { pathname } = useLocation()
 
@@ -28,27 +28,37 @@ function ScrollToTop() {
   return null
 }
 
+function AppContent() {
+  return (
+    <>
+      <ScrollToTop />
+      <Header />
+      <ChatBot />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/booking/:serviceId" element={<Booking />} />
+        <Route path="/booking/cart" element={<Booking />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/profesional/dashboard" element={<ProfessionalDashboard />} />
+        <Route path="/cliente/dashboard" element={<ClientDashboard />} />
+      </Routes>
+      <Footer />
+    </>
+  )
+}
+
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/booking/:serviceId" element={<Booking />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/profesional/dashboard" element={<ProfessionalDashboard />} />
-          <Route path="/cliente/dashboard" element={<ClientDashboard />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
     </AuthProvider>
   )
 }

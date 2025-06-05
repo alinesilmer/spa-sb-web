@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect, useRef } from "react"
 import { Link, useLocation } from "react-router-dom"
 import Logo from "../assets/logo-sb.png"
@@ -6,9 +7,10 @@ import SearchIcon from "../assets/search.svg"
 import "../styles/header.css"
 import MenuDropdown from "./MenuDropdown"
 import SearchResults from "./SearchResults"
+import CartIcon from "./CartIcon"
 import { globalSearch } from "../utils/SearchUtils"
 import { getActiveServices } from "../services/serviceService"
-import { getSpecificUser } from '../services/userService'
+import { getSpecificUser } from "../services/userService"
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -22,11 +24,9 @@ const Header = () => {
   const searchRef = useRef(null)
   const location = useLocation()
 
-  
   const publicRoutes = ["/", "/about-us", "/services", "/contact"]
   const isPublicRoute = publicRoutes.includes(location.pathname)
 
-  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -58,7 +58,6 @@ const Header = () => {
     loadServices()
   }, [])
 
-
   let headerClass = "header"
   if (isPublicRoute) {
     headerClass += isScrolled ? " opaque" : " hidden"
@@ -82,8 +81,7 @@ const Header = () => {
     const query = e.target.value
     setSearchQuery(query)
     if (query.trim().length > 2) {
-      // Search across all content
-      const results = globalSearch(query, { services:services, teamMembers: profUsers } )
+      const results = globalSearch(query, { services: services, teamMembers: profUsers })
       setSearchResults(results)
       setShowResults(true)
     } else {
@@ -163,11 +161,14 @@ const Header = () => {
         </ul>
       </div>
       <div className="nav-container">
-        <div className="menu">
-          <button className="menu-button" aria-label="Open Menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <img src={MenuIcon || "/placeholder.svg"} alt="menu-icon" className="icon" />
-          </button>
-          <MenuDropdown isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+        <div className="header-actions">
+          <CartIcon />
+          <div className="menu">
+            <button className="menu-button" aria-label="Open Menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              <img src={MenuIcon || "/placeholder.svg"} alt="menu-icon" className="icon" />
+            </button>
+            <MenuDropdown isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+          </div>
         </div>
       </div>
     </header>
@@ -175,3 +176,4 @@ const Header = () => {
 }
 
 export default Header
+

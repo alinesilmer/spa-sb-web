@@ -32,6 +32,30 @@
   margin: 5px 0;
 }
 
+/* Cart Services Summary */
+.cart-services-summary {
+  margin: 15px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.booking-service-count {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+}
+
+.booking-service-item {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+  margin: 5px 0;
+}
+
 /* Booking Content */
 .booking-content {
   display: grid;
@@ -54,6 +78,53 @@
   font-size: 1.5rem;
   color: var(--secondary-color);
   margin-bottom: 20px;
+}
+
+/* 48-hour notice styling */
+.booking-date-info {
+  margin-bottom: 15px;
+}
+
+.booking-48hr-notice {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: rgb(37, 37, 37);
+  background-color: var(--bg-color);
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid var(--highlight-color);
+  margin: 0;
+}
+
+.booking-date-error {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 5px;
+}
+
+.booking-date-error p {
+  color: #c33;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* New warning style for better UX */
+.booking-date-warning {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 5px;
+}
+
+.booking-date-warning p {
+  color: #856404;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  margin: 0;
 }
 
 /* Calendar Styling */

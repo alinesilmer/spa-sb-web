@@ -28,7 +28,7 @@ const Services = () => {
       try {
         const result = await getActiveServices();
         setServices(result.length > 0 ? result : []);
-      } catch (error) {
+      } catch {
         setServices([]);
       } finally {
         setIsLoading(false);
