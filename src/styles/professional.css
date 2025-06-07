@@ -441,6 +441,15 @@
   background-color: #c3e6cb;
 }
 
+.professional-appointment-action-btn.print {
+  background-color: #f8b3b3;
+  color: #754242;
+}
+
+.professional-appointment-action-btn.print:hover {
+  background-color: #e2a3a3;
+}
+
 .professional-no-data {
   font-family: "Montserrat", sans-serif;
   font-size: 0.9rem;
@@ -522,28 +531,6 @@
 .professional-table-actions {
   display: flex;
   gap: 5px;
-}
-
-.professional-table-action-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: none;
-  background-color: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-}
-
-.professional-table-action-btn.view:hover {
-  background-color: #cce5ff;
-}
-
-.professional-table-action-btn.history:hover {
-  background-color: #d4edda;
 }
 
 .pagination-controls button {
@@ -1258,6 +1245,16 @@
 
 .professional-table-action-btn.delete:hover {
   background-color: #f8d7da;
+  transform: translateY(-2px);
+}
+
+.professional-table-action-btn.confirm:hover {
+  background-color: #d4edda;
+  transform: translateY(-2px);
+}
+
+.professional-table-action-btn.print:hover {
+  background-color: #cce5ff;
   transform: translateY(-2px);
 }
 

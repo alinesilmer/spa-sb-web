@@ -5,7 +5,7 @@ import { useAuth } from "../../contexts/AuthContext"
 import "../../styles/professional.css"
 import SimpleModal from "../../components/SimpleModal"
 import ScheduleSelector from "../../components/ScheduleSelector"
-import { getProfBookings, cancelBooking, confirmBooking } from '../../services/bookingService';
+import { getProfBookings, cancelBooking, confirmBooking, printBooking} from '../../services/bookingService';
 import { updateUser, setSchedule, getClients } from '../../services/userService';
 import { getProfessionalServices } from "../../services/serviceService"
 import ClientHistoryModal from "../../components/ClientHistoryModal"
@@ -132,6 +132,30 @@ const ProfessionalDashboard = () => {
     const currentDate = new Date(selectedDate)
     currentDate.setDate(currentDate.getDate() + 1)
     setSelectedDate(currentDate.toISOString().split("T")[0])
+  }
+
+  const handlePrintAppt = async (appointment) => {
+    try {      
+      const token = localStorage.getItem('authToken');   
+
+      const response = await printBooking(token, appointment);
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Cita_${appointment.id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Error al cancelar el turno.";
+      setErrorMessage(errorMessage);
+    } finally {
+      setShowCancelModal(false)
+    }
   }
 
   const confirmConfirm = (id) => {
@@ -474,6 +498,14 @@ const ProfessionalDashboard = () => {
                                 Confirmar
                               </button>
                             )}
+
+                            <button
+                                className="professional-appointment-action-btn print"
+                                onClick={() => handlePrintAppt(appointment)}
+                              >
+                                Imprimir PDF
+                            </button>
+
                           </div>
                         </div>
                       ))}
@@ -519,6 +551,14 @@ const ProfessionalDashboard = () => {
                                 Confirmar
                               </button>
                             )}
+
+                            <button
+                                className="professional-appointment-action-btn print"
+                                onClick={() => handlePrintAppt(appointment)}
+                              >
+                                Imprimir PDF
+                            </button>
+
                           </div>
                         </div>
                       ))}
@@ -597,7 +637,7 @@ const ProfessionalDashboard = () => {
                               </button>
                               {booking.status !== "cancelado" && booking.status !== "completado" && (
                                 <button
-                                  className="admin-table-action-btn confirm"
+                                  className="professional-table-action-btn confirm"
                                   title="Confirmar reserva"
                                   onClick={() => confirmConfirm(booking.id)}
                                   disabled={booking.status === "confirmado"}
@@ -617,6 +657,14 @@ const ProfessionalDashboard = () => {
                                   ❌
                                 </button>
                               )}
+                              <button
+                                className="professional-table-action-btn print"
+                                title="Imprimir PDF"
+                                onClick={() => handlePrintAppt(appointment)}
+                              >
+                                🖨️
+                            </button>
+
                             </div>
                           </td>
                         </tr>

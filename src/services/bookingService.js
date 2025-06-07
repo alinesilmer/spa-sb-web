@@ -122,3 +122,20 @@ export const confirmBooking = async (authToken, apptId) => {
 
   return response.data;
 };
+
+export const printBooking = async (authToken, appointment) => {
+  const response = await axios.post(
+    `${API_BASE_URL}/appointments/pdf`, 
+    appointment, 
+    { 
+      headers: { 
+        'Content-Type': 'application/json', 
+        Authorization: `Bearer ${authToken}` 
+      },
+      responseType: 'blob', 
+    }
+  );
+  //console.log("printBooking: " + appointment + ". RESPONSE: " + JSON.stringify(response.data));
+
+  return response;
+};
