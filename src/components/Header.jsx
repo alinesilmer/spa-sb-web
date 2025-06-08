@@ -11,6 +11,7 @@ import CartIcon from "./CartIcon"
 import { globalSearch } from "../utils/SearchUtils"
 import { getActiveServices } from "../services/serviceService"
 import { getSpecificUser } from "../services/userService"
+import { useAuth } from "../contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -21,6 +22,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [services, setServices] = useState([])
   const [profUsers, setProfUsers] = useState([])
+  const { isLoggedIn } = useAuth(); 
   const searchRef = useRef(null)
   const location = useLocation()
 
@@ -162,7 +164,9 @@ const Header = () => {
       </div>
       <div className="nav-container">
         <div className="header-actions">
-          <CartIcon />
+          {isLoggedIn && (
+            <CartIcon />
+          )}
           <div className="menu">
             <button className="menu-button" aria-label="Open Menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               <img src={MenuIcon || "/placeholder.svg"} alt="menu-icon" className="icon" />
