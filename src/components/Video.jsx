@@ -10,7 +10,7 @@ const Video = ({
     <div className={className}>
       <video className="video" autoPlay={true} muted={true} loop={true} controls={false}>
         <source src={videoSrc} type="video/mp4" />
-        Your browser does not support the video tag.
+        Tu navegador no soporta el video.
       </video>
       {children && (
         <div className="overlay-content">

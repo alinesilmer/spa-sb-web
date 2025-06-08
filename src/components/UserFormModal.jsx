@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 import SimpleModal from "./SimpleModal";
+import {
+  isOnlyLetters,
+  isValidEmail,
+  isValidPhone,
+  isStrongPassword
+} from "../utils/validationUtils";
+
 
 const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
   const [userData, setUserData] = useState({
@@ -17,36 +24,56 @@ const UserFormModal = ({ isOpen, onClose, onSaveUser }) => {
   };
 
   const handleSubmit = () => {
-    
-    if (!userData.name || !userData.lastname || !userData.email || !userData.password) {
+    const { name, lastname, email, password, telephone } = userData;
+  
+    if (!name.trim() || !lastname.trim() || !email.trim() || !password) {
       alert("Por favor completá todos los campos obligatorios");
       return;
     }
-
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(userData.email)) {
+  
+    if (!isOnlyLetters(name)) {
+      alert("El nombre solo debe contener letras");
+      return;
+    }
+  
+    if (!isOnlyLetters(lastname)) {
+      alert("El apellido solo debe contener letras");
+      return;
+    }
+  
+    if (!isValidEmail(email)) {
       alert("Por favor ingresá un email válido");
       return;
     }
-
+  
+    if (!isStrongPassword(password)) {
+      alert("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+  
+    if (telephone && !isValidPhone(telephone)) {
+      alert("Número de teléfono inválido");
+      return;
+    }
+  
+    // Si todo es válido, se guarda el usuario
     onSaveUser({
       ...userData,
-      id: Date.now().toString() 
+      id: Date.now().toString()
     });
-    
-    
+  
     setUserData({
       name: "",
       lastname: "",
       email: "",
       password: "",
       telephone: "",
-      userType: "cliente",
+      userType: "cliente"
     });
-    
+  
     onClose();
   };
+  
 
   return (
     <SimpleModal

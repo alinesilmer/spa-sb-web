@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 import SimpleModal from "./SimpleModal";
+import {
+  isOnlyLetters,
+  isValidEmail,
+  isValidPhone,
+  isStrongPassword,
+  doPasswordsMatch
+} from "../utils/validationUtils";
 
 const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
   const [profileData, setProfileData] = useState({
@@ -14,12 +21,36 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfileData({ ...profileData, [name]: value });    
+    setProfileData({ ...profileData, [name]: value });
   };
 
   const handleSubmit = () => {
+    if (!isOnlyLetters(profileData.name)) {
+      alert("El nombre solo debe contener letras");
+      return;
+    }
+
+    if (!isOnlyLetters(profileData.lastname)) {
+      alert("El apellido solo debe contener letras");
+      return;
+    }
+
+    if (!isValidEmail(profileData.email)) {
+      alert("Por favor ingresá un email válido");
+      return;
+    }
+
+    if (profileData.telephone && !isValidPhone(profileData.telephone)) {
+      alert("Número de teléfono inválido");
+      return;
+    }
+
     if (profileData.newPassword) {
-      if (profileData.newPassword !== profileData.confirmPassword) {
+      if (!isStrongPassword(profileData.newPassword)) {
+        alert("La nueva contraseña debe tener al menos 6 caracteres");
+        return;
+      }
+      if (!doPasswordsMatch(profileData.newPassword, profileData.confirmPassword)) {
         alert("Las contraseñas no coinciden");
         return;
       }
@@ -28,15 +59,15 @@ const ProfileConfigModal = ({ isOpen, onClose, user, onSaveProfile }) => {
         return;
       }
     }
-    
+
     const updatedUser = {
       ...user,
       name: profileData.name,
       lastname: profileData.lastname,
       email: profileData.email,
-      telephone: profileData.telephone
+      telephone: profileData.telephone,
     };
-   
+
     if (profileData.newPassword) {
       updatedUser.password = profileData.newPassword;
     }

@@ -124,7 +124,6 @@ const Header = () => {
       <div className="search-area" ref={searchRef}>
         <div className={`search-input ${isSearchOpen ? "visible" : "hidden"}`}>
           <input
-            type="text"
             placeholder="¿Qué estás buscando?"
             className="search-text-input"
             autoFocus={isSearchOpen}
@@ -152,7 +151,9 @@ const Header = () => {
             <Link to="/about-us">Nosotros</Link>
           </li>
           <li>
-            <img src={Logo || "/placeholder.svg"} alt="Logo" className="logo" />
+            <Link to="/">
+              <img src={Logo || "/placeholder.svg"} alt="Logo" className="logo" />
+            </Link>
           </li>
           <li>
             <Link to="/services">Servicios</Link>
