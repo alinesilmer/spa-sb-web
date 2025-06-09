@@ -13,6 +13,7 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import ForgotPassword from "./pages/ForgotPassword"
 import Booking from "./pages/Booking"
+import CartBooking from "./pages/CartBooking"
 import AdminDashboard from "./pages/admin/Dashboard"
 import ProfessionalDashboard from "./pages/profesional/Dashboard"
 import ClientDashboard from "./pages/cliente/Dashboard"
@@ -43,7 +44,7 @@ function AppContent() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/booking/:serviceId" element={<Booking />} />
-        <Route path="/booking/cart" element={<Booking />} />
+        <Route path="/booking/cart" element={<CartBooking />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/profesional/dashboard" element={<ProfessionalDashboard />} />
         <Route path="/cliente/dashboard" element={<ClientDashboard />} />

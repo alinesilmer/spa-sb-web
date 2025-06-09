@@ -1,0 +1,138 @@
+.cart-booking-page {
+  padding: 120px 0 60px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.cart-booking-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.cart-booking-container h1 {
+  text-align: center;
+  font-size: 2.3rem;
+  margin-bottom: 40px;
+}
+
+.cart-booking-service {
+  margin-bottom: 40px;
+}
+
+.cart-booking-service h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.cart-booking-service p {
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.cart-booking-service input[type="date"] {
+  font-size: 1rem;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.cart-booking-time-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cart-booking-time-slot {
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  font-size: 0.9rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.cart-booking-time-slot:hover {
+  background-color: #e5e5e5;
+}
+
+.cart-booking-time-slot.selected {
+  background-color: var(--highlight-color);
+  color: white;
+}
+
+.cart-booking-time-slot:disabled {
+  background-color: #eee;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.cart-booking-error {
+  background: #fee;
+  color: #b00;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.cart-booking-confirm-button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 30px;
+  background-color: var(--highlight-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cart-booking-confirm-button:hover {
+  background-color: var(--accent-color);
+}
+
+.cart-booking-payment-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.cart-booking-payment-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.cart-booking-payment-button {
+  padding: 12px 24px;
+  border-radius: 30px;
+  background-color: var(--highlight-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cart-booking-payment-button:hover {
+  background-color: var(--accent-color);
+}
+
+.cart-booking-payment-button.booking-cash-button {
+  background-color: var(--highlight-color);
+}
+
+.cart-booking-receipt-input {
+  margin: 15px 0;
+}
