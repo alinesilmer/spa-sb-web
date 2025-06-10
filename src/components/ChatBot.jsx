@@ -35,8 +35,7 @@ const ChatBot = () => {
           if (window.botpressWebChat) {
             console.log("✅ botpressWebChat está disponible")
 
-            // The bot should initialize automatically with the config script
-            // But we can force it to show if needed
+            
             try {
               window.botpressWebChat.sendEvent({ type: "show" })
             } catch{
@@ -82,7 +81,7 @@ const ChatBot = () => {
     }
   }, [])
 
-  return null // No renderiza ningún elemento visible en el DOM; el widget se inyecta solo
+  return null 
 }
 
 export default ChatBot

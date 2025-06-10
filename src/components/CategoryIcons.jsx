@@ -2,7 +2,6 @@
 import "../styles/category-icons.css"
 
 const CategoryIcons = ({ activeCategory, setActiveCategory }) => {
-  // Updated categories to match the mockData.js categories
   const categories = [
     { id: "todo", name: "Todos", icon: "Spa" },
     { id: "corporales", name: "Corporales", icon: "Heart" },
@@ -11,7 +10,7 @@ const CategoryIcons = ({ activeCategory, setActiveCategory }) => {
     { id: "grupales", name: "Grupales", icon: "Users" },
   ]
 
-  // Simple icon components
+  
   const icons = {
     Spa: () => (
       <svg

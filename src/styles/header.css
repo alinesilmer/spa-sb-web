@@ -88,6 +88,9 @@
   transition: visibility 0s, opacity 0.5s linear;
 }
 
+.search-text-input {
+  width: 230px;
+}
 .search-input.visible {
   visibility: visible;
   opacity: 1;
@@ -172,6 +175,10 @@
   .nav-links {
     gap: 20px;
   }
+
+  .search-text-input {
+    width: 110px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -194,6 +201,10 @@
     right: 5%;
     top: 80px;
   }
+
+  .search-text-input {
+    width: 110px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -207,5 +218,9 @@
 
   .search-area {
     margin-right: 10px;
+  }
+
+  .search-text-input {
+    width: 150px;
   }
 }

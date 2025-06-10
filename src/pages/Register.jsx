@@ -2,6 +2,14 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
+import {
+  isOnlyLetters,
+  isValidEmail,
+  isValidPhone,
+  isStrongPassword,
+  doPasswordsMatch,
+} from "../utils/validationUtils"
+
 import "../styles/auth.css"
 
 const Register = () => {
@@ -52,37 +60,58 @@ const Register = () => {
 
   const validateForm = () => {
     const newErrors = {}
-    
-    if (!formData.name.trim()) newErrors.name = "El nombre es requerido"
-    if (!formData.lastname.trim()) newErrors.lastname = "El apellido es requerido"
-    if (!formData.email.trim()) newErrors.email = "El email es requerido"
-    if (!formData.password) newErrors.password = "La contraseña es requerida"
-    if (!formData.confirmPassword) newErrors.confirmPassword = "Confirmá tu contraseña"
-    if (!formData.telephone.trim()) newErrors.telephone = "El teléfono es requerido"
-    if (!formData.agreeToTerms) newErrors.agreeToTerms = "Debés aceptar los términos y condiciones"
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (formData.email && !emailRegex.test(formData.email)) {
+  
+    if (!formData.name.trim()) {
+      newErrors.name = "El nombre es requerido"
+    } else if (!isOnlyLetters(formData.name)) {
+      newErrors.name = "El nombre solo debe contener letras"
+    }
+  
+    if (!formData.lastname.trim()) {
+      newErrors.lastname = "El apellido es requerido"
+    } else if (!isOnlyLetters(formData.lastname)) {
+      newErrors.lastname = "El apellido solo debe contener letras"
+    }
+  
+    if (!formData.email.trim()) {
+      newErrors.email = "El email es requerido"
+    } else if (!isValidEmail(formData.email)) {
       newErrors.email = "Formato de email inválido"
     }
-    
-    if (formData.password && formData.password.length < 6) {
+  
+    if (!formData.password) {
+      newErrors.password = "La contraseña es requerida"
+    } else if (!isStrongPassword(formData.password)) {
       newErrors.password = "La contraseña debe tener al menos 6 caracteres"
     }
-    
-    if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+  
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirmá tu contraseña"
+    } else if (!doPasswordsMatch(formData.password, formData.confirmPassword)) {
       newErrors.confirmPassword = "Las contraseñas no coinciden"
     }
-
+  
+    if (!formData.telephone.trim()) {
+      newErrors.telephone = "El teléfono es requerido"
+    } else if (!isValidPhone(formData.telephone)) {
+      newErrors.telephone = "Número de teléfono inválido"
+    }
+  
+    if (!formData.agreeToTerms) {
+      newErrors.agreeToTerms = "Debés aceptar los términos y condiciones"
+    }
+  
     if (formData.userType === "profesional") {
-      if (!formData.professionalInfo.certification) {
+      if (!formData.professionalInfo.certification.trim()) {
         newErrors["professionalInfo.certification"] = "La certificación es requerida"
       }
     }
-
+  
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
+  
+  
 
   const transformFormData = () => {
     const { name, lastname, email, password, telephone, userType } = formData;
@@ -182,6 +211,7 @@ const Register = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
+                  placeholder="Juan"
                   className={errors.name ? "error" : ""}
                 />
                 {errors.name && <span className="error-message">{errors.name}</span>}
@@ -195,6 +225,7 @@ const Register = () => {
                   name="lastname"
                   value={formData.lastname}
                   onChange={handleChange}
+                  placeholder="Pérez"
                   className={errors.lastname ? "error" : ""}
                 />
                 {errors.lastname && <span className="error-message">{errors.lastname}</span>}
@@ -209,6 +240,7 @@ const Register = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                placeholder="juanperez@gmail.com"
                 className={errors.email ? "error" : ""}
               />
               {errors.email && <span className="error-message">{errors.email}</span>}
@@ -223,6 +255,7 @@ const Register = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
+                  placeholder="******"
                   className={errors.password ? "error" : ""}
                 />
                 {errors.password && <span className="error-message">{errors.password}</span>}
@@ -236,6 +269,7 @@ const Register = () => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  placeholder="******"
                   className={errors.confirmPassword ? "error" : ""}
                 />
                 {errors.confirmPassword && (

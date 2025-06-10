@@ -77,7 +77,6 @@ const FAQSection = () => {
           </ul>
         </div>
 
-        {/* RIGHT COLUMN: CTA to Contact Form */}
         <div className="faq-right">
           <h2 className="contact-title">¿Necesitás más ayuda?</h2>
           <p className="contact-description">
