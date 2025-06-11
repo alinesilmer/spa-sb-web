@@ -73,6 +73,14 @@ const Booking = () => {
     }
   }, [serviceId])  
 
+  const handleExpiryChange = (e) => {
+    let value = e.target.value.replace(/[^\d]/g, "")
+    if (value.length >= 3) {
+      value = value.slice(0, 2) + "/" + value.slice(2, 4)
+    }
+    setExpiryDate(value)
+  }
+  
   const checkDiscountEligibility = (price, date) => {
     if (!price || !date) return
     
@@ -454,25 +462,19 @@ const Booking = () => {
                           type="text" 
                           placeholder="MM/YY" 
                           value={expiryDate}
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/[^\d/]/g, '')
-                            if (value.length <= 5) {
-                              setExpiryDate(value)
-                            }
-                          }}
+                          onChange={handleExpiryChange}
                           maxLength={5}
                         />
                       </div>
                       <div className="form-group">
-                        <label>Código de Seguridad</label>
-                        <input 
-                          type="text" 
-                          placeholder="CVV" 
-                          value={cvv}
-                          onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 3))}
-                          maxLength={3}
-                        />
-                      </div>
+                  <label>CVV</label>
+                  <input
+                    type="text"
+                    maxLength={3}
+                    value={cvv}
+                    onChange={e => setCvv(e.target.value.replace(/\D/g, ''))}
+                  />
+                </div>
                     </div>
                     
                     {error && <div className="payment-error">{error}</div>}
