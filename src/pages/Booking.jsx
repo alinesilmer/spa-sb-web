@@ -5,6 +5,13 @@ import { useAuth } from "../contexts/AuthContext"
 import { getActiveServices } from "../services/serviceService"
 import { getAvailable } from "../services/userService"
 import { createBooking } from "../services/bookingService"
+import {
+  isOnlyLetters,
+  isValidCardNumber,
+  isValidExpiryDate,
+  isValidCVV
+} from "../utils/validationUtils"
+
 import "../styles/booking.css"
 
 const Booking = () => {
@@ -95,29 +102,40 @@ const Booking = () => {
 
   useEffect(() => {
     const fetchAvailability = async () => {
-      if (!currentUser || !serviceId || !selectedDate) return
-
-      try {
-        const token = localStorage.getItem("authToken")
-
-        const response = await getAvailable(token, serviceId, selectedDate)
-        const weekday = new Date(selectedDate + "T00:00:00").toLocaleDateString("es-AR", { weekday: "long" }).toLowerCase()
-        
-        const dayAvailability = response.message.availability.find((d) => d.day.toLowerCase() === weekday)
-        if (dayAvailability && dayAvailability.schedule) {
-          setAvailableTimeSlots(dayAvailability.schedule.filter((s) => s.available))
-        } else {
-          setAvailableTimeSlots([])
-        }
-
-      } catch (error) {
-        console.error("Error al obtener disponibilidad:", error)
-        setAvailableTimeSlots([])
-      }
-    }
+      if (!currentUser || !serviceId || !selectedDate) return;
   
-    fetchAvailability()
-  }, [selectedDate, serviceId, currentUser])
+      try {
+        const bookingDate = new Date(selectedDate + "T00:00:00");
+        const now = new Date();
+        const hoursDifference = (bookingDate - now) / (1000 * 60 * 60);
+
+        if (hoursDifference < 48) {
+          setAvailableTimeSlots([]);
+          return;
+        }
+  
+        const token = localStorage.getItem("authToken");
+        const response = await getAvailable(token, serviceId, selectedDate);
+        const weekday = bookingDate.toLocaleDateString("es-AR", { weekday: "long" }).toLowerCase();
+  
+        const dayAvailability = response.message.availability.find(
+          (d) => d.day.toLowerCase() === weekday
+        );
+  
+        if (dayAvailability && dayAvailability.schedule) {
+          setAvailableTimeSlots(dayAvailability.schedule.filter((s) => s.available));
+        } else {
+          setAvailableTimeSlots([]);
+        }
+      } catch (error) {
+        console.error("Error al obtener disponibilidad:", error);
+        setAvailableTimeSlots([]);
+      }
+    };
+  
+    fetchAvailability();
+  }, [selectedDate, serviceId, currentUser]);
+  
 
   useEffect(() => {
     if (selectedPaymentMethod === "MercadoPago" && !finalConfirmation) {
@@ -195,28 +213,25 @@ const Booking = () => {
   }
 
   const validateDebitCard = () => {
-    if (!cardNumber || cardNumber.length < 16) {
-      setError("Por favor, ingresá un número de tarjeta válido")
-      return false
+    if (!isValidCardNumber(cardNumber)) {
+      setError("El número de tarjeta debe tener 16 dígitos numéricos.");
+      return false;
     }
-    
-    if (!cardName) {
-      setError("Por favor, ingresá el nombre del titular")
-      return false
+    if (!cardName.trim() || !isOnlyLetters(cardName)) {
+      setError("El nombre del titular solo debe contener letras.");
+      return false;
     }
-    
-    if (!expiryDate || !expiryDate.match(/^\d{2}\/\d{2}$/)) {
-      setError("Por favor, ingresá una fecha de vencimiento válida (MM/YY)")
-      return false
+    if (!isValidExpiryDate(expiryDate)) {
+      setError("La fecha debe tener formato MM/YY válido.");
+      return false;
     }
-    
-    if (!cvv || cvv.length < 3) {
-      setError("Por favor, ingresá un código de seguridad válido")
-      return false
+    if (!isValidCVV(cvv)) {
+      setError("El CVV debe tener 3 dígitos numéricos.");
+      return false;
     }
-    
-    return true
-  }
+    return true;
+  };
+  
 
   const handleDebitCardPayment = () => {
     if (!validateDebitCard()) {

@@ -1,5 +1,13 @@
 export const isOnlyLetters = (str) => /^[a-zA-ZÀ-ÿ\s]+$/.test(str.trim());
 
+export const isValidCardNumber = (cardNumber) =>
+  /^\d{16}$/.test(cardNumber.trim());
+
+export const isValidExpiryDate = (expiry) =>
+  /^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry);
+
+export const isValidCVV = (cvv) => /^\d{3}$/.test(cvv.trim());
+
 export const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export const isValidPhone = (phone) => /^\+?\d{7,15}$/.test(phone.trim());
